@@ -112,6 +112,7 @@ class WindowGenerator:
         labels = ['train', 'validate', 'test']
 
         if self.checkDirExists():
+            print('[WindowGen] - Dataset already exists, skipping generation...')
             return True
         else:
             for folder in labels:
