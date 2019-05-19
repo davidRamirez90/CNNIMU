@@ -108,7 +108,7 @@ def init():
     }
 
     config = {
-        'channels': (100,132),
+        'channels': 132,
         'n_classes': 7,
         'n_filters': 64,
         'f_size': (5,1),
