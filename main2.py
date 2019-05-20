@@ -1,3 +1,11 @@
+
+# HELPER IMPORTS
+import numpy as np
+import argparse
+import logging
+import visdom
+import copy
+
 # TORCH IGNITE IMPORTS
 from ignite.engine import Events, create_supervised_trainer, create_supervised_evaluator
 from ignite.metrics import Accuracy, Loss, Precision, Recall, MetricsLambda
@@ -10,26 +18,21 @@ from torch.optim import SGD
 from torch import nn
 import torch
 
-# HELPER IMPORTS
-import numpy as np
-import argparse
-import logging
-import visdom
-import copy
-
 # CUSTOM SCRIPTS IMPORT SECTION
 from windowGenerator import WindowGenerator
 from windataset import windowDataSet
 from network import CNN_IMU
 import env
-import pdv
-
+import pdb
 
 
 # INITIAL CONFIG OF VARIABLES
 url = env.window_url
 logging_format = '[%(asctime)-19s, %(name)s, %(levelname)s] %(message)s'
-logging.basicConfig(filename='debug3.log', level=logging.DEBUG, format=logging_format)
+logging.basicConfig(
+    filename='debug3.log',
+    level=logging.DEBUG,
+    format=logging_format)
 logger = logging.getLogger('CNN network')
 
 
@@ -37,6 +40,7 @@ class GaussianNoise(object):
     """
     Add Gaussian noise to a window data sample
     """
+
     def __init__(self, mu, sigma):
         self.mu = mu
         self.sigma = sigma
@@ -65,14 +69,18 @@ def get_data_loaders(config):
     val_dataset = windowDataSet(dir=url.format(config['win_len'],
                                                config['win_step'],
                                                'validate'),
-                                     transform=GaussianNoise(0, 1e-2))
+                                transform=GaussianNoise(0, 1e-2))
 
     train_loader = DataLoader(train_dataset, batch_size=train_batch_size,
                               shuffle=True, num_workers=4)
-    val_loader = DataLoader(val_dataset, batch_size=val_batch_size, shuffle=False,
-                                     num_workers=4)
+    val_loader = DataLoader(
+        val_dataset,
+        batch_size=val_batch_size,
+        shuffle=False,
+        num_workers=4)
 
     return train_loader, val_loader, train_dataset.__len__(), val_dataset.__len__()
+
 
 def init():
     '''
@@ -112,7 +120,7 @@ def init():
         'channels': 132,
         'n_classes': 7,
         'n_filters': 64,
-        'f_size': (5,1),
+        'f_size': (5, 1),
         'batch_train': 100,
         'batch_validate': 100,
         'patience': 7,
@@ -123,7 +131,7 @@ def init():
         'momentum': 0.9
     }
 
-    if (args.core):
+    if args.core:
         print("Using cuda core: cuda:{}".format(args.core))
         logger.info("Selected cuda core: cuda:{}".format(args.core))
         config['gpucore'] = "cuda:{}".format(args.core)
@@ -138,14 +146,6 @@ def init():
                 configArr.append(c)
 
     return configArr
-
-
-def customTrainerOutput(x, y, y_pred, loss):
-    return loss.item(), y_pred, y
-
-
-def AccuracyMetricOutput(output):
-    return [output[1], output[2]]
 
 
 def F1(precision, recall):
@@ -165,6 +165,7 @@ def create_plot_window(vis, xlabel, ylabel, title, name=""):
                               ylabel=ylabel,
                               title=title))
 
+
 def append_plot_to_window(vis, win, name, update):
     vis.line(X=np.array([1]),
              Y=np.array([np.nan]),
@@ -172,12 +173,14 @@ def append_plot_to_window(vis, win, name, update):
              update=update,
              win=win)
 
+
 def append_scalar_to_plot(vis, y, x, update, win, name=""):
     vis.line(Y=[y, ],
              X=[x, ],
              name=name,
              update=update,
              win=win)
+
 
 def run(i, config):
     """
@@ -199,7 +202,8 @@ def run(i, config):
     train_loader, val_loader, train_size, val_size = get_data_loaders(config)
 
     # NETWORK CREATION
-    device = torch.device(config['gpucore'] if torch.cuda.is_available() else "cpu")
+    device = torch.device(
+        config['gpucore'] if torch.cuda.is_available() else "cpu")
     net = CNN_IMU(config)
     net = net.to(device)
 
@@ -208,8 +212,8 @@ def run(i, config):
 
     # OPTIMIZER AND CRITERION INITIALIZATION
     optimizer = SGD(net.parameters(),
-                          lr=config['lr'],
-                          momentum=config['momentum'])
+                    lr=config['lr'],
+                    momentum=config['momentum'])
     criterion = nn.CrossEntropyLoss()
 
     # IGNITE METRICS DEFINED INCLUDING CUSTOM F1
@@ -229,8 +233,8 @@ def run(i, config):
                                         optimizer,
                                         criterion,
                                         device=device)
-    val_evaluator = create_supervised_evaluator(net, metrics=metrics, device=device)
-
+    val_evaluator = create_supervised_evaluator(
+        net, metrics=metrics, device=device)
 
     # LIFETIME EVENTS FOR PRINTING CALCULATING AND PLOTTING
     tr_cpe = CustomPeriodicEvent(n_iterations=config['train_info_iter'])
@@ -242,16 +246,17 @@ def run(i, config):
     pbar = tqdm_logger.ProgressBar()
     pbar.attach(val_evaluator)
 
-
     # CREATING EARLY STOPPING AND SAVE HANDLERS
-    checkpoint = ModelCheckpoint(dirname='/data/dramirez/models',
-                                 filename_prefix='CNNIMU_{}_{}_{}'.format(config['win_len'],
-                                                                          config['win_step'],
-                                                                          config['lr']),
-                                 score_function=score_function,
-                                 score_name='loss',
-                                 create_dir=True,
-                                 require_empty=False)
+    checkpoint = ModelCheckpoint(
+        dirname='/data/dramirez/models',
+        filename_prefix='CNNIMU_{}_{}_{}'.format(
+            config['win_len'],
+            config['win_step'],
+            config['lr']),
+        score_function=score_function,
+        score_name='loss',
+        create_dir=True,
+        require_empty=False)
     val_evaluator.add_event_handler(Events.EPOCH_COMPLETED,
                                     checkpoint,
                                     {'network': net})
@@ -261,35 +266,38 @@ def run(i, config):
                                  trainer=trainer)
     val_evaluator.add_event_handler(Events.COMPLETED, earlyStopper)
 
-
     # CREATING VISDOM INITIAL GRAPH OBJECTS
 
-    train_metrics_window = create_plot_window(vis, '# Iterations', 'Loss',
-                                              'Val / Train Losses W [{}/{}] - LR [{}]'.format(config['win_len'],
-                                                                                              config['win_step'],
-                                                                                              config['lr']),
-                                              'trainingloss')
-    append_plot_to_window(vis, train_metrics_window, 'validationloss', 'append')
-    val_acc_window = create_plot_window(vis, '# Iterations', 'Accuracy', 'Validation Accuracy W [{}/{}] - LR [{}]'.format(config['win_len'],
-                                                                                                                          config['win_step'],
-                                                                                                                          config['lr']))
-    val_f1_window = create_plot_window(vis, '# Iterations', 'F1', 'F1 score W [{}/{}] - LR [{}]'.format(config['win_len'],
-                                                                                                        config['win_step'],
-                                                                                                        config['lr']))
+    train_metrics_window = create_plot_window(
+        vis, '# Iterations', 'Loss', 'Val / Train Losses W [{}/{}] - LR [{}]'.format(
+            config['win_len'], config['win_step'], config['lr']), 'trainingloss')
+    append_plot_to_window(
+        vis,
+        train_metrics_window,
+        'validationloss',
+        'append')
+    val_acc_window = create_plot_window(
+        vis,
+        '# Iterations',
+        'Accuracy',
+        'Validation Accuracy W [{}/{}] - LR [{}]'.format(
+            config['win_len'],
+            config['win_step'],
+            config['lr']))
+    val_f1_window = create_plot_window(
+        vis, '# Iterations', 'F1', 'F1 score W [{}/{}] - LR [{}]'.format(
+            config['win_len'], config['win_step'], config['lr']))
 
     training_losses_acc = list()
-
 
     # IGNITE EVENTS DEFINITION
     @trainer.on(Events.EPOCH_STARTED)
     def initial_eval(engine):
         val_evaluator.run(val_loader)
 
-
     @trainer.on(Events.ITERATION_COMPLETED)
     def accumulate_trainlosses(engine):
         training_losses_acc.append(engine.state.output)
-
 
     @trainer.on(tr_cpe.Events.ITERATIONS_10_COMPLETED)
     def log_training_loss(engine):
@@ -299,14 +307,15 @@ def run(i, config):
                  name='trainingloss',
                  update='replace',
                  win=train_metrics_window)
-        print("Epoch[{}],  Iteration[{}],  Loss: {:.2f}".format(engine.state.epoch,
-                                                              engine.state.iteration,
-                                                              engine.state.output))
+        print(
+            "Epoch[{}],  Iteration[{}],  Loss: {:.2f}".format(
+                engine.state.epoch,
+                engine.state.iteration,
+                engine.state.output))
 
     @trainer.on(val_cpe.Events.ITERATIONS_50_COMPLETED)
     def run_validation(engine):
         val_evaluator.run(val_loader)
-
 
     @val_evaluator.on(Events.EPOCH_COMPLETED)
     def log_validation_results(engine):
@@ -321,15 +330,11 @@ def run(i, config):
         append_scalar_to_plot(vis, m['f1'],
                               trainer.state.iteration,
                               'append', val_f1_window)
-        print("Validation Result: ----------------->    Loss: {:.4f}, Accuracy: {:.4f}, F1: {:.4f}".format(trainer.state.epoch,
-                                                                              trainer.state.iteration,
-                                                                              m['loss'],
-                                                                              m['accuracy'],
-                                                                              m['f1']))
-
+        print("Validation Result: ----------------->  Loss: {:.4f}, Accuracy: {:.4f}, F1: {:.4f}".format(
+            trainer.state.epoch, trainer.state.iteration, m['loss'], m['accuracy'], m['f1']))
 
     trainer.run(train_loader, max_epochs=2)
-    pdv.set_trace()
+    pdb.set_trace()
 
 
 if __name__ == '__main__':
@@ -337,18 +342,6 @@ if __name__ == '__main__':
     configs = init()
 
     for i, config in enumerate(configs):
-        print('Creating network for LR [{}] / WIN_SIZE [{}] / WIN_STRIDE [{}]'.format(config['lr'],
-                                                                                      config['win_len'],
-                                                                                      config['win_step']))
+        print('Creating network for LR [{}] / WIN_SIZE [{}] / WIN_STRIDE [{}]'.format(
+            config['lr'], config['win_len'], config['win_step']))
         run(i, config)
-
-
-
-
-
-
-
-
-
-
-
