@@ -1,10 +1,7 @@
 # HELPER IMPORTS
 import numpy as np
-import argparse
 import logging
 import visdom
-import copy
-import gc
 
 # TORCH IGNITE IMPORTS
 from ignite.engine import Events, create_supervised_trainer, create_supervised_evaluator
@@ -27,13 +24,12 @@ import pdb
 
 
 # INITIAL CONFIG OF VARIABLES
-
 logging_format = '[%(asctime)-19s, %(name)s, %(levelname)s] %(message)s'
 logging.basicConfig(
-    filename='debug3.log',
+    filename='debug.log',
     level=logging.DEBUG,
     format=logging_format)
-logger = logging.getLogger('CNN network')
+logger = logging.getLogger('Netevaluator')
 
 
 
@@ -245,16 +241,17 @@ class TorchModel:
                                        trainer.state.iteration,
                                        'append', val_f1_window)
             print(
-                "Validation Result: ----------------->  Loss: {:.4f}, Accuracy: {:.4f}, F1: {:.4f}".format(
+                "Validation Result: ----------->  Loss: {:.4f}, Accuracy: {:.4f}, F1: {:.4f}".format(
                     m['loss'],
                     m['accuracy'],
                     m['f1']))
 
         trainer.run(train_loader, max_epochs=15)
+        logger.info('Finished training after {} iterations'.format(trainer.state.iteration))
         del training_losses_acc
+        del trainer
+        del val_evaluator
         del net
-        # torch.cuda
-        # dump_tensors()
         pdb.set_trace()
 
 
