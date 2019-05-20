@@ -36,34 +36,17 @@ logging.basicConfig(
 logger = logging.getLogger('CNN network')
 
 
-class GaussianNoise(object):
-    """
-    Add Gaussian noise to a window data sample
-    """
-
-    def __init__(self, mu, sigma):
-        self.mu = mu
-        self.sigma = sigma
-
-    def __call__(self, sample):
-        data = sample['data']
-        label = np.long(sample['label'])
-        data += np.random.normal(self.mu,
-                                 self.sigma,
-                                 data.shape)
-        data = np.expand_dims(data, 0)
-        return (data, label)
-
 
 class TorchModel:
     """
     Allows to evaluate one instance of torch model
     """
-
     def __init__(self):
+        print('[netevaluator] - Init Torchmodel')
         self.url = env.window_url
 
     def get_data_loaders(self, config):
+
         train_batch_size = config['batch_train']
         val_batch_size = config['batch_validate']
 
@@ -88,8 +71,7 @@ class TorchModel:
 
         return train_loader, val_loader, train_dataset.__len__(), val_dataset.__len__()
 
-    @staticmethod
-    def create_plot_window(vis, xlabel, ylabel, title, name=""):
+    def create_plot_window(self, vis, xlabel, ylabel, title, name=""):
         return vis.line(X=np.array([1]),
                         Y=np.array([np.nan]),
                         name=name,
@@ -97,32 +79,30 @@ class TorchModel:
                                   ylabel=ylabel,
                                   title=title))
 
-    @staticmethod
-    def append_plot_to_window(vis, win, name, update):
+    def append_plot_to_window(self, vis, win, name, update):
         vis.line(X=np.array([1]),
                  Y=np.array([np.nan]),
                  name=name,
                  update=update,
                  win=win)
 
-    @staticmethod
-    def append_scalar_to_plot(vis, y, x, update, win, name=""):
+    def append_scalar_to_plot(self, vis, y, x, update, win, name=""):
         vis.line(Y=[y, ],
                  X=[x, ],
                  name=name,
                  update=update,
                  win=win)
 
-    @staticmethod
-    def F1(precision, recall):
+    def F1(self, precision, recall):
         return (precision * recall * 2 / (precision + recall + 1e-20)).mean()
 
-    @staticmethod
-    def score_function(engine):
+    def score_function(self, engine):
         val_loss = engine.state.metrics['loss']
         return -val_loss
 
+
     def execute_instance(self, config):
+
         # CREATING CUSTOM WINDOWS FOR THIS LOOP
         winGen = WindowGenerator(config['win_len'],
                                  config['win_step'])
@@ -275,3 +255,24 @@ class TorchModel:
         # torch.cuda.empty_cache()
         # dump_tensors()
         # pdb.set_trace()
+
+
+
+
+class GaussianNoise(object):
+    """
+    Add Gaussian noise to a window data sample
+    """
+
+    def __init__(self, mu, sigma):
+        self.mu = mu
+        self.sigma = sigma
+
+    def __call__(self, sample):
+        data = sample['data']
+        label = np.long(sample['label'])
+        data += np.random.normal(self.mu,
+                                 self.sigma,
+                                 data.shape)
+        data = np.expand_dims(data, 0)
+        return (data, label)

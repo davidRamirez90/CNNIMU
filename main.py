@@ -15,9 +15,8 @@ def pretty_size(size):
 def memory_dump(core):
     print(
         "Cached memory: {}, Allocated memory: {}".format(
-            torch.cuda.memory_cached(
-                device=core), torch.cuda.memory_allocated(
-                device=core)))
+            torch.cuda.memory_cached(device=core),
+            torch.cuda.memory_allocated(device=core)))
 
 
 def dump_tensors(gpu_only=True):
@@ -116,16 +115,16 @@ if __name__ == "__main__":
 
     print('[MAIN] - Initiating hyperparam evaluation')
 
-    hyParamChecker = TorchModel()
-
     configs = init()
 
+    hyParamChecker = TorchModel()
+
     for i, config in enumerate(configs):
-        memory_dump(config['gpucore'])
+        # memory_dump(config['gpucore'])
         print('Creating network for LR [{}] / WIN_SIZE [{}] / WIN_STRIDE [{}]'.format(
             config['lr'], config['win_len'], config['win_step']))
 
-        TorchModel.execute_instance(config=config)
+        hyParamChecker.execute_instance(config)
 
-        memory_dump(config['gpucore'])
+        # memory_dump(config['gpucore'])
         pdb.set_trace()
