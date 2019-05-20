@@ -252,7 +252,6 @@ class TorchModel:
         del trainer
         del val_evaluator
         del net
-        pdb.set_trace()
 
 
 
