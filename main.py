@@ -2,6 +2,7 @@ import argparse
 import torch
 import copy
 import pdb
+import gc
 
 from netevaluator import TorchModel
 
@@ -21,7 +22,6 @@ def memory_dump(core):
 
 def dump_tensors(gpu_only=True):
     """Prints a list of the Tensors being tracked by the garbage collector."""
-    import gc
     total_size = 0
     for obj in gc.get_objects():
         try:
@@ -111,6 +111,12 @@ def init():
     return configArr
 
 
+def clean_memory():
+    gc.collect()
+    torch.cuda.empty_cache()
+    torch.cuda.ipc_collect()
+
+
 if __name__ == "__main__":
 
     print('[MAIN] - Initiating hyperparam evaluation')
@@ -120,11 +126,9 @@ if __name__ == "__main__":
     hyParamChecker = TorchModel()
 
     for i, config in enumerate(configs):
-        memory_dump(config['gpucore'])
         print('Creating network for LR [{}] / WIN_SIZE [{}] / WIN_STRIDE [{}]'.format(
             config['lr'], config['win_len'], config['win_step']))
 
         hyParamChecker.execute_instance(config)
-
+        clean_memory()
         memory_dump(config['gpucore'])
-        pdb.set_trace()
