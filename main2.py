@@ -220,7 +220,7 @@ def append_scalar_to_plot(vis, y, x, update, win, name=""):
              win=win)
 
 
-def run(i, config, net, device):
+def run(i, config):
     """
     :param i: Current hyperparam loop iteration
     :param config: Configuration object
@@ -239,8 +239,11 @@ def run(i, config, net, device):
     # GETTING DATA
     train_loader, val_loader, train_size, val_size = get_data_loaders(config)
 
-
-
+    # NETWORK CREATION
+    device = torch.device(
+        config['gpucore'] if torch.cuda.is_available() else "cpu")
+    net = CNN_IMU(config)
+    net = net.to(device)
     print(device)
     print(net)
 
@@ -368,6 +371,8 @@ def run(i, config, net, device):
             trainer.state.epoch, trainer.state.iteration, m['loss'], m['accuracy'], m['f1']))
 
     trainer.run(train_loader, max_epochs=2)
+    del net
+    torch.cuda.empty_cache()
     dump_tensors()
     pdb.set_trace()
 
@@ -377,16 +382,8 @@ if __name__ == '__main__':
     configs = init()
 
     for i, config in enumerate(configs):
-        if i == 0:
-            # NETWORK CREATION
-            device = torch.device(
-                config['gpucore'] if torch.cuda.is_available() else "cpu")
-            net = CNN_IMU(config)
-            net = net.to(device)
-        else:
-            net.modify(config)
 
         print('Creating network for LR [{}] / WIN_SIZE [{}] / WIN_STRIDE [{}]'.format(
             config['lr'], config['win_len'], config['win_step']))
         print("Cached memory: {}, Allocated memory: {}")
-        run(i, config, net, device)
+        run(i, config)
