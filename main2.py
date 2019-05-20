@@ -137,11 +137,7 @@ def init():
     #     window stride
     #     balancing classes
 
-    lr = {0: 1e-2,
-          1: 1e-3,
-          2: 1e-4,
-          3: 1e-5,
-          4: 1e-6}
+    lr = {0: 1e-2}
 
     win_size = {
         0: 70,
@@ -150,8 +146,7 @@ def init():
     }
 
     win_stride = {
-        0: 5,
-        1: 1
+        0: 5
     }
 
     config = {
@@ -367,8 +362,11 @@ def run(i, config):
         append_scalar_to_plot(vis, m['f1'],
                               trainer.state.iteration,
                               'append', val_f1_window)
-        print("Validation Result: ----------------->  Loss: {:.4f}, Accuracy: {:.4f}, F1: {:.4f}".format(
-            trainer.state.epoch, trainer.state.iteration, m['loss'], m['accuracy'], m['f1']))
+        print(
+            "Validation Result: ----------------->  Loss: {:.4f}, Accuracy: {:.4f}, F1: {:.4f}".format(
+                m['loss'],
+                m['accuracy'],
+                m['f1']))
 
     trainer.run(train_loader, max_epochs=2)
     del net
@@ -377,13 +375,21 @@ def run(i, config):
     pdb.set_trace()
 
 
+def memory_dump():
+    print(
+        "Cached memory: {}, Allocated memory: {}".format(
+            torch.cuda.memory_cached(
+                device=1), torch.cuda.memory_allocated(
+                device=1)))
+
+
 if __name__ == '__main__':
 
     configs = init()
 
     for i, config in enumerate(configs):
-
+        memory_dump()
         print('Creating network for LR [{}] / WIN_SIZE [{}] / WIN_STRIDE [{}]'.format(
             config['lr'], config['win_len'], config['win_step']))
-        print("Cached memory: {}, Allocated memory: {}")
+        memory_dump()
         run(i, config)
