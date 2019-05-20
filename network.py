@@ -17,6 +17,14 @@ class CNN_IMU(nn.Module):
         self.fc1 = nn.Linear(int(out_dim)*config['n_filters']*config['channels'], 512)
         self.fc2 = nn.Linear(512, config['n_classes'])
 
+    def modify(self, config):
+        self.conv1 = nn.Conv2d(1, config['n_filters'], config['f_size'])
+        out_dim = (config['win_len'] - 4) / 2
+        self.conv2 = nn.Conv2d(config['n_filters'], config['n_filters'], config['f_size'])
+        out_dim = (out_dim - 4) / 2
+        self.fc1 = nn.Linear(int(out_dim) * config['n_filters'] * config['channels'], 512)
+        self.fc2 = nn.Linear(512, config['n_classes'])
+
     def forward(self, x):
         """
         :param x: Input to perform forward pass
