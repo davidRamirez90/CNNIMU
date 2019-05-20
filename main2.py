@@ -22,6 +22,7 @@ from windowGenerator import WindowGenerator
 from windataset import windowDataSet
 from network import CNN_IMU
 import env
+import pdv
 
 
 
@@ -103,8 +104,8 @@ def init():
     }
 
     win_stride = {
-        0: 1,
-        1: 5
+        0: 5,
+        1: 1
     }
 
     config = {
@@ -116,7 +117,7 @@ def init():
         'batch_validate': 100,
         'patience': 7,
         'train_info_iter': 10,
-        'val_iter': 40,
+        'val_iter': 50,
         'noise': (0, 1e-2),
         'gpucore': 'cuda:0',
         'momentum': 0.9
@@ -243,7 +244,7 @@ def run(i, config):
 
 
     # CREATING EARLY STOPPING AND SAVE HANDLERS
-    checkpoint = ModelCheckpoint(dirname='./temp/models',
+    checkpoint = ModelCheckpoint(dirname='/data/dramirez/models',
                                  filename_prefix='CNNIMU_{}_{}_{}'.format(config['win_len'],
                                                                           config['win_step'],
                                                                           config['lr']),
@@ -302,7 +303,7 @@ def run(i, config):
                                                               engine.state.iteration,
                                                               engine.state.output))
 
-    @trainer.on(val_cpe.Events.ITERATIONS_40_COMPLETED)
+    @trainer.on(val_cpe.Events.ITERATIONS_50_COMPLETED)
     def run_validation(engine):
         val_evaluator.run(val_loader)
 
@@ -320,7 +321,7 @@ def run(i, config):
         append_scalar_to_plot(vis, m['f1'],
                               trainer.state.iteration,
                               'append', val_f1_window)
-        print("Epoch[{}], Iteration[{}], Loss: {:.4f}, Accuracy: {:.4f}, F1: {:.4f}".format(trainer.state.epoch,
+        print("Validation Result: ----------------->    Loss: {:.4f}, Accuracy: {:.4f}, F1: {:.4f}".format(trainer.state.epoch,
                                                                               trainer.state.iteration,
                                                                               m['loss'],
                                                                               m['accuracy'],
@@ -328,9 +329,7 @@ def run(i, config):
 
 
     trainer.run(train_loader, max_epochs=2)
-
-
-
+    pdv.set_trace()
 
 
 if __name__ == '__main__':
