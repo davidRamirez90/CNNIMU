@@ -1,10 +1,10 @@
-
 # HELPER IMPORTS
 import numpy as np
 import argparse
 import logging
 import visdom
 import copy
+import gc
 
 # TORCH IGNITE IMPORTS
 from ignite.engine import Events, create_supervised_trainer, create_supervised_evaluator
@@ -53,6 +53,44 @@ class GaussianNoise(object):
                                  data.shape)
         data = np.expand_dims(data, 0)
         return (data, label)
+
+
+def pretty_size(size):
+    """Pretty prints a torch.Size object"""
+    assert(isinstance(size, torch.Size))
+    return " × ".join(map(str, size))
+
+
+def dump_tensors(gpu_only=True):
+    """Prints a list of the Tensors being tracked by the garbage collector."""
+    import gc
+    total_size = 0
+    for obj in gc.get_objects():
+        try:
+            if torch.is_tensor(obj):
+                if not gpu_only or obj.is_cuda:
+                    print("%s:%s%s %s" % (type(obj).__name__,
+                                          " GPU" if obj.is_cuda else "",
+                                          " pinned" if obj.is_pinned else "",
+                                          pretty_size(obj.size())))
+                    total_size += obj.numel()
+            elif hasattr(obj, "data") and torch.is_tensor(obj.data):
+                if not gpu_only or obj.is_cuda:
+                    print(
+                        "%s → %s:%s%s%s%s %s" %
+                        (type(obj).__name__,
+                         type(
+                            obj.data).__name__,
+                            " GPU" if obj.is_cuda else "",
+                            " pinned" if obj.data.is_pinned else "",
+                            " grad" if obj.requires_grad else "",
+                            " volatile" if obj.volatile else "",
+                            pretty_size(
+                            obj.data.size())))
+                    total_size += obj.data.numel()
+        except Exception as e:
+            pass
+    print("Total size:", total_size)
 
 
 def get_data_loaders(config):
@@ -334,6 +372,7 @@ def run(i, config):
             trainer.state.epoch, trainer.state.iteration, m['loss'], m['accuracy'], m['f1']))
 
     trainer.run(train_loader, max_epochs=2)
+    dump_tensors()
     pdb.set_trace()
 
 
@@ -344,4 +383,5 @@ if __name__ == '__main__':
     for i, config in enumerate(configs):
         print('Creating network for LR [{}] / WIN_SIZE [{}] / WIN_STRIDE [{}]'.format(
             config['lr'], config['win_len'], config['win_step']))
+        print("Cached memory: {}, Allocated memory: {}")
         run(i, config)
