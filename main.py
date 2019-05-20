@@ -3,8 +3,19 @@ import torch
 import copy
 import pdb
 import gc
+import math
 
 from netevaluator import TorchModel
+
+
+def convert_size(size_bytes):
+   if size_bytes == 0:
+       return "0B"
+   size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+   i = int(math.floor(math.log(size_bytes, 1024)))
+   p = math.pow(1024, i)
+   s = round(size_bytes / p, 2)
+   return "%s %s" % (s, size_name[i])
 
 
 def pretty_size(size):
@@ -16,8 +27,8 @@ def pretty_size(size):
 def memory_dump(core):
     print(
         "Cached memory: {}, Allocated memory: {}".format(
-            torch.cuda.memory_cached(device=core),
-            torch.cuda.memory_allocated(device=core)))
+            convert_size(torch.cuda.memory_cached(device=core)),
+            convert_size(torch.cuda.memory_allocated(device=core))))
 
 
 def dump_tensors(gpu_only=True):
