@@ -1,6 +1,6 @@
 import torch.nn.functional as F
 import torch.nn as nn
-
+import pdb
 
 
 class CNN_IMU(nn.Module):
@@ -14,7 +14,7 @@ class CNN_IMU(nn.Module):
         out_dim = (config['win_len']-4)/2
         self.conv2 = nn.Conv2d(config['n_filters'], config['n_filters'], config['f_size'])
         out_dim = (out_dim-4)/2
-        self.fc1 = nn.Linear(int(out_dim*config['n_filters']*config['channels']), 512)
+        self.fc1 = nn.Linear(int(out_dim)*config['n_filters']*config['channels'], 512)
         self.fc2 = nn.Linear(512, config['n_classes'])
 
     def forward(self, x):
@@ -22,7 +22,7 @@ class CNN_IMU(nn.Module):
         :param x: Input to perform forward pass
         :return: Output of network forward pass
         """
-        # breakpoint()
+        # pdb.set_trace()
         x = x.float()
         x = F.max_pool2d(F.relu(self.conv1(x)), (2,1))
         x = F.max_pool2d(F.relu(self.conv2(x)), (2,1))
