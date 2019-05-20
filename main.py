@@ -120,11 +120,11 @@ if __name__ == "__main__":
     hyParamChecker = TorchModel()
 
     for i, config in enumerate(configs):
-        # memory_dump(config['gpucore'])
+        memory_dump(config['gpucore'])
         print('Creating network for LR [{}] / WIN_SIZE [{}] / WIN_STRIDE [{}]'.format(
             config['lr'], config['win_len'], config['win_step']))
 
         hyParamChecker.execute_instance(config)
 
-        # memory_dump(config['gpucore'])
+        memory_dump(config['gpucore'])
         pdb.set_trace()
