@@ -253,8 +253,9 @@ class TorchModel:
         trainer.run(train_loader, max_epochs=15)
         # del net
         # torch.cuda.empty_cache()
+        # torch.cuda
         # dump_tensors()
-        # pdb.set_trace()
+        pdb.set_trace()
 
 
 
