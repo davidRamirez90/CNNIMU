@@ -68,7 +68,10 @@ def init():
     #     window stride
     #     balancing classes
 
-    lr = {0: 1e-2}
+    lr = {0: 1e-3,
+          1: 1e-4,
+          2: 1e-5,
+          3: 1e-6}
 
     win_size = {
         0: 70,
@@ -77,7 +80,8 @@ def init():
     }
 
     win_stride = {
-        0: 5
+        0: 1,
+        1: 5
     }
 
     config = {
