@@ -251,8 +251,9 @@ class TorchModel:
                     m['f1']))
 
         trainer.run(train_loader, max_epochs=15)
-        # del net
-        # torch.cuda.empty_cache()
+        del training_losses_acc
+        del net
+        torch.cuda.empty_cache()
         # torch.cuda
         # dump_tensors()
         pdb.set_trace()
