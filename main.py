@@ -124,6 +124,8 @@ if __name__ == "__main__":
         memory_dump(config['gpucore'])
         print('Creating network for LR [{}] / WIN_SIZE [{}] / WIN_STRIDE [{}]'.format(
             config['lr'], config['win_len'], config['win_step']))
-        TorchModel.execute_instance(config)
+
+        TorchModel.execute_instance(config=config)
+
         memory_dump(config['gpucore'])
         pdb.set_trace()

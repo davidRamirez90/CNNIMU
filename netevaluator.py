@@ -55,7 +55,7 @@ class GaussianNoise(object):
         return (data, label)
 
 
-class TorchModel():
+class TorchModel:
     """
     Allows to evaluate one instance of torch model
     """
