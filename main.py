@@ -11,7 +11,7 @@ from netevaluator import TorchModel
 logging_format = '[%(asctime)-19s, %(name)s, %(levelname)s] %(message)s'
 logging.basicConfig(
     filename='debug.log',
-    level=logging.DEBUG,
+    level=logging.INFO,
     format=logging_format)
 logger = logging.getLogger('MainLoop')
 
