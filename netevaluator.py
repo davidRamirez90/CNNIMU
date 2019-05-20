@@ -24,12 +24,12 @@ import pdb
 
 
 # INITIAL CONFIG OF VARIABLES
-logging_format = '[%(asctime)-19s, %(name)s, %(levelname)s] %(message)s'
-logging.basicConfig(
-    filename='debug.log',
-    level=logging.INFO,
-    format=logging_format)
-logger = logging.getLogger('Netevaluator')
+# logging_format = '[%(asctime)-19s, %(name)s, %(levelname)s] %(message)s'
+# logging.basicConfig(
+#     filename='debug.log',
+#     level=logging.INFO,
+#     format=logging_format)
+# logger = logging.getLogger('Netevaluator')
 
 
 
@@ -247,7 +247,7 @@ class TorchModel:
                     m['f1']))
 
         trainer.run(train_loader, max_epochs=15)
-        logger.info('Finished training after {} iterations'.format(trainer.state.iteration))
+        # logger.info('Finished training after {} iterations'.format(trainer.state.iteration))
         del training_losses_acc
         del trainer
         del val_evaluator
