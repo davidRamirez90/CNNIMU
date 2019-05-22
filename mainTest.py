@@ -69,7 +69,7 @@ if __name__ == "__main__":
     
     configs = init()
     
-    tester = Tester(config)
+    tester = Tester()
     for i, config in enumerate(configs):
         tester.runTest(config)
         pdb.set_trace()
