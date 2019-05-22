@@ -206,8 +206,7 @@ class TorchModel:
             val_evaluator.run(val_loader)
 
         @trainer.on(Events.ITERATION_COMPLETED)
-        def accumulate_trainlosses(engine):
-            pdb.set_trace()
+        def accumulate_trainlosses(engine)
             training_losses_acc.append(engine.state.output)
 
         @trainer.on(tr_cpe.Events.ITERATIONS_10_COMPLETED)

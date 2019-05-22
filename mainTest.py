@@ -1,0 +1,75 @@
+import argparse
+import pdb
+from tester import Tester
+
+
+def init():
+    '''
+    Initial configuration of used variables
+    :return: Array of config objects
+    '''
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--core", "-c", help="Specify GPU core to use")
+    args = parser.parse_args()
+
+    configArr = []
+
+    # HYPERPARAMETERS
+    #     window size
+    #     window stride
+    #     balancing classes
+
+    lr = {0: 1e-3,
+          1: 1e-4,
+          2: 1e-5,
+          3: 1e-6}
+
+    win_size = {
+        0: 100
+    }
+
+    win_stride = {
+        0: 1,
+        1: 5
+    }
+
+    config = {
+        'channels': 132,
+        'n_classes': 7,
+        'n_filters': 64,
+        'f_size': (5, 1),
+        'batch_train': 100,
+        'batch_validate': 100,
+        'patience': 7,
+        'train_info_iter': 10,
+        'val_iter': 50,
+        'noise': (0, 1e-2),
+        'gpucore': 'cuda:0',
+        'momentum': 0.9
+    }
+
+    if args.core:
+        print("Using cuda core: cuda:{}".format(args.core))
+        config['gpucore'] = "cuda:{}".format(args.core)
+
+    for i in range(win_size.__len__()):
+        for j in range(win_stride.__len__()):
+            for k in range(lr.__len__()):
+                c = copy.deepcopy(config)
+                c['win_len'] = win_size[i]
+                c['win_step'] = win_stride[j]
+                c['lr'] = lr[k]
+                configArr.append(c)
+
+    return configArr
+
+
+if __name__ == "__main__":
+    
+    configs = init()
+    
+    tester = Tester(config)
+    for i, config in enumerate(configs):
+        tester.runTest(config)
+        pdb.set_trace()
