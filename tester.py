@@ -104,7 +104,7 @@ class Tester:
         @tester.on(Events.EPOCH_COMPLETED)
         def log_test_results(engine):
             m = engine.state.metrics
-            print('Test results for WinSize WinStep [{}], LR [{}]'.format(
+            print('Test results for WinSize [{}], WinStep [{}], LR [{}]'.format(
                                                                           config['win_len'],
                                                                           config['win_step'],
                                                                           config['lr']))
