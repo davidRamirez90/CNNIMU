@@ -1,14 +1,18 @@
-import torch
+import numpy as np
 import pdb
+import os
 
-from ignite.engine import import Events, create_supervised_evaluator
+from torch.utils.data import DataLoader
+from torch import nn
+import torch
+
+from ignite.engine import Events, create_supervised_evaluator
 from ignite.metrics import Accuracy, Loss, Precision, Recall, MetricsLambda
 from ignite.contrib.handlers import tqdm_logger
 
 import env
 from network import CNN_IMU
 from windataset import windowDataSet
-from netevaluator import GaussianNoise
 
 
 
@@ -22,10 +26,12 @@ class Tester:
         
     def load_checkpoint(self, config):
         # {window length} - {window step} - {Learning rate}
-        saved_model_path = self.url.format(
-                                           config['win_len'],
-                                           config['win_step'],
-                                           config['lr'])
+        
+        keystr = "{}_{}_{}".format(config['win_len'],config['win_step'],config['lr'])
+        
+        saved_model_name = [n for n in os.listdir(self.modelurl) if keystr in n][0]
+        saved_model_path = os.path.join(self.modelurl, saved_model_name)
+        
         device = torch.device(
             config['gpucore'] if torch.cuda.is_available() else "cpu")
         net = CNN_IMU(config)
@@ -61,6 +67,8 @@ class Tester:
     
     
     def get_metrics(self):
+        
+        criterion = nn.CrossEntropyLoss()
         
         precision = Precision(average=False)
         recall = Recall(average=False)
@@ -99,12 +107,12 @@ class Tester:
             print('Test results for WinSize WinStep [{}], LR [{}]'.format(
                                                                           config['win_len'],
                                                                           config['win_step'],
-                                                                          config['lr'])
+                                                                          config['lr']))
             print('Loss:    {}\nAccuracy    {}\nF1:    {}'.format(
                                                                   m['loss'],
                                                                   m['accuracy'],
                                                                   m['f1']))
-      return tester
+        return tester
         
         
     def runTest(self, config):
@@ -113,10 +121,26 @@ class Tester:
         tester = self.create_supervisor(config)
         
         # RUN TEST
-        tester.run()
+        tester.run(test_loader)
         
         
-        
+class GaussianNoise(object):
+    """
+    Add Gaussian noise to a window data sample
+    """
+
+    def __init__(self, mu, sigma):
+        self.mu = mu
+        self.sigma = sigma
+
+    def __call__(self, sample):
+        data = sample['data']
+        label = np.long(sample['label'])
+        data += np.random.normal(self.mu,
+                                 self.sigma,
+                                 data.shape)
+        data = np.expand_dims(data, 0)
+        return (data, label)
 
         
     

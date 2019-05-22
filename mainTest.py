@@ -1,5 +1,6 @@
 import argparse
 import pdb
+import copy
 from tester import Tester
 
 
@@ -26,7 +27,7 @@ def init():
           3: 1e-6}
 
     win_size = {
-        0: 100
+        0: 70
     }
 
     win_stride = {
@@ -73,3 +74,6 @@ if __name__ == "__main__":
     for i, config in enumerate(configs):
         tester.runTest(config)
         pdb.set_trace()
+        
+        
+        
