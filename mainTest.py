@@ -1,6 +1,8 @@
 import argparse
 import pdb
 import copy
+import csv
+
 from tester import Tester
 
 
@@ -27,7 +29,9 @@ def init():
           3: 1e-6}
 
     win_size = {
-        0: 70
+        0: 70,
+        1: 85,
+        2: 100
     }
 
     win_stride = {
@@ -69,11 +73,17 @@ def init():
 if __name__ == "__main__":
     
     configs = init()
-    
     tester = Tester()
-    for i, config in enumerate(configs):
-        tester.runTest(config)
-        pdb.set_trace()
-        
+    with open('testResults.csv', mode='w') as csv_file:
+        fields = ['win_len', 'win_step', 'lr', 'accuracy', 'loss', 'f1']
+        writer = csv.DictWriter(csv_file, fieldnames=fields)
+        writer.writeheader()
+        for i, config in enumerate(configs):
+            res = tester.runTest(config)
+            fullr = {**config, **res}
+            filtr = {key: value for key, value in fullr.items() if key in fields}
+            writer.writerow(filtr)
+            #pdb.set_trace()
+        print('Finished Testing of all models')
         
         

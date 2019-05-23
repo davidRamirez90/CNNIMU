@@ -122,6 +122,8 @@ class Tester:
         
         # RUN TEST
         tester.run(test_loader)
+       
+        return tester.state.metrics
         
         
 class GaussianNoise(object):
