@@ -21,6 +21,13 @@ import re
 # logger = logging.getLogger('CNN network')
 
 
+# Added data to env.py
+# MOCAP MARKERS
+# markers_url = "/vol/corpora/har/MoCap/recordings_2019/03_Markers_Exports/Subject{}_{}.csv"
+# marker_window_url = "/data/dramirez/dataset_wsize={}_wstride={}/{}"
+# marker_models_url = "/data/dramirez/marker_models"
+
+
 class WindowGenerator:
 
     def __init__(self, win_size=100, win_stride=1):
