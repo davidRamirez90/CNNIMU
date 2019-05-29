@@ -20,6 +20,16 @@ def read_data(path):
 
         return data
 
+def coords_to_channels(data):
+
+    res = np.array([
+        np.copy(data[:, ::3]),
+        np.copy(data[:, 1::3]),
+        np.copy(data[:, 2::3])
+    ])
+    print(res)
+    return res
+
 def diff(base, dt):
     dbase = list()
     for i, pos in enumerate(base):
@@ -66,7 +76,9 @@ if __name__ == "__main__":
     print("Starting program execution")
 
     d = read_data(sequrl.format('Subject01_01.csv'))
+    d2 = coords_to_channels(d)
     d = d[:,0].astype(float)
+    
     calculate(d)
 
     # x = np.arange(0, 10, (1/120))

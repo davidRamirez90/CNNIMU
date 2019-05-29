@@ -13,6 +13,7 @@ import glob
 import tqdm
 import env
 import pdb
+import re
 
 # LOGGING CONFIGURATION
 # logging_format = '[%(asctime)-19s, %(name)s, %(levelname)s] %(message)s'
@@ -27,6 +28,8 @@ class WindowGenerator:
         self.win_stride = win_stride
         self.dataset_dir = env.dataset_url
         self.save_dataset_dir = env.window_url
+        self.markerset_dir = env.markers_url
+        self.save_marker_dataset_dir = env.marker_window_url
 
 
     def read_data(self, path):
@@ -41,6 +44,17 @@ class WindowGenerator:
 
         return data
 
+    def read_data_markers(self, path):
+        '''
+        Reads CSV file from path
+        @:param File path
+        '''
+        data = pd.read_csv(path, skiprows=2)
+        data = data.dropna(axis=1, how='all')
+        data = data.iloc[2:, 2:]
+        data = data.to_numpy()
+
+        return data
 
     def getMostCommonClass(self, window):
         '''
@@ -97,22 +111,71 @@ class WindowGenerator:
 
         return curri + i
 
-    def checkDirExists(self):
-        dir = self.save_dataset_dir.format(self.win_size,
-                                           self.win_stride,
-                                           "")
+    def checkDirExists(self, dir):
+        dir = dir.format(self.win_size,
+                         self.win_stride,
+                         "")
         return os.path.isdir(dir)
 
 
-    def run(self):
+    def runMarkers(self):
         """
-        Main function to generate new windows for dataset
+        Main function to generate new windows for skeleton dataset
         :return: Dataset with windows exists
         """
 
         labels = ['train', 'validate', 'test']
 
-        if self.checkDirExists():
+        if self.checkDirExists(self.save_marker_dataset_dir):
+            print('[WindowGen] - Dataset already exists, skipping generation...')
+            return True
+        else:
+            for folder in labels:
+                os.makedirs(self.save_marker_dataset_dir.format(self.win_size,
+                                                                self.win_stride,
+                                                                folder))
+        markers_dict = dict(
+            train=['02', '06'],
+            validate=['04'],
+            test=['03']
+        )
+
+        print('[WindowGen] - Creating Training Windows')
+
+        start = time.time()
+
+        for i, folder in enumerate(labels):
+            print('[WindowGen] - Saving on folder {}'.format(folder))
+            win_amount = 0
+            for j, dir in enumerate(markers_dict[folder]):
+                skeletondir = 'P{}'.format(dir)
+                files = glob.glob(self.dataset_dir.format(skeletondir))
+                for k, file in enumerate(files):
+                    print('[WindowGen] - Saving for found file {}'.format(file))
+                    try:
+                        markerseq = re.search('P[0-9]*_R(.+?)_A[0-9]*', file).group(1)
+                        markerfile = self.markerset_dir.format(dir, markerseq)
+
+                        skdata = self.read_data(file)
+                        mkdata = self.read_data_markers(markerfile)
+                        print(mkdata)
+                    except AttributeError:
+                        print('something wrong on regexp side')
+        print('hola')
+
+        return true
+                    
+
+
+    def run(self):
+        """
+        Main function to generate new windows for skeleton dataset
+        :return: Dataset with windows exists
+        """
+
+        labels = ['train', 'validate', 'test']
+
+        if self.checkDirExists(self.save_dataset_dir):
             print('[WindowGen] - Dataset already exists, skipping generation...')
             return True
         else:
@@ -162,7 +225,7 @@ if __name__ == '__main__':
     window_step = 1
 
     wg = WindowGenerator(window_size, window_step)
-    wg.run()
+    wg.runMarkers()
 
 
 
