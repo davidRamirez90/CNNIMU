@@ -91,7 +91,7 @@ def init(args):
     if args.type == 1:
         config['channels'] = 39
         config['depth'] = 3
-        config['f_size'] = (3, 5, 1)
+        # config['f_size'] = (3, 5, 1)
 
     if args.core:
         print("Using cuda core: cuda:{}".format(args.core))
