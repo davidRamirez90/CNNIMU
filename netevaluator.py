@@ -37,9 +37,15 @@ class TorchModel:
     """
     Allows to evaluate one instance of torch model
     """
-    def __init__(self):
+    def __init__(self, type):
         print('[netevaluator] - Init Torchmodel')
-        self.url = env.window_url
+        self.type = type
+        if self.type == 0:
+            self.win_url = env.window_url
+            self.model_url = env.models_url
+        else:
+            self.win_url = env.marker_window_url
+            self.model_url = env.marker_models_url
 
     def get_data_loaders(self, config):
 
@@ -47,12 +53,12 @@ class TorchModel:
         val_batch_size = config['batch_validate']
 
         # OBTAINING TRAINING / VALIDATION - DATASET / DATALOADER
-        train_dataset = windowDataSet(dir=self.url.format(config['win_len'],
+        train_dataset = windowDataSet(dir=self.win_url.format(config['win_len'],
                                                           config['win_step'],
                                                           'train'),
                                       transform=GaussianNoise(0, 1e-2))
 
-        val_dataset = windowDataSet(dir=self.url.format(config['win_len'],
+        val_dataset = windowDataSet(dir=self.win_url.format(config['win_len'],
                                                         config['win_step'],
                                                         'validate'),
                                     transform=GaussianNoise(0, 1e-2))
@@ -102,8 +108,13 @@ class TorchModel:
         # CREATING CUSTOM WINDOWS FOR THIS LOOP
         winGen = WindowGenerator(config['win_len'],
                                  config['win_step'])
-        win_generated = winGen.run()
+        if self.type == 0:
+            win_generated = winGen.run()
+        else:
+            win_generated = winGen.runMarkers()
+
         assert win_generated
+
 
         print('[Main] - Initializing Visdom')
         vis = visdom.Visdom(env='IGNITE_workspace')
@@ -158,7 +169,7 @@ class TorchModel:
 
         # CREATING EARLY STOPPING AND SAVE HANDLERS
         checkpoint = ModelCheckpoint(
-            dirname='/data/dramirez/models',
+            dirname=self.model_url,
             filename_prefix='CNNIMU_{}_{}_{}'.format(
                 config['win_len'],
                 config['win_step'],
@@ -206,7 +217,7 @@ class TorchModel:
             val_evaluator.run(val_loader)
 
         @trainer.on(Events.ITERATION_COMPLETED)
-        def accumulate_trainlosses(engine)
+        def accumulate_trainlosses(engine):
             training_losses_acc.append(engine.state.output)
 
         @trainer.on(tr_cpe.Events.ITERATIONS_10_COMPLETED)

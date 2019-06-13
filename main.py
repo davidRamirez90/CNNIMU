@@ -6,6 +6,7 @@ import gc
 import math
 import time
 
+from windowGenerator import WindowGenerator
 from netevaluator import TorchModel
 
 logging_format = '[%(asctime)-19s, %(name)s, %(levelname)s] %(message)s'
@@ -43,15 +44,11 @@ def memory_dump(core):
             convert_size(torch.cuda.memory_allocated(device=core))))
 
 
-def init():
+def init(args):
     '''
     Initial configuration of used variables
     :return: Array of config objects
     '''
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--core", "-c", help="Specify GPU core to use")
-    args = parser.parse_args()
 
     configArr = []
 
@@ -62,8 +59,7 @@ def init():
 
     lr = {0: 1e-3,
           1: 1e-4,
-          2: 1e-5,
-          3: 1e-6}
+          2: 1e-5}
 
     win_size = {
         0: 70,
@@ -78,6 +74,7 @@ def init():
 
     config = {
         'channels': 132,
+        'depth': 1,
         'n_classes': 7,
         'n_filters': 64,
         'f_size': (5, 1),
@@ -90,6 +87,11 @@ def init():
         'gpucore': 'cuda:0',
         'momentum': 0.9
     }
+
+    if args.type == 1:
+        config['channels'] = 39
+        config['depth'] = 3
+        config['f_size'] = (3, 5, 1)
 
     if args.core:
         print("Using cuda core: cuda:{}".format(args.core))
@@ -115,27 +117,36 @@ def clean_memory():
 
 if __name__ == "__main__":
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--core", "-c", help="Specify GPU core to use")
+    parser.add_argument("--type", "-t", help="Specify net type: 0: Skeleton, 1: Markers", default=0)
+
+    args = parser.parse_args()
+
+
+
     print('[MAIN] - Initiating hyperparam evaluation')
     logger.info('Initiating hyperparam evaluation')
 
     total_time = time.time()
 
-    configs = init()
+    configs = init(args)
 
-    hyParamChecker = TorchModel()
+    hyParamChecker = TorchModel(args.type)
 
     for i, config in enumerate(configs):
         model_time = time.time()
-        print('Creating network for LR [{}] / WIN_SIZE [{}] / WIN_STRIDE [{}]'.format(
+        print('Executing network for LR [{}] / WIN_SIZE [{}] / WIN_STRIDE [{}]'.format(
             config['lr'], config['win_len'], config['win_step']))
-        logger.info('Creating network for LR [{}] / WIN_SIZE [{}] / WIN_STRIDE [{}]'.format(
+        logger.info('Executing network for LR [{}] / WIN_SIZE [{}] / WIN_STRIDE [{}]'.format(
             config['lr'], config['win_len'], config['win_step']))
         memory_dump(config['gpucore'])
         hyParamChecker.execute_instance(config)
         clean_memory()
         memory_dump(config['gpucore'])
-        print(' > Took: {:.2} minutes'.format((time.time()-model_time)/60))
+        print(' > Took: {:.2} minutes'.format((time.time() - model_time) / 60))
         logger.info('Took: {:.2} minutes'.format((time.time() - model_time) / 60))
+
 
     print('FINAL, script took: {:.2} minutes'.format((time.time() - total_time) / 60))
     logger.info('FINAL, script took: {:.2} minutes'.format((time.time() - total_time) / 60))
