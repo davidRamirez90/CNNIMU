@@ -110,7 +110,9 @@ class WindowGenerator:
             normalized = np.hstack((labels, content))
             normalized = np.squeeze(np.asarray(normalized))
         else:
+            pdb.set_trace()
             normalized = preprocessing.scale(data)
+
 
 
         return normalized
