@@ -110,7 +110,7 @@ class WindowGenerator:
             normalized = np.hstack((labels, content))
             normalized = np.squeeze(np.asarray(normalized))
         else:
-            pdb.set_trace()
+            # pdb.set_trace()
             normalized = preprocessing.scale(data)
 
 
@@ -197,7 +197,7 @@ class WindowGenerator:
                     # pdb.set_trace()
                     try:
                         markerseq = re.search('P[0-9]*_R(.+?)_A[0-9]*', file).group(1)
-                        markerfile = self.markerset_dir.format(dir, 13)
+                        markerfile = self.markerset_dir.format(dir, markerseq)
                         skdata = self.read_data(file)
                         mkdata = self.read_data_markers(markerfile).astype('float64')
                         labels = skdata[:,0].reshape((-1,1))
