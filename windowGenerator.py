@@ -58,10 +58,19 @@ class WindowGenerator:
         '''
         data = pd.read_csv(path, skiprows=2)
         data = data.dropna(axis=1, how='all')
-        data = data.iloc[2:, 2:]
+        data = data.iloc[2:-2, 2:]
         data = data.to_numpy()
 
         return data
+
+    def coords_to_channels(self, data):
+
+        res = np.array([
+            np.copy(data[:, ::3]),
+            np.copy(data[:, 1::3]),
+            np.copy(data[:, 2::3])
+        ])
+        return res
 
     def getMostCommonClass(self, window):
         '''
@@ -69,7 +78,10 @@ class WindowGenerator:
         @:param windows: Window to be analyzed
         @:return class: Most common class found on window
         '''
-        classes = window[:, 0]
+        if window.shape.__len__() > 1:
+            classes = window[:, 0]
+        else:
+            classes = window
         mid = classes[round(classes.size / 2)]
 
         return mid
@@ -87,15 +99,19 @@ class WindowGenerator:
         return filtArray
 
 
-    def normalizeData(self, data):
+    def normalizeData(self, data, haslabels=True):
         '''
         :param data: Input data to normalize
         :return: Normalized data, 0 mean, Unit variance, column wise
         '''
-        labels = np.transpose(np.asmatrix(data[:, 0]))
-        content = preprocessing.scale(data[:, 1:])
-        normalized = np.hstack((labels, content))
-        normalized = np.squeeze(np.asarray(normalized))
+        if haslabels:
+            labels = np.transpose(np.asmatrix(data[:, 0]))
+            content = preprocessing.scale(data[:, 1:])
+            normalized = np.hstack((labels, content))
+            normalized = np.squeeze(np.asarray(normalized))
+        else:
+            normalized = preprocessing.scale(data)
+
 
         return normalized
 
@@ -110,6 +126,23 @@ class WindowGenerator:
             label = self.getMostCommonClass(window)
             data = window[:, 1:]
             obj = {"data": data, "label": label}
+            f = open(os.path.join(data_dir, 'seq_{0:06}.pkl'.format(curri + i)), 'wb')
+            pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
+            f.close()
+
+        print('[WindowGen] - Saved windows {}'.format(curri + i))
+
+        return curri + i
+
+    def saveMarkerWindows(self, d_wins, l_wins, data_dir, curri):
+        '''
+        Serializes and saves windows using pickle
+        @:param windows: Object with windows to be saved to disk
+        '''
+
+        for i, (window_data, label_data) in enumerate(tqdm.tqdm(zip(d_wins, l_wins), total=d_wins.shape[0])):
+            label = self.getMostCommonClass(label_data)
+            obj = {"data": window_data, "label": label}
             f = open(os.path.join(data_dir, 'seq_{0:06}.pkl'.format(curri + i)), 'wb')
             pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
             f.close()
@@ -162,15 +195,35 @@ class WindowGenerator:
                     try:
                         markerseq = re.search('P[0-9]*_R(.+?)_A[0-9]*', file).group(1)
                         markerfile = self.markerset_dir.format(dir, markerseq)
-
                         skdata = self.read_data(file)
                         mkdata = self.read_data_markers(markerfile)
-                        print(mkdata)
+                        labels = skdata[:,0].reshape((-1,1))
+                        mergedata = np.hstack((labels, mkdata))     # Combined markers with labels
+                        filteredData = self.removeClass(mkdata, 7)   # Removed unused 7 class
+                        normalizedData = self.normalizeData(filteredData, haslabels=False)   # Normalize data per sensor channel
+                        stackedData = self.coords_to_channels(normalizedData)   # (X,Y,Z) coords to Channels(dims)
+
+                        data_windows = sliding_window(stackedData,
+                                                      (stackedData.shape[0], self.win_size, stackedData.shape[2]),
+                                                      (1, self.win_stride, 1))
+                        label_windows = sliding_window(labels,
+                                                       (self.win_size, labels.shape[1]),
+                                                       (self.win_stride, 1))
+
+                        win_amount = self.saveMarkerWindows(data_windows,
+                                                            label_windows,
+                                                            self.save_marker_dataset_dir.format(self.win_size,
+                                                                                         self.win_stride,
+                                                                                         folder),
+                                                            win_amount)
                     except AttributeError:
                         print('something wrong on regexp side')
-        print('hola')
 
-        return true
+        end = time.time()
+        t = end - start
+        print('[WindowGen] - Process has been finished after: {}'.format(t))
+
+        return True
                     
 
 
@@ -232,7 +285,8 @@ if __name__ == '__main__':
     window_step = 1
 
     wg = WindowGenerator(window_size, window_step)
-    wg.runMarkers()
+    # wg.runMarkers()
+    wg.run()
 
 
 

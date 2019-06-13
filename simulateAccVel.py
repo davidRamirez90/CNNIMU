@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import env
+# import env
 import pdb
 
 
@@ -75,14 +75,15 @@ if __name__ == "__main__":
 
     print("Starting program execution")
 
-    d = read_data(sequrl.format('Subject01_01.csv'))
-    d2 = coords_to_channels(d)
-    d = d[:,0].astype(float)
-    
-    calculate(d)
+    # d = read_data(sequrl.format('Subject01_01.csv'))
+    # d2 = coords_to_channels(d)
+    # d = d[:,0].astype(float)
+    #
+    # calculate(d)
 
-    # x = np.arange(0, 10, (1/120))
-    # y = np.sin(x)
-    # calculate(y)
+    x = np.arange(0, 10, (1/120))
+    y = np.sin(x)
+    calculate(y)
+    print(y)
 
 
