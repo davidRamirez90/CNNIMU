@@ -104,7 +104,6 @@ class TorchModel:
 
 
     def execute_instance(self, config, type=0):
-        pdb.set_trace()
         # CREATING CUSTOM WINDOWS FOR THIS LOOP
         winGen = WindowGenerator(config['win_len'],
                                  config['win_step'])
@@ -122,8 +121,6 @@ class TorchModel:
         # GETTING DATA
         train_loader, val_loader, train_size, val_size = self.get_data_loaders(
             config)
-        aaa = next(iter(train_loader))
-        pdb.set_trace()
         # NETWORK CREATION
         device = torch.device(
             config['gpucore'] if torch.cuda.is_available() else "cpu")
