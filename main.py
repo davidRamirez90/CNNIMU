@@ -141,7 +141,7 @@ if __name__ == "__main__":
         logger.info('Executing network for LR [{}] / WIN_SIZE [{}] / WIN_STRIDE [{}]'.format(
             config['lr'], config['win_len'], config['win_step']))
         memory_dump(config['gpucore'])
-        hyParamChecker.execute_instance(config)
+        hyParamChecker.execute_instance(config, type=args.type)
         clean_memory()
         memory_dump(config['gpucore'])
         print(' > Took: {:.2} minutes'.format((time.time() - model_time) / 60))

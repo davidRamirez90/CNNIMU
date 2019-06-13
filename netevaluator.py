@@ -103,12 +103,12 @@ class TorchModel:
         return -val_loss
 
 
-    def execute_instance(self, config):
+    def execute_instance(self, config, type=0):
 
         # CREATING CUSTOM WINDOWS FOR THIS LOOP
         winGen = WindowGenerator(config['win_len'],
                                  config['win_step'])
-        if self.type == 0:
+        if type == 0:
             win_generated = winGen.run()
         else:
             win_generated = winGen.runMarkers()

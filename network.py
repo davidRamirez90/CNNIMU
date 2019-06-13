@@ -13,10 +13,7 @@ class CNN_IMU(nn.Module):
 
         self.conv1 = nn.Conv2d(config['depth'],
                                config['n_filters'],
-                               config['f_size'],
-                               stride=(1,)*config['f_size'].__len__(),
-                               padding=(0,)*config['f_size'].__len__(),
-                               dilation=(1,)*config['f_size'].__len__())
+                               config['f_size'])
         out_dim = (config['win_len']-4)/2
         self.conv2 = nn.Conv2d(config['n_filters'], config['n_filters'], (5,1))
         out_dim = (out_dim-4)/2
