@@ -194,6 +194,7 @@ class WindowGenerator:
                 files = glob.glob(self.dataset_dir.format(skeletondir))
                 for k, file in enumerate(files):
                     print('[WindowGen] - Saving for found file {}'.format(file))
+                    pdb.set_trace()
                     try:
                         markerseq = re.search('P[0-9]*_R(.+?)_A[0-9]*', file).group(1)
                         markerfile = self.markerset_dir.format(dir, markerseq)
@@ -287,8 +288,8 @@ if __name__ == '__main__':
     window_step = 1
 
     wg = WindowGenerator(window_size, window_step)
-    # wg.runMarkers()
-    wg.run()
+    wg.runMarkers()
+    # wg.run()
 
 
 
