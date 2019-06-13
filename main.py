@@ -5,6 +5,7 @@ import logging
 import gc
 import math
 import time
+import pdb
 
 from windowGenerator import WindowGenerator
 from netevaluator import TorchModel
@@ -49,7 +50,6 @@ def init(args):
     Initial configuration of used variables
     :return: Array of config objects
     '''
-
     configArr = []
 
     # HYPERPARAMETERS
@@ -119,7 +119,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--core", "-c", help="Specify GPU core to use")
-    parser.add_argument("--type", "-t", help="Specify net type: 0: Skeleton, 1: Markers", default=0)
+    parser.add_argument("--type", "-t", help="Specify net type: 0: Skeleton, 1: Markers", default=0, type=int)
 
     args = parser.parse_args()
 
@@ -131,7 +131,7 @@ if __name__ == "__main__":
     total_time = time.time()
 
     configs = init(args)
-
+    
     hyParamChecker = TorchModel(args.type)
 
     for i, config in enumerate(configs):
