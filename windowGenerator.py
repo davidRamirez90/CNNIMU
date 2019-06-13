@@ -194,13 +194,16 @@ class WindowGenerator:
                 files = glob.glob(self.dataset_dir.format(skeletondir))
                 for k, file in enumerate(files):
                     print('[WindowGen] - Saving for found file {}'.format(file))
-                    pdb.set_trace()
+                    # pdb.set_trace()
                     try:
                         markerseq = re.search('P[0-9]*_R(.+?)_A[0-9]*', file).group(1)
-                        markerfile = self.markerset_dir.format(dir, markerseq)
+                        markerfile = self.markerset_dir.format(dir, 13)
                         skdata = self.read_data(file)
-                        mkdata = self.read_data_markers(markerfile)
+                        mkdata = self.read_data_markers(markerfile).astype('float64')
                         labels = skdata[:,0].reshape((-1,1))
+                        nanfilter = np.isnan(mkdata).any(axis=1)
+                        labels = labels[~nanfilter]
+                        mkdata = mkdata[~nanfilter]
                         mergedata = np.hstack((labels, mkdata))     # Combined markers with labels
                         filteredData = self.removeClass(mkdata, 7)   # Removed unused 7 class
                         normalizedData = self.normalizeData(filteredData, haslabels=False)   # Normalize data per sensor channel
