@@ -56,12 +56,12 @@ class TorchModel:
         train_dataset = windowDataSet(dir=self.win_url.format(config['win_len'],
                                                           config['win_step'],
                                                           'train'),
-                                      transform=GaussianNoise(0, 1e-2))
+                                      transform=GaussianNoise(0, 1e-2, self.type))
 
         val_dataset = windowDataSet(dir=self.win_url.format(config['win_len'],
                                                         config['win_step'],
                                                         'validate'),
-                                    transform=GaussianNoise(0, 1e-2))
+                                    transform=GaussianNoise(0, 1e-2, self.type))
 
         train_loader = DataLoader(train_dataset, batch_size=train_batch_size,
                                   shuffle=True, num_workers=4)
@@ -272,9 +272,10 @@ class GaussianNoise(object):
     Add Gaussian noise to a window data sample
     """
 
-    def __init__(self, mu, sigma):
+    def __init__(self, mu, sigma, type):
         self.mu = mu
         self.sigma = sigma
+        self.type = type
 
     def __call__(self, sample):
         data = sample['data']
@@ -282,5 +283,6 @@ class GaussianNoise(object):
         data += np.random.normal(self.mu,
                                  self.sigma,
                                  data.shape)
-        data = np.expand_dims(data, 0)
+        if type == 0:
+            data = np.expand_dims(data, 0)
         return (data, label)
