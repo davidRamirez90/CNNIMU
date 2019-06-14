@@ -269,7 +269,7 @@ class GaussianNoise(object):
     """
     Add Gaussian noise to a window data sample
     """
-
+    
     def __init__(self, mu, sigma, type):
         self.mu = mu
         self.sigma = sigma
