@@ -281,6 +281,6 @@ class GaussianNoise(object):
         data += np.random.normal(self.mu,
                                  self.sigma,
                                  data.shape)
-        if type == 0:
+        if self.type == 0:
             data = np.expand_dims(data, 0)
         return (data, label)
