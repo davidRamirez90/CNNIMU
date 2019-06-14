@@ -98,6 +98,18 @@ class WindowGenerator:
 
         return filtArray
 
+    def removeClassMarkers(self, data, labels, classN):
+        '''
+        :param data: Data to remove class from
+        :param classN: Class number to remove from data
+        :return: filtArray: Filtered Array
+        '''
+        indices = labels[:, 0] != classN
+        filtData = data[indices, :]
+        filtLabels = labels[indices, :]
+
+        return data, labels
+
 
     def normalizeData(self, data, haslabels=True):
         '''
@@ -205,14 +217,14 @@ class WindowGenerator:
                         labels = labels[~nanfilter]
                         mkdata = mkdata[~nanfilter]
                         mergedata = np.hstack((labels, mkdata))     # Combined markers with labels
-                        filteredData = self.removeClass(mkdata, 7)   # Removed unused 7 class
+                        filteredData, filteredLabels = self.removeClassMarkers(mkdata, labels, 7)   # Removed unused 7 class
                         normalizedData = self.normalizeData(filteredData, haslabels=False)   # Normalize data per sensor channel
                         stackedData = self.coords_to_channels(normalizedData)   # (X,Y,Z) coords to Channels(dims)
 
                         data_windows = sliding_window(stackedData,
                                                       (stackedData.shape[0], self.win_size, stackedData.shape[2]),
                                                       (1, self.win_stride, 1))
-                        label_windows = sliding_window(labels,
+                        label_windows = sliding_window(filteredLabels,
                                                        (self.win_size, labels.shape[1]),
                                                        (self.win_stride, 1))
 
