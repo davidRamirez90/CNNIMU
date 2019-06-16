@@ -108,7 +108,7 @@ class WindowGenerator:
         filtData = data[indices, :]
         filtLabels = labels[indices, :]
 
-        return data, labels
+        return filtData, filtLabels
 
 
     def normalizeData(self, data, haslabels=True):
@@ -218,25 +218,23 @@ class WindowGenerator:
                         mkdata = mkdata[~nanfilter]
                         mergedata = np.hstack((labels, mkdata))     # Combined markers with labels
                         filteredData, filteredLabels = self.removeClassMarkers(mkdata, labels, 7)   # Removed unused 7 class
-                        print(np.unique(labels))
                         print(np.unique(filteredLabels))
-                        #pdb.set_trace()
-                        # normalizedData = self.normalizeData(filteredData, haslabels=False)   # Normalize data per sensor channel
-                        # stackedData = self.coords_to_channels(normalizedData)   # (X,Y,Z) coords to Channels(dims)
-                        #
-                        # data_windows = sliding_window(stackedData,
-                        #                               (stackedData.shape[0], self.win_size, stackedData.shape[2]),
-                        #                               (1, self.win_stride, 1))
-                        # label_windows = sliding_window(filteredLabels,
-                        #                                (self.win_size, labels.shape[1]),
-                        #                                (self.win_stride, 1))
-                        #
-                        # win_amount = self.saveMarkerWindows(data_windows,
-                        #                                     label_windows,
-                        #                                     self.save_marker_dataset_dir.format(self.win_size,
-                        #                                                                  self.win_stride,
-                        #                                                                  folder),
-                        #                                     win_amount)
+                        normalizedData = self.normalizeData(filteredData, haslabels=False)   # Normalize data per sensor channel
+                        stackedData = self.coords_to_channels(normalizedData)   # (X,Y,Z) coords to Channels(dims)
+
+                        data_windows = sliding_window(stackedData,
+                                                      (stackedData.shape[0], self.win_size, stackedData.shape[2]),
+                                                      (1, self.win_stride, 1))
+                        label_windows = sliding_window(filteredLabels,
+                                                       (self.win_size, labels.shape[1]),
+                                                       (self.win_stride, 1))
+
+                        win_amount = self.saveMarkerWindows(data_windows,
+                                                            label_windows,
+                                                            self.save_marker_dataset_dir.format(self.win_size,
+                                                                                         self.win_stride,
+                                                                                         folder),
+                                                            win_amount)
                     except AttributeError:
                         print('something wrong on regexp side')
 
