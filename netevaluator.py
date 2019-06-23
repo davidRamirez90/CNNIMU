@@ -116,7 +116,7 @@ class TorchModel:
 
 
         print('[Main] - Initializing Visdom')
-        vis = visdom.Visdom(env='IGNITE_workspace')
+        vis = visdom.Visdom(env='MARKERS_relative')
 
         # GETTING DATA
         train_loader, val_loader, train_size, val_size = self.get_data_loaders(
