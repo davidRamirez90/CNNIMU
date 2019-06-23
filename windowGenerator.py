@@ -123,7 +123,10 @@ class WindowGenerator:
             normalized = np.squeeze(np.asarray(normalized))
         else:
             # pdb.set_trace()
-            normalized = preprocessing.scale(data)
+            base = data[:, 15:18]
+            conv = np.tile(base, 39)
+            relative = data-conv
+            normalized = preprocessing.scale(relative)
 
 
 
@@ -218,7 +221,6 @@ class WindowGenerator:
                         mkdata = mkdata[~nanfilter]
                         mergedata = np.hstack((labels, mkdata))     # Combined markers with labels
                         filteredData, filteredLabels = self.removeClassMarkers(mkdata, labels, 7)   # Removed unused 7 class
-                        print(np.unique(filteredLabels))
                         normalizedData = self.normalizeData(filteredData, haslabels=False)   # Normalize data per sensor channel
                         stackedData = self.coords_to_channels(normalizedData)   # (X,Y,Z) coords to Channels(dims)
 
