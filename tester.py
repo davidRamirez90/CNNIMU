@@ -20,6 +20,7 @@ from netevaluator import GaussianNoise
 class Tester:
     
     def __init__(self, type):
+
         print('[Tester] - Initializing tester')
         self.type = type
         if type == 0:
@@ -30,12 +31,28 @@ class Tester:
             self.dataurl = env.marker_window_url
 
 
-    def filterStateDict(self, model_path):
+    def filterStateDict(self, model_path, net):
+        print(net.state_dict()['fc2.weight'])
+        
+        currdict = net.state_dict()
+
+        for k, v in net.state_dict().items():
+            print(k)
+        
+        print('////////')
 
         nnmodel = torch.load(model_path)
         for k, v in nnmodel.items():
             if 'fc' in k:
                 print(k)
+                currdict.update({k: v})
+
+        net.load_state_dict(currdict)
+
+        print('//////')
+        print(nnmodel['fc2.weight'])
+        print('///////')
+        print(net.state_dict()['fc2.weight'])
 
         
     def load_checkpoint(self, config):
@@ -49,7 +66,7 @@ class Tester:
         device = torch.device(
             config['gpucore'] if torch.cuda.is_available() else "cpu")
         net = CNN_IMU(config)
-        self.filterStateDict()
+        self.filterStateDict(saved_model_path, net)
         pdb.set_trace()
         net.load_state_dict(torch.load(saved_model_path))
         net = net.to(device)
