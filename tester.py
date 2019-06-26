@@ -13,6 +13,7 @@ from ignite.contrib.handlers import tqdm_logger
 import env
 from network import CNN_IMU
 from windataset import windowDataSet
+from netevaluator import GaussianNoise
 
 
 
@@ -130,29 +131,29 @@ class Tester:
        
         return tester.state.metrics
 
-        
-        
-class GaussianNoise(object):
-    """
-    Add Gaussian noise to a window data sample
-    """
-
-    def __init__(self, mu, sigma):
-        self.mu = mu
-        self.sigma = sigma
-
-    def __call__(self, sample):
-        data = sample['data']
-        label = np.long(sample['label'])
-        data += np.random.normal(self.mu,
-                                 self.sigma,
-                                 data.shape)
-        data = np.expand_dims(data, 0)
-        return (data, label)
-
-        
-    
-        
+#
+#
+# class GaussianNoise(object):
+#     """
+#     Add Gaussian noise to a window data sample
+#     """
+#
+#     def __init__(self, mu, sigma):
+#         self.mu = mu
+#         self.sigma = sigma
+#
+#     def __call__(self, sample):
+#         data = sample['data']
+#         label = np.long(sample['label'])
+#         data += np.random.normal(self.mu,
+#                                  self.sigma,
+#                                  data.shape)
+#         data = np.expand_dims(data, 0)
+#         return (data, label)
+#
+#
+#
+#
         
         
         
