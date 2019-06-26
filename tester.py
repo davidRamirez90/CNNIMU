@@ -18,10 +18,15 @@ from windataset import windowDataSet
 
 class Tester:
     
-    def __init__(self):
+    def __init__(self, type):
         print('[Tester] - Initializing tester')
-        self.modelurl = env.models_url
-        self.dataurl = env.window_url
+        if type == 0:
+            self.modelurl = env.models_url
+            self.dataurl = env.window_url
+        else:
+            self.modelurl = env.marker_models_url
+            self.dataurl = env.marker_window_url
+
         
         
     def load_checkpoint(self, config):
@@ -41,10 +46,10 @@ class Tester:
         return net, device
     
     
-    def get_data_loader(self, config):
+    def get_data_loader(self, config, ):
 
         train_batch_size = config['batch_validate']
-        
+
         # OBTAINING TEST - DATASET / DATALOADER
         test_win_dir = self.dataurl.format(
                                            config['win_len'],
@@ -55,12 +60,12 @@ class Tester:
 
         test_loader = DataLoader(test_dataset,
                                  batch_size=train_batch_size,
-                                 shuffle=False, 
+                                 shuffle=False,
                                  num_workers=4)
-        
+
 
         return test_loader, test_dataset.__len__()
-    
+
     
     def F1(self, precision, recall):
         return (precision * recall * 2 / (precision + recall + 1e-20)).mean()
@@ -124,6 +129,7 @@ class Tester:
         tester.run(test_loader)
        
         return tester.state.metrics
+
         
         
 class GaussianNoise(object):

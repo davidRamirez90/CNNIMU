@@ -25,8 +25,7 @@ def init():
 
     lr = {0: 1e-3,
           1: 1e-4,
-          2: 1e-5,
-          3: 1e-6}
+          2: 1e-5}
 
     win_size = {
         0: 70,
@@ -41,6 +40,7 @@ def init():
 
     config = {
         'channels': 132,
+        'depth': 1,
         'n_classes': 7,
         'n_filters': 64,
         'f_size': (5, 1),
@@ -53,6 +53,10 @@ def init():
         'gpucore': 'cuda:0',
         'momentum': 0.9
     }
+
+    if args.type == 1:
+        config['channels'] = 39
+        config['depth'] = 3
 
     if args.core:
         print("Using cuda core: cuda:{}".format(args.core))
@@ -71,10 +75,16 @@ def init():
 
 
 if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--type", "-t", help="Specify net type: 0: Skeleton, 1: Markers", default=0, type=int)
+    parser.add_argument("--name", "-n", help="Specify file name to save", default="testResults", type=str)
+
+    args = parser.parse_args()
     
     configs = init()
-    tester = Tester()
-    with open('testResults.csv', mode='w') as csv_file:
+    tester = Tester(type=args.type)
+    with open('{}.csv'.format(args.name), mode='w') as csv_file:
         fields = ['win_len', 'win_step', 'lr', 'accuracy', 'loss', 'f1']
         writer = csv.DictWriter(csv_file, fieldnames=fields)
         writer.writeheader()
