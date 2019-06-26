@@ -6,15 +6,12 @@ import csv
 from tester import Tester
 
 
-def init():
+def init(args):
     '''
     Initial configuration of used variables
     :return: Array of config objects
     '''
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--core", "-c", help="Specify GPU core to use")
-    args = parser.parse_args()
 
     configArr = []
 
@@ -83,7 +80,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     
-    configs = init()
+    configs = init(args)
     tester = Tester(type=args.type)
     with open('{}.csv'.format(args.name), mode='w') as csv_file:
         fields = ['win_len', 'win_step', 'lr', 'accuracy', 'loss', 'f1']
