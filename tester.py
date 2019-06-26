@@ -38,10 +38,11 @@ class Tester:
         
         saved_model_name = [n for n in os.listdir(self.modelurl) if keystr in n][0]
         saved_model_path = os.path.join(self.modelurl, saved_model_name)
-        
+        print(saved_model_name)
         device = torch.device(
             config['gpucore'] if torch.cuda.is_available() else "cpu")
         net = CNN_IMU(config)
+        pdb.set_trace()
         net.load_state_dict(torch.load(saved_model_path))
         net = net.to(device)
         
