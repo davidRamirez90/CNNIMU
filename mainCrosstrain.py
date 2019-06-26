@@ -7,8 +7,7 @@ import math
 import time
 import pdb
 
-from windowGenerator import WindowGenerator
-from netevaluator import TorchModel
+from netcrosstrainer import TorchModel
 
 logging_format = '[%(asctime)-19s, %(name)s, %(levelname)s] %(message)s'
 logging.basicConfig(
@@ -58,12 +57,10 @@ def init(args):
     #     balancing classes
 
     lr = {0: 1e-3,
-          1: 1e-4,
-          2: 1e-5}
+          1: 1e-4}
 
     win_size = {
         0: 70,
-        1: 85,
         2: 100
     }
 
