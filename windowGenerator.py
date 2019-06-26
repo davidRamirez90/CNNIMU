@@ -255,6 +255,7 @@ class WindowGenerator:
         """
 
         labels = ['train', 'validate', 'test']
+        # labels = ['test']
 
         if self.checkDirExists(self.save_dataset_dir):
             print('[WindowGen] - Dataset already exists, skipping generation...')
@@ -270,6 +271,7 @@ class WindowGenerator:
             validate=['P04'],
             test=['P03']
         )
+        
 
         print('[WindowGen] - Creating Training Windows')
 
@@ -305,9 +307,19 @@ if __name__ == '__main__':
     window_size = 100
     window_step = 1
 
-    wg = WindowGenerator(window_size, window_step)
-    wg.runMarkers()
-    # wg.run()
+    wg1 = WindowGenerator(100, 1)
+    wg2 = WindowGenerator(100, 5)
+    wg3 = WindowGenerator(85, 1)
+    wg4 = WindowGenerator(85, 5)
+    wg5 = WindowGenerator(70, 1)
+    wg6 = WindowGenerator(70, 5)
+    # wg.runMarkers()
+    wg1.run()
+    wg2.run()
+    wg3.run()
+    wg4.run()
+    wg5.run()
+    wg6.run()
 
 
 
