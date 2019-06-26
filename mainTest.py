@@ -2,6 +2,8 @@ import argparse
 import pdb
 import copy
 import csv
+import gc
+import torch
 
 from tester import Tester
 
@@ -71,6 +73,12 @@ def init(args):
     return configArr
 
 
+def clean_memory():
+    gc.collect()
+    torch.cuda.empty_cache()
+    torch.cuda.ipc_collect()
+
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
@@ -91,6 +99,7 @@ if __name__ == "__main__":
             fullr = {**config, **res}
             filtr = {key: value for key, value in fullr.items() if key in fields}
             writer.writerow(filtr)
+            clean_memory()
             #pdb.set_trace()
         print('Finished Testing of all models')
         
