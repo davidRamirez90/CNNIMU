@@ -122,6 +122,7 @@ if __name__ == "__main__":
             filtr = {key: value for key, value in fullr.items() if key in fields}
             writer.writerow(filtr)
             clean_memory()
+            memory_dump(args.core)
             #pdb.set_trace()
         print('Finished Testing of all models')
         
