@@ -29,7 +29,14 @@ class Tester:
             self.modelurl = env.marker_models_url
             self.dataurl = env.marker_window_url
 
-        
+
+    def filterStateDict(self, model_path):
+
+        nnmodel = torch.load(model_path)
+        for k, v in nnmodel.items():
+            if 'fc' in k:
+                print(k)
+
         
     def load_checkpoint(self, config):
         # {window length} - {window step} - {Learning rate}
@@ -42,6 +49,7 @@ class Tester:
         device = torch.device(
             config['gpucore'] if torch.cuda.is_available() else "cpu")
         net = CNN_IMU(config)
+        self.filterStateDict()
         pdb.set_trace()
         net.load_state_dict(torch.load(saved_model_path))
         net = net.to(device)
