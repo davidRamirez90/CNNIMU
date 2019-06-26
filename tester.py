@@ -51,10 +51,10 @@ class Tester:
         train_batch_size = config['batch_validate']
 
         # OBTAINING TEST - DATASET / DATALOADER
-        test_win_dir = self.dataurl.format(
-                                           config['win_len'],
+        test_win_dir = self.dataurl.format(config['win_len'],
                                            config['win_step'],
                                            'test')
+        print(test_win_dir)
         test_dataset = windowDataSet(dir=test_win_dir,
                                      transform=GaussianNoise(0, 1e-2))
 
