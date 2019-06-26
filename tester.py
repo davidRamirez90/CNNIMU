@@ -21,6 +21,7 @@ class Tester:
     
     def __init__(self, type):
         print('[Tester] - Initializing tester')
+        self.type = type
         if type == 0:
             self.modelurl = env.models_url
             self.dataurl = env.window_url
@@ -47,7 +48,7 @@ class Tester:
         return net, device
     
     
-    def get_data_loader(self, config, ):
+    def get_data_loader(self, config):
 
         train_batch_size = config['batch_validate']
 
@@ -57,7 +58,7 @@ class Tester:
                                            'test')
         print(test_win_dir)
         test_dataset = windowDataSet(dir=test_win_dir,
-                                     transform=GaussianNoise(0, 1e-2))
+                                     transform=GaussianNoise(0, 1e-2, self.type))
 
         test_loader = DataLoader(test_dataset,
                                  batch_size=train_batch_size,
