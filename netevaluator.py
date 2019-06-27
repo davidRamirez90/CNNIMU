@@ -43,9 +43,11 @@ class TorchModel:
         if self.type == 0:
             self.win_url = env.window_url
             self.model_url = env.models_url
+            self.envname = "Skeleton_results"
         else:
             self.win_url = env.marker_window_url
             self.model_url = env.marker_models_url
+            self.envname = "Markers_results"
 
     def get_data_loaders(self, config):
 
@@ -116,7 +118,7 @@ class TorchModel:
 
 
         print('[Main] - Initializing Visdom')
-        vis = visdom.Visdom(env='MARKERS_relative')
+        vis = visdom.Visdom(env=self.envname)
 
         # GETTING DATA
         train_loader, val_loader, train_size, val_size = self.get_data_loaders(
