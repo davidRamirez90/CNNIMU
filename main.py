@@ -58,12 +58,10 @@ def init(args):
     #     balancing classes
 
     lr = {0: 1e-3,
-          1: 1e-4,
-          2: 1e-5}
+          1: 1e-4}
 
     win_size = {
         0: 70,
-        1: 85,
         2: 100
     }
 
