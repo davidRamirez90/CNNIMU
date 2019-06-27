@@ -62,7 +62,7 @@ def init(args):
 
     win_size = {
         0: 70,
-        2: 100
+        1: 100
     }
 
     win_stride = {
