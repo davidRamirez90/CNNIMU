@@ -61,13 +61,12 @@ def init(args):
           1: 1e-4}
 
     win_size = {
-        0: 70,
-        1: 100
+        0: 100,
+        1: 70
     }
 
     win_stride = {
-        0: 1,
-        1: 5
+        0: 5
     }
 
     config = {
@@ -80,7 +79,7 @@ def init(args):
         'batch_validate': 100,
         'patience': 10,
         'train_info_iter': 10,
-        'val_iter': 50,
+        'val_iter': 90,
         'noise': (0, 1e-2),
         'gpucore': 'cuda:0',
         'momentum': 0.9

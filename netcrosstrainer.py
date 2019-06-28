@@ -138,7 +138,7 @@ class TorchModel:
         device = torch.device(
             config['gpucore'] if torch.cuda.is_available() else "cpu")
 
-        net = self.loadPretrainedModel()
+        net = self.loadPretrainedModel(config)
 
         net = net.to(device)
         print(device)

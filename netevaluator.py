@@ -234,7 +234,7 @@ class TorchModel:
                     engine.state.iteration,
                     engine.state.output))
 
-        @trainer.on(val_cpe.Events.ITERATIONS_50_COMPLETED)
+        @trainer.on(val_cpe.Events.ITERATIONS_90_COMPLETED)
         def run_validation(engine):
             val_evaluator.run(val_loader)
 
