@@ -26,8 +26,14 @@ class Tester:
         if type == 0:
             self.modelurl = env.models_url
             self.dataurl = env.window_url
-        else:
+        elif type == 1:
             self.modelurl = env.marker_models_url
+            self.dataurl = env.marker_window_url
+        elif type == 2:
+            self.modelurl = env.cross_models_url
+            self.dataurl = env.window_url
+        elif type == 3:
+            self.modelurl = env.cross_marker_models_url
             self.dataurl = env.marker_window_url
 
 

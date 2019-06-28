@@ -101,18 +101,29 @@ def clean_memory():
     torch.cuda.ipc_collect()
 
 
+def getName(type):
+    if type == 0:
+        return "[SK]simple"
+    elif type == 1:
+        return "[MK]simple"
+    elif type == 2:
+        return "[SK]pretrained"
+    elif type == 3:
+        return "[MK]pretrained"
+
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--core", "-c", help="Specify GPU core to use", default=0, type=int)
-    parser.add_argument("--type", "-t", help="Specify net type: 0: Skeleton, 1: Markers", default=0, type=int)
+    parser.add_argument("--type", "-t", help="Specify net type: 0: Skeleton, 1: Markers, 2: PreSkeleton, 3: PreMarkers", default=0, type=int)
     parser.add_argument("--name", "-n", help="Specify file name to save", default="testResults")
 
     args = parser.parse_args()
-    
+    name = getName()
     configs = init(args)
     tester = Tester(type=args.type)
-    with open('{}.csv'.format(args.name), mode='w') as csv_file:
+    with open('{}.csv'.format(name), mode='w') as csv_file:
         fields = ['win_len', 'win_step', 'lr', 'accuracy', 'loss', 'f1']
         writer = csv.DictWriter(csv_file, fieldnames=fields)
         writer.writeheader()
