@@ -1,4 +1,5 @@
 import torch.nn.functional as F
+import torch.nn.init as init
 import torch.nn as nn
 import pdb
 import numpy as np
@@ -19,6 +20,18 @@ class CNN_IMU(nn.Module):
         out_dim = (out_dim-4)/2
         self.fc1 = nn.Linear(int(out_dim)*config['n_filters']*config['channels'], 512)
         self.fc2 = nn.Linear(512, config['n_classes'])
+
+        self.initializeWeights()
+
+    def initializeWeights(self):
+        """
+        ORTHONORMAL WEIGHT INITIALIZATION
+        """
+        init.orthogonal_(self.conv1.weight, init.calculate_gain('relu'))
+        init.orthogonal_(self.conv2.weight, init.calculate_gain('relu'))
+        init.orthogonal_(self.fc1.weight, init.calculate_gain('relu'))
+        init.orthogonal_(self.fc2.weight, init.calculate_gain('relu'))
+
 
 
     def forward(self, x):

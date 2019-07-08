@@ -43,11 +43,11 @@ class TorchModel:
         if self.type == 0:
             self.win_url = env.window_url
             self.model_url = env.models_url
-            self.envname = "Skeleton_results"
+            self.envname = "100/1/0.001_skeletons"
         else:
             self.win_url = env.marker_window_url
             self.model_url = env.marker_models_url
-            self.envname = "Markers_results"
+            self.envname = "100/1/0.001_markers"
 
     def get_data_loaders(self, config):
 
@@ -105,7 +105,7 @@ class TorchModel:
         return -val_loss
 
 
-    def execute_instance(self, config, type=0):
+    def execute_instance(self, config, iteration, type=0):
         # CREATING CUSTOM WINDOWS FOR THIS LOOP
         winGen = WindowGenerator(config['win_len'],
                                  config['win_step'])
@@ -170,7 +170,8 @@ class TorchModel:
         # CREATING EARLY STOPPING AND SAVE HANDLERS
         checkpoint = ModelCheckpoint(
             dirname=self.model_url,
-            filename_prefix='CNNIMU_{}_{}_{}'.format(
+            filename_prefix='[{}]-CNNIMU_{}_{}_{}'.format(
+                iteration,
                 config['win_len'],
                 config['win_step'],
                 config['lr']),

@@ -81,26 +81,28 @@ def init(args):
         'val_iter': 50,
         'noise': (0, 1e-2),
         'gpucore': 'cuda:0',
-        'momentum': 0.9
+        'momentum': 0.9,
+        'win_len': 100,
+        'win_step': 1,
+        'lr': 0.
     }
 
     if args.type == 1:
         config['channels'] = 39
         config['depth'] = 3
-        # config['f_size'] = (3, 5, 1)
 
     if args.core:
         print("Using cuda core: cuda:{}".format(args.core))
         config['gpucore'] = "cuda:{}".format(args.core)
 
-    for i in range(win_size.__len__()):
-        for j in range(win_stride.__len__()):
-            for k in range(lr.__len__()):
-                c = copy.deepcopy(config)
-                c['win_len'] = win_size[i]
-                c['win_step'] = win_stride[j]
-                c['lr'] = lr[k]
-                configArr.append(c)
+    # for i in range(win_size.__len__()):
+    #     for j in range(win_stride.__len__()):
+    #         for k in range(lr.__len__()):
+    #             c = copy.deepcopy(config)
+    #             c['win_len'] = win_size[i]
+    #             c['win_step'] = win_stride[j]
+    #             c['lr'] = lr[k]
+    #             configArr.append(c)
 
     return configArr
 
@@ -130,19 +132,32 @@ if __name__ == "__main__":
     
     hyParamChecker = TorchModel(args.type)
 
-    for i, config in enumerate(configs):
+    for i, iteration in enumerate(range(0,10), start=1):
         model_time = time.time()
-        print('Executing network for LR [{}] / WIN_SIZE [{}] / WIN_STRIDE [{}]'.format(
-            config['lr'], config['win_len'], config['win_step']))
-        logger.info('Executing network for LR [{}] / WIN_SIZE [{}] / WIN_STRIDE [{}]'.format(
-            config['lr'], config['win_len'], config['win_step']))
-        memory_dump(config['gpucore'])
-        hyParamChecker.execute_instance(config, type=args.type)
+        print('Executing training for MODE [{}] / ITERATION [{}]'.format(
+            args.type, i))
+        logger.info('Executing training for MODE [{}] / ITERATION [{}]'.format(
+            configs.type, i))
+        memory_dump(args.core)
+        hyParamChecker.execute_instance(configs, i, type=args.type)
         clean_memory()
-        memory_dump(config['gpucore'])
-        print(' > Took: {:.2} minutes'.format((time.time() - model_time) / 60))
-        logger.info('Took: {:.2} minutes'.format((time.time() - model_time) / 60))
+        memory_dump(args.core)
+        print(' > Took: {:.2} seconds'.format(time.time() - model_time))
+        logger.info('Took: {:.2} seconds'.format(time.time() - model_time))
+
+    # for i, config in enumerate(configs):
+    #     model_time = time.time()
+    #     print('Executing network for LR [{}] / WIN_SIZE [{}] / WIN_STRIDE [{}]'.format(
+    #         config['lr'], config['win_len'], config['win_step']))
+    #     logger.info('Executing network for LR [{}] / WIN_SIZE [{}] / WIN_STRIDE [{}]'.format(
+    #         config['lr'], config['win_len'], config['win_step']))
+    #     memory_dump(config['gpucore'])
+    #     hyParamChecker.execute_instance(config, type=args.type)
+    #     clean_memory()
+    #     memory_dump(config['gpucore'])
+    #     print(' > Took: {:.2} minutes'.format((time.time() - model_time) / 60))
+    #     logger.info('Took: {:.2} minutes'.format((time.time() - model_time) / 60))
 
 
-    print('FINAL, script took: {:.2} minutes'.format((time.time() - total_time) / 60))
-    logger.info('FINAL, script took: {:.2} minutes'.format((time.time() - total_time) / 60))
+    print('FINAL, script took: {:.2} seconds'.format(time.time() - total_time))
+    logger.info('FINAL, script took: {:.2} seconds'.format(time.time() - total_time))

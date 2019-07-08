@@ -42,12 +42,12 @@ class TorchModel:
         print('[netevaluator] - Init Crosstrain Torchmodel')
         self.type = type
         if self.type == 0:
-            self.envname = 'preMarkers-postSkeleton'
+            self.envname = '100/1/0.001_skeleton(preMK)'
             self.win_url = env.window_url
             self.save_model_url = env.cross_models_url
             self.load_model_url = env.marker_models_url
         else:
-            self.envname = 'preSkeleton-postMarkers'
+            self.envname = '100/1/0.markers(preSK)'
             self.win_url = env.marker_window_url
             self.save_model_url = env.cross_marker_models_url
             self.load_model_url = env.models_url
@@ -125,7 +125,7 @@ class TorchModel:
         return net
 
 
-    def execute_instance(self, config, type=0):
+    def execute_instance(self, config, iteration, type=0):
 
 
         print('[Main] - Initializing Visdom')
@@ -183,7 +183,8 @@ class TorchModel:
         # CREATING EARLY STOPPING AND SAVE HANDLERS
         checkpoint = ModelCheckpoint(
             dirname=self.save_model_url,
-            filename_prefix='CNNIMU_{}_{}_{}'.format(
+            filename_prefix='[{}]-CNNIMU_{}_{}_{}'.format(
+                iteration,
                 config['win_len'],
                 config['win_step'],
                 config['lr']),
