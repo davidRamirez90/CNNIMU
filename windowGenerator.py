@@ -57,6 +57,7 @@ class WindowGenerator:
         @:param File path
         '''
         data = pd.read_csv(path, skiprows=2)
+        pdb.set_trace()
         data = data.dropna(axis=1, how='all')
         data = data.iloc[2:-2, 2:]
         data = data.to_numpy()
