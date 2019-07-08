@@ -105,7 +105,7 @@ def init(args):
     #             c['lr'] = lr[k]
     #             configArr.append(c)
 
-    return configArr
+    return config
 
 
 def clean_memory():
