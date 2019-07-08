@@ -139,10 +139,10 @@ if __name__ == "__main__":
             args.type, i))
         logger.info('Executing training for MODE [{}] / ITERATION [{}]'.format(
             args.type, i))
-        memory_dump(args.core)
+        memory_dump(configs['gpucore'])
         hyParamChecker.execute_instance(configs, i, type=args.type)
         clean_memory()
-        memory_dump(args.core)
+        memory_dump(configs['gpucore'])
         print(' > Took: {:.2} seconds'.format(time.time() - model_time))
         logger.info('Took: {:.2} seconds'.format(time.time() - model_time))
 
