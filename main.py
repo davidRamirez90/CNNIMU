@@ -138,7 +138,7 @@ if __name__ == "__main__":
         print('Executing training for MODE [{}] / ITERATION [{}]'.format(
             args.type, i))
         logger.info('Executing training for MODE [{}] / ITERATION [{}]'.format(
-            configs.type, i))
+            args.type, i))
         memory_dump(args.core)
         hyParamChecker.execute_instance(configs, i, type=args.type)
         clean_memory()
