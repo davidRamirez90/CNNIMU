@@ -24,18 +24,15 @@ def init(args):
     #     balancing classes
 
     lr = {0: 1e-3,
-          1: 1e-4,
-          2: 1e-5}
+          1: 1e-4}
 
     win_size = {
         0: 70,
-        1: 85,
-        2: 100
+        1: 100
     }
 
     win_stride = {
-        0: 1,
-        1: 5
+        0: 5
     }
 
     config = {
@@ -117,10 +114,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--core", "-c", help="Specify GPU core to use", default=0, type=int)
     parser.add_argument("--type", "-t", help="Specify net type: 0: Skeleton, 1: Markers, 2: PreSkeleton, 3: PreMarkers", default=0, type=int)
-    parser.add_argument("--name", "-n", help="Specify file name to save", default="testResults")
+
 
     args = parser.parse_args()
-    name = getName()
+    name = getName(args.type)
     configs = init(args)
     tester = Tester(type=args.type)
     with open('{}.csv'.format(name), mode='w') as csv_file:

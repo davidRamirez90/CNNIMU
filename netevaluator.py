@@ -73,216 +73,216 @@ class TorchModel:
             shuffle=False,
             num_workers=4)
 
-        return train_loader, val_loader, train_dataset.__len__(), val_dataset.__len__()
+   SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS     return train_loader, val_loader, train_dataset.__len__(), val_dataset.__len__()
 
     def create_plot_window(self, vis, xlabel, ylabel, title, name=""):
-        return vis.line(X=np.array([1]),
+  S      return vis.line(X=np.array([1]),
                         Y=np.array([np.nan]),
                         name=name,
-                        opts=dict(xlabel=xlabel,
+ S                       opts=dict(xlabel=xlabel,
                                   ylabel=ylabel,
                                   title=title))
-
+S
     def append_plot_to_window(self, vis, win, name, update):
         vis.line(X=np.array([1]),
-                 Y=np.array([np.nan]),
+      S           Y=np.array([np.nan]),
                  name=name,
                  update=update,
-                 win=win)
+     S            win=win)
 
     def append_scalar_to_plot(self, vis, y, x, update, win, name=""):
-        vis.line(Y=[y, ],
+    S    vis.line(Y=[y, ],
                  X=[x, ],
                  name=name,
-                 update=update,
+   S              update=update,
                  win=win)
 
-    def F1(self, precision, recall):
+  S  def F1(self, precision, recall):
         return (precision * recall * 2 / (precision + recall + 1e-20)).mean()
 
-    def score_function(self, engine):
+ S   def score_function(self, engine):
         val_loss = engine.state.metrics['loss']
         return -val_loss
-
+S
 
     def execute_instance(self, config, type=0):
-        # CREATING CUSTOM WINDOWS FOR THIS LOOP
+   S     # CREATING CUSTOM WINDOWS FOR THIS LOOP
         winGen = WindowGenerator(config['win_len'],
                                  config['win_step'])
-        if type == 0:
+  S      if type == 0:
             win_generated = winGen.run()
         else:
-            win_generated = winGen.runMarkers()
+ S           win_generated = winGen.runMarkers()
 
         assert win_generated
-
+S
 
         print('[Main] - Initializing Visdom')
-        vis = visdom.Visdom(env=self.envname)
+    S    vis = visdom.Visdom(env=self.envname)
 
         # GETTING DATA
-        train_loader, val_loader, train_size, val_size = self.get_data_loaders(
+   S     train_loader, val_loader, train_size, val_size = self.get_data_loaders(
             config)
         # NETWORK CREATION
-        device = torch.device(
+  S      device = torch.device(
             config['gpucore'] if torch.cuda.is_available() else "cpu")
         net = CNN_IMU(config)
-        net = net.to(device)
+ S       net = net.to(device)
         print(device)
         print(net)
-
+S
         # OPTIMIZER AND CRITERION INITIALIZATION
         optimizer = SGD(net.parameters(),
-                        lr=config['lr'],
+ S                       lr=config['lr'],
                         momentum=config['momentum'])
         criterion = nn.CrossEntropyLoss()
-
+S
         # IGNITE METRICS DEFINED INCLUDING CUSTOM F1
         precision = Precision(average=False)
-        recall = Recall(average=False)
+   S     recall = Recall(average=False)
 
         metrics = {
-            'accuracy': Accuracy(),
+  S          'accuracy': Accuracy(),
             'loss': Loss(criterion),
             'precision': precision,
-            'recall': recall,
+ S           'recall': recall,
             'f1': MetricsLambda(self.F1, precision, recall)
         }
-
+S
         # IGNITE TRAINER AND EVAL OBJECTS CONFIG
         trainer = create_supervised_trainer(net,
-                                            optimizer,
+     S                                       optimizer,
                                             criterion,
                                             device=device)
-        val_evaluator = create_supervised_evaluator(
+    S    val_evaluator = create_supervised_evaluator(
             net, metrics=metrics, device=device)
 
-        # LIFETIME EVENTS FOR PRINTING CALCULATING AND PLOTTING
+   S     # LIFETIME EVENTS FOR PRINTING CALCULATING AND PLOTTING
         tr_cpe = CustomPeriodicEvent(n_iterations=config['train_info_iter'])
         val_cpe = CustomPeriodicEvent(n_iterations=config['val_iter'])
-        tr_cpe.attach(trainer)
+  S      tr_cpe.attach(trainer)
         val_cpe.attach(trainer)
 
-        # TQDM OBSERVERS
+ S       # TQDM OBSERVERS
         pbar = tqdm_logger.ProgressBar()
         pbar.attach(val_evaluator)
-
+S
         # CREATING EARLY STOPPING AND SAVE HANDLERS
         checkpoint = ModelCheckpoint(
-            dirname=self.model_url,
+    S        dirname=self.model_url,
             filename_prefix='CNNIMU_{}_{}_{}'.format(
                 config['win_len'],
-                config['win_step'],
+   S             config['win_step'],
                 config['lr']),
             score_function=self.score_function,
-            score_name='loss',
+  S          score_name='loss',
             create_dir=True,
             require_empty=False)
-        val_evaluator.add_event_handler(Events.EPOCH_COMPLETED,
+ S       val_evaluator.add_event_handler(Events.EPOCH_COMPLETED,
                                         checkpoint,
                                         {'network': net})
-
+S
         earlyStopper = EarlyStopping(patience=config['patience'],
                                      score_function=self.score_function,
-                                     trainer=trainer)
+        S                             trainer=trainer)
         val_evaluator.add_event_handler(Events.COMPLETED, earlyStopper)
 
-        # CREATING VISDOM INITIAL GRAPH OBJECTS
+       S # CREATING VISDOM INITIAL GRAPH OBJECTS
 
         train_metrics_window = self.create_plot_window(
-            vis, '# Iterations', 'Loss', 'Val / Train Losses W [{}/{}] - LR [{}]'.format(
+      S      vis, '# Iterations', 'Loss', 'Val / Train Losses W [{}/{}] - LR [{}]'.format(
                 config['win_len'], config['win_step'], config['lr']), 'trainingloss')
         self.append_plot_to_window(
-            vis,
+     S       vis,
             train_metrics_window,
             'validationloss',
-            'append')
+    S        'append')
         val_acc_window = self.create_plot_window(
             vis,
-            '# Iterations',
+   S         '# Iterations',
             'Accuracy',
             'Validation Accuracy W [{}/{}] - LR [{}]'.format(
-                config['win_len'],
+  S              config['win_len'],
                 config['win_step'],
                 config['lr']))
-        val_f1_window = self.create_plot_window(
+ S       val_f1_window = self.create_plot_window(
             vis, '# Iterations', 'F1', 'F1 score W [{}/{}] - LR [{}]'.format(
                 config['win_len'], config['win_step'], config['lr']))
-
+S
         training_losses_acc = list()
 
-        # IGNITE EVENTS DEFINITION
+        # IGNITSE EVENTS DEFINITION
         @trainer.on(Events.EPOCH_STARTED)
         def initial_eval(engine):
-            val_evaluator.run(val_loader)
+            vaSl_evaluator.run(val_loader)
 
         @trainer.on(Events.ITERATION_COMPLETED)
-        def accumulate_trainlosses(engine):
+        def aSccumulate_trainlosses(engine):
             training_losses_acc.append(engine.state.output)
 
-        @trainer.on(tr_cpe.Events.ITERATIONS_10_COMPLETED)
+        @traSiner.on(tr_cpe.Events.ITERATIONS_10_COMPLETED)
         def log_training_loss(engine):
             # breakpoint()
-            vis.line(Y=np.array(training_losses_acc),
+           S vis.line(Y=np.array(training_losses_acc),
                      X=np.arange(start=0, stop=training_losses_acc.__len__()),
                      name='trainingloss',
-                     update='replace',
+          S           update='replace',
                      win=train_metrics_window)
             print(
-                "Epoch[{}],  Iteration[{}],  Loss: {:.2f}".format(
+         S       "Epoch[{}],  Iteration[{}],  Loss: {:.2f}".format(
                     engine.state.epoch,
                     engine.state.iteration,
-                    engine.state.output))
+        S            engine.state.output))
 
         @trainer.on(val_cpe.Events.ITERATIONS_90_COMPLETED)
-        def run_validation(engine):
+       S def run_validation(engine):
             val_evaluator.run(val_loader)
 
-        @val_evaluator.on(Events.EPOCH_COMPLETED)
+      S  @val_evaluator.on(Events.EPOCH_COMPLETED)
         def log_validation_results(engine):
             m = engine.state.metrics
-            self.append_scalar_to_plot(vis, m['loss'],
+     S       self.append_scalar_to_plot(vis, m['loss'],
                                        trainer.state.iteration,
                                        'append', train_metrics_window,
-                                       name='validationloss')
+    S                                   name='validationloss')
             self.append_scalar_to_plot(vis, m['accuracy'],
                                        trainer.state.iteration,
-                                       'append', val_acc_window)
+   S                                    'append', val_acc_window)
             self.append_scalar_to_plot(vis, m['f1'],
                                        trainer.state.iteration,
-                                       'append', val_f1_window)
+  S                                     'append', val_f1_window)
             print(
                 "Validation Result: ----------->  Loss: {:.4f}, Accuracy: {:.4f}, F1: {:.4f}".format(
-                    m['loss'],
+ S                   m['loss'],
                     m['accuracy'],
                     m['f1']))
-
+S
         trainer.run(train_loader, max_epochs=15)
         # logger.info('Finished training after {} iterations'.format(trainer.state.iteration))
-        del training_losses_acc
+  S      del training_losses_acc
         del trainer
         del val_evaluator
-        del net
+ S       del net
 
 
-
+S
 
 class GaussianNoise(object):
-    """
+    "S""
     Add Gaussian noise to a window data sample
     """
-    
+    S
     def __init__(self, mu, sigma, type):
         self.mu = mu
-        self.sigma = sigma
+        self.sigma = sigmaS
         self.type = type
 
-    def __call__(self, sample):
+    def __call__(self, sample):S
         data = sample['data']
         label = np.long(sample['label'])
         data += np.random.normal(self.mu,
                                  self.sigma,
                                  data.shape)
-        if self.type == 0:
+        SSSSSSSSSSSSSSSSSSSSSSS
             data = np.expand_dims(data, 0)
-        return (data, label)
+        return (data, label)SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS

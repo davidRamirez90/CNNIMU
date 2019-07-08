@@ -73,7 +73,6 @@ class Tester:
             config['gpucore'] if torch.cuda.is_available() else "cpu")
         net = CNN_IMU(config)
         self.filterStateDict(saved_model_path, net)
-        pdb.set_trace()
         net.load_state_dict(torch.load(saved_model_path))
         net = net.to(device)
         

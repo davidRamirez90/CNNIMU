@@ -250,7 +250,7 @@ class WindowGenerator:
 
     def run(self):
         """
-        Main function to generate new windows for skeleton dataset
+
         :return: Dataset with windows exists
         """
 
@@ -259,62 +259,62 @@ class WindowGenerator:
 
         if self.checkDirExists(self.save_dataset_dir):
             print('[WindowGen] - Dataset already exists, skipping generation...')
-            return True
+
         else:
             for folder in labels:
-                os.makedirs(self.save_dataset_dir.format(self.win_size,
+
                                                          self.win_stride,
                                                          folder))
 
         dataset_dict = dict(
             train=['P02', 'P06'],
-            validate=['P04'],
+
             test=['P03']
         )
-        
+
 
         print('[WindowGen] - Creating Training Windows')
 
         start = time.time()
 
-        for i, folder in enumerate(labels):
+
             print('[WindowGen] - Saving on folder {}'.format(folder))
             win_amount = 0
-            for j, dir in enumerate(dataset_dict[folder]):
+
                 print('[WindowGen] - Saving for person {}'.format(dir))
                 files = glob.glob(self.dataset_dir.format(dir))
-                for k, file in enumerate(files):
+
                     print('[WindowGen] - Saving for found file {}'.format(file))
                     rawData = self.read_data(file)
-                    filteredData = self.removeClass(rawData, 7)
+
                     normalizedData = self.normalizeData(filteredData)
                     data_windows = sliding_window(normalizedData,
-                                                  (self.win_size, normalizedData.shape[1]),
+
                                                   (self.win_stride, 1))
                     win_amount = self.saveWindows(data_windows,
-                                             self.save_dataset_dir.format(self.win_size,
+
                                                                       self.win_stride,
                                                                       folder),
-                                             win_amount)
+
 
         end = time.time()
-        t = end - start
+
         print('[WindowGen] - Process has been finished after: {}'.format(t))
 
-        return True
+
 
 if __name__ == '__main__':
-    window_size = 100
+
     window_step = 1
 
-    wg1 = WindowGenerator(100, 1)
+
     wg2 = WindowGenerator(100, 5)
     wg3 = WindowGenerator(85, 1)
-    wg4 = WindowGenerator(85, 5)
+
     wg5 = WindowGenerator(70, 1)
     wg6 = WindowGenerator(70, 5)
-    # wg.runMarkers()
-    wg1.run()
+ 
+  
     wg2.run()
     wg3.run()
     wg4.run()
