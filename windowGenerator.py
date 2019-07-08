@@ -266,7 +266,7 @@ class WindowGenerator:
                                                          self.win_stride,
                                                          folder))
 
-        markers_dict = dict(
+        dataset_dict = dict(
             train=['01', '02', '03'],
             validate=['04'],
             test=['05', '06']
@@ -314,7 +314,7 @@ if __name__ == '__main__':
     wg5 = WindowGenerator(70, 1)
     wg6 = WindowGenerator(70, 5)
     # wg.runMarkers()
-    wg1.runMarkers()
+    wg1.run()
     wg2.run()
     wg3.run()
     wg4.run()
