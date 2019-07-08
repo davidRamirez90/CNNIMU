@@ -192,9 +192,9 @@ class WindowGenerator:
                                                                 self.win_stride,
                                                                 folder))
         markers_dict = dict(
-            train=['01', '02', '03'],
-            validate=['04'],
-            test=['05', '06']
+            train=['P01', 'P02', 'P03'],
+            validate=['P04'],
+            test=['P05', 'P06']
         )
 
         print('[WindowGen] - Creating Training Windows')
@@ -205,8 +205,7 @@ class WindowGenerator:
             print('[WindowGen] - Saving on folder {}'.format(folder))
             win_amount = 0
             for j, dir in enumerate(markers_dict[folder]):
-                skeletondir = 'P{}'.format(dir)
-                files = glob.glob(self.dataset_dir.format(skeletondir))
+                files = glob.glob(self.dataset_dir.format(dir))
                 for k, file in enumerate(files):
                     print('[WindowGen] - Saving for found file {}'.format(file))
                     # pdb.set_trace()
@@ -267,9 +266,9 @@ class WindowGenerator:
                                                          folder))
 
         dataset_dict = dict(
-            train=['01', '02', '03'],
-            validate=['04'],
-            test=['05', '06']
+            train=['P01', 'P02', 'P03'],
+            validate=['P04'],
+            test=['P05', 'P06']
         )
         
 
