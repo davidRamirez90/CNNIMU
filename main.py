@@ -89,7 +89,7 @@ def init(args):
     }
 
     if args.type == 1:
-        config['channels'] = 39
+        config['channels'] = 38
         config['depth'] = 3
 
     if args.core:

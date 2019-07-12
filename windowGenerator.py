@@ -126,7 +126,7 @@ class WindowGenerator:
         else:
             # pdb.set_trace()
             base = data[:, 15:18]
-            conv = np.tile(base, 39)
+            conv = np.tile(base, 38)
             relative = data-conv
             normalized = preprocessing.scale(relative)
 
