@@ -57,9 +57,10 @@ class WindowGenerator:
         @:param File path
         '''
         data = pd.read_csv(path, skiprows=2)
-        pdb.set_trace()
+        # pdb.set_trace()
         data = data.dropna(axis=1, how='all')
         data = data.iloc[2:-2, 2:]
+        data = pd.concat([data.iloc[:, :57], data.iloc[:, 60:]], axis=1)
         data = data.to_numpy()
 
         return data
@@ -224,7 +225,7 @@ class WindowGenerator:
                         filteredData, filteredLabels = self.removeClassMarkers(mkdata, labels, 7)   # Removed unused 7 class
                         normalizedData = self.normalizeData(filteredData, haslabels=False)   # Normalize data per sensor channel
                         stackedData = self.coords_to_channels(normalizedData)   # (X,Y,Z) coords to Channels(dims)
-                        pdb.set_trace()
+                        # pdb.set_trace()
                         data_windows = sliding_window(stackedData,
                                                       (stackedData.shape[0], self.win_size, stackedData.shape[2]),
                                                       (1, self.win_stride, 1))
