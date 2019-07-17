@@ -83,8 +83,8 @@ def init(args):
         'gpucore': 'cuda:0',
         'momentum': 0.9,
         'win_len': 100,
-        'win_step': 1,
-        'lr': 0.
+        'win_step': 5,
+        'lr': 0.0001
     }
 
     if args.type == 1:
@@ -132,7 +132,7 @@ if __name__ == "__main__":
     
     hyParamChecker = TorchModel(args.type)
 
-    for i, iteration in enumerate(range(0,10), start=1):
+    for i, iteration in enumerate(range(0,5), start=1):
         model_time = time.time()
         print('Executing training for MODE [{}] / ITERATION [{}]'.format(
             args.type, i))
