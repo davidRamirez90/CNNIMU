@@ -223,6 +223,8 @@ class WindowGenerator:
                         mkdata = mkdata[~nanfilter]
                         mergedata = np.hstack((labels, mkdata))     # Combined markers with labels
                         filteredData, filteredLabels = self.removeClassMarkers(mkdata, labels, 7)   # Removed unused 7 class
+                        if filteredData.shape[0] == 0:
+                            break;
                         normalizedData = self.normalizeData(filteredData, haslabels=False)   # Normalize data per sensor channel
                         stackedData = self.coords_to_channels(normalizedData)   # (X,Y,Z) coords to Channels(dims)
                         # pdb.set_trace()
@@ -315,13 +317,13 @@ if __name__ == '__main__':
     wg4 = WindowGenerator(85, 5)
     wg5 = WindowGenerator(70, 1)
     wg6 = WindowGenerator(70, 5)
-    # wg.runMarkers()
-    wg1.run()
-    wg2.run()
-    wg3.run()
-    wg4.run()
-    wg5.run()
-    wg6.run()
+    wg1.runMarkers()
+    # wg1.run()
+    # wg2.run()
+    # wg3.run()
+    # wg4.run()
+    # wg5.run()
+    # wg6.run()
 
 
 
