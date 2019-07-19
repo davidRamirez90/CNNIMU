@@ -43,10 +43,9 @@ def init(args):
     }
 
     types = {
-        0: 0,
-        1: 1,
-        2: 2,
-        3: 3
+        0: 1,
+        1: 2,
+        2: 3,
     }
 
     config = {
@@ -68,10 +67,6 @@ def init(args):
         'lr': 0.0001
     }
 
-    if args.type == 1 or args.type == 3:
-        config['channels'] = 38
-        config['depth'] = 3
-
     if args.core:
         print("Using cuda core: cuda:{}".format(args.core))
         config['gpucore'] = "cuda:{}".format(args.core)
@@ -79,6 +74,9 @@ def init(args):
     for i in range(types.__len__()):
         c = copy.deepcopy(config)
         c['type'] = types[i]
+        if types[i] == 1 or types[i] == 3:
+            c['channels'] = 38
+            c['depth'] = 3
         configArr.append(c)
 
     # return config
