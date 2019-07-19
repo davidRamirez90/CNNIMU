@@ -76,7 +76,7 @@ def init(args):
         print("Using cuda core: cuda:{}".format(args.core))
         config['gpucore'] = "cuda:{}".format(args.core)
 
-    for i in range(type.__len__()):
+    for i in range(types.__len__()):
         c = copy.deepcopy(config)
         c['type'] = types[i]
         configArr.append(c)
