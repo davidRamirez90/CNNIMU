@@ -121,7 +121,7 @@ class Tester:
         return metrics
     
     
-    def create_supervisor(self, config):
+    def create_supervisor(self, config, it):
         
         # GET LOADED NETWORK
         net, device = self.load_checkpoint(config, it)
