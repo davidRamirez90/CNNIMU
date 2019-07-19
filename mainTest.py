@@ -143,6 +143,7 @@ if __name__ == "__main__":
             writer.writeheader()
             for i, iteration in enumerate(range(0,5), start=1):
                 res = tester.runTest(config, i)
+                print(res)
                 fullr = {**config, **res}
                 filtr = {key: value for key, value in fullr.items() if key in fields}
                 writer.writerow(filtr)
