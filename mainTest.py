@@ -23,16 +23,30 @@ def init(args):
     #     window stride
     #     balancing classes
 
-    lr = {0: 1e-3,
-          1: 1e-4}
+    lr = {0: 0.0001,
+          1: 0.0001,
+          2: 0.0001,
+          3: 0.0001}
 
     win_size = {
-        0: 70,
-        1: 100
+        0: 100,
+        1: 100,
+        2: 100,
+        3: 100,
     }
 
     win_stride = {
-        0: 5
+        0: 5,
+        1: 5,
+        2: 5,
+        3: 5
+    }
+
+    types = {
+        0: 1,
+        1: 2,
+        2: 3,
+        3: 4
     }
 
     config = {
@@ -48,27 +62,27 @@ def init(args):
         'val_iter': 50,
         'noise': (0, 1e-2),
         'gpucore': 'cuda:0',
-        'momentum': 0.9
+        'momentum': 0.9,
+        'win_len': 100,
+        'win_step': 5,
+        'lr': 0.0001
     }
 
-    if args.type == 1:
-        config['channels'] = 39
+    if args.type == 1 or args.type == 3:
+        config['channels'] = 38
         config['depth'] = 3
 
     if args.core:
         print("Using cuda core: cuda:{}".format(args.core))
         config['gpucore'] = "cuda:{}".format(args.core)
 
-    for i in range(win_size.__len__()):
-        for j in range(win_stride.__len__()):
-            for k in range(lr.__len__()):
-                c = copy.deepcopy(config)
-                c['win_len'] = win_size[i]
-                c['win_step'] = win_stride[j]
-                c['lr'] = lr[k]
-                configArr.append(c)
+    for i in range(type.__len__()):
+        c = copy.deepcopy(config)
+        c['type'] = types[i]
+        configArr.append(c)
 
-    return configArr
+    return config
+    # return configArr
 
 def convert_size(size_bytes):
    if size_bytes == 0:
@@ -117,9 +131,11 @@ if __name__ == "__main__":
 
 
     args = parser.parse_args()
-    name = getName(args.type)
+    # name = getName(args.type)
     configs = init(args)
-    tester = Tester(type=args.type)
+    name = getName(configs.type)
+    tester = Tester(type=configs.type)
+
     with open('{}.csv'.format(name), mode='w') as csv_file:
         fields = ['win_len', 'win_step', 'lr', 'accuracy', 'loss', 'f1']
         writer = csv.DictWriter(csv_file, fieldnames=fields)
