@@ -61,11 +61,11 @@ class Tester:
         print(net.state_dict()['fc2.weight'])
 
         
-    def load_checkpoint(self, config):
+    def load_checkpoint(self, config, it):
         # {window length} - {window step} - {Learning rate}
         
-        keystr = "{}_{}_{}".format(config['win_len'],config['win_step'],config['lr'])
-        
+        keystr = "[{}]-CNNIMU_{}_{}_{}".format(it, config['win_len'],config['win_step'],config['lr'])
+        pdb.set_trace()
         saved_model_name = [n for n in os.listdir(self.modelurl) if keystr in n][0]
         saved_model_path = os.path.join(self.modelurl, saved_model_name)
         print(saved_model_name)
@@ -124,7 +124,7 @@ class Tester:
     def create_supervisor(self, config):
         
         # GET LOADED NETWORK
-        net, device = self.load_checkpoint(config)
+        net, device = self.load_checkpoint(config, it)
         
         # SET METRICS
         metrics = self.get_metrics()
@@ -152,10 +152,10 @@ class Tester:
         return tester
         
         
-    def runTest(self, config):
+    def runTest(self, config, it):
         # GET DATA AND TESTER
         test_loader, test_len = self.get_data_loader(config)
-        tester = self.create_supervisor(config)
+        tester = self.create_supervisor(config, it)
         
         # RUN TEST
         tester.run(test_loader)

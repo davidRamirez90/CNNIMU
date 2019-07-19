@@ -133,22 +133,22 @@ if __name__ == "__main__":
     args = parser.parse_args()
     # name = getName(args.type)
     configs = init(args)
-    pdb.set_trace()
-    name = getName(configs['type'])
-    tester = Tester(type=configs['type'])
 
-    with open('{}.csv'.format(name), mode='w') as csv_file:
-        fields = ['win_len', 'win_step', 'lr', 'accuracy', 'loss', 'f1']
-        writer = csv.DictWriter(csv_file, fieldnames=fields)
-        writer.writeheader()
-        for i, config in enumerate(configs):
-            res = tester.runTest(config)
-            fullr = {**config, **res}
-            filtr = {key: value for key, value in fullr.items() if key in fields}
-            writer.writerow(filtr)
-            clean_memory()
-            memory_dump(args.core)
-            #pdb.set_trace()
+    for i, config in enumerate(configs):
+        tester = Tester(type=configs['type'])
+        name = getName(config['type'])
+        with open('{}.csv'.format(name), mode='w') as csv_file:
+            fields = ['win_len', 'win_step', 'lr', 'accuracy', 'loss', 'f1']
+            writer = csv.DictWriter(csv_file, fieldnames=fields)
+            writer.writeheader()
+            for i, iteration in enumerate(range(0,5), start=1):
+                res = tester.runTest(config, i)
+                fullr = {**config, **res}
+                filtr = {key: value for key, value in fullr.items() if key in fields}
+                writer.writerow(filtr)
+                clean_memory()
+                memory_dump(args.core)
+                #pdb.set_trace()
         print('Finished Testing of all models')
         
         
