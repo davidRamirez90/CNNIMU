@@ -133,6 +133,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     # name = getName(args.type)
     configs = init(args)
+    pdb.set_trace()
     name = getName(configs.type)
     tester = Tester(type=configs.type)
 
