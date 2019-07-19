@@ -134,8 +134,8 @@ if __name__ == "__main__":
     # name = getName(args.type)
     configs = init(args)
     pdb.set_trace()
-    name = getName(configs.type)
-    tester = Tester(type=configs.type)
+    name = getName(configs['type'])
+    tester = Tester(type=configs['type'])
 
     with open('{}.csv'.format(name), mode='w') as csv_file:
         fields = ['win_len', 'win_step', 'lr', 'accuracy', 'loss', 'f1']
