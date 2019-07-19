@@ -43,9 +43,8 @@ def init(args):
     }
 
     types = {
-        0: 1,
-        1: 2,
-        2: 3,
+        0: 2,
+        1: 3,
     }
 
     config = {
