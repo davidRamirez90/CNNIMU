@@ -81,8 +81,8 @@ def init(args):
         c['type'] = types[i]
         configArr.append(c)
 
-    return config
-    # return configArr
+    # return config
+    return configArr
 
 def convert_size(size_bytes):
    if size_bytes == 0:
