@@ -135,7 +135,7 @@ if __name__ == "__main__":
     configs = init(args)
 
     for i, config in enumerate(configs):
-        tester = Tester(type=configs['type'])
+        tester = Tester(type=config['type'])
         name = getName(config['type'])
         with open('{}.csv'.format(name), mode='w') as csv_file:
             fields = ['win_len', 'win_step', 'lr', 'accuracy', 'loss', 'f1']
