@@ -133,9 +133,9 @@ if __name__ == "__main__":
     
     hyParamChecker = TorchModel(args.type)
 
-    for i, iteration in enumerate(range(0,5), start=1):
+    for i, iteration in enumerate(range(0,5), start=6):
         model_time = time.time()
-        print('Executing training for MODE [{}] / ITERATION [{}]'.format(
+        print('Executing TRAINING for MODE [{}] / ITERATION [{}]'.format(
             args.type, i))
         logger.info('Executing training for MODE [{}] / ITERATION [{}]'.format(
             args.type, i))
@@ -143,8 +143,8 @@ if __name__ == "__main__":
         hyParamChecker.execute_instance(configs, i, type=args.type)
         clean_memory()
         # memory_dump(configs['gpucore'])
-        print(' > Took: {:.2} seconds'.format(time.time() - model_time))
-        logger.info('Took: {:.2} seconds'.format(time.time() - model_time))
+        print(' > Took: {:.6} seconds'.format(time.time() - model_time))
+        logger.info('Took: {:.6} seconds'.format(time.time() - model_time))
 
     # for i, config in enumerate(configs):
     #     model_time = time.time()
@@ -160,5 +160,7 @@ if __name__ == "__main__":
     #     logger.info('Took: {:.2} seconds'.format(time.time() - model_time))
 
 
-    print('FINAL, script took: {:.2} seconds'.format(time.time() - total_time))
-    logger.info('FINAL, script took: {:.2} seconds'.format(time.time() - total_time))
+    print('FINAL, script took: {:.6} seconds'.format(time.time() - total_time))
+    logger.info('FINAL, script took: {:.6} seconds'.format(time.time() - total_time))
+    print('---------------------------------------------')
+    logger.info('---------------------------------------------')
