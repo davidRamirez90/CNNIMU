@@ -30,7 +30,7 @@ def convert_size(size_bytes):
 def pretty_size(size):
     """Pretty prints a torch.Size object"""
     assert(isinstance(size, torch.Size))
-    return " × ".join(map(str, size))
+    return " ? ".join(map(str, size))
 
 
 def memory_dump(core):
