@@ -143,8 +143,8 @@ if __name__ == "__main__":
         hyParamChecker.execute_instance(configs, i, type=args.type)
         clean_memory()
         # memory_dump(configs['gpucore'])
-        print(' > Took: {:.6} seconds'.format(time.time() - model_time))
-        logger.info('Took: {:.6} seconds'.format(time.time() - model_time))
+        print('TRAINING ---[# {}] --- [m: {}] --- Took: {:.6} seconds'.format(i, args.type, time.time() - model_time))
+        logger.info('TRAINING ---[# {}] --- [m: {}] --- Took: {:.6} seconds'.format(i, args.type, time.time() - model_time))
 
     # for i, config in enumerate(configs):
     #     model_time = time.time()
