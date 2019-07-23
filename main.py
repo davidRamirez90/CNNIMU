@@ -133,7 +133,7 @@ if __name__ == "__main__":
     
     hyParamChecker = TorchModel(args.type)
 
-    for i, iteration in enumerate(range(0,4), start=7):
+    for i, iteration in enumerate(range(0,10), start=1):
         model_time = time.time()
         print('Executing TRAINING for MODE [{}] / ITERATION [{}]'.format(
             args.type, i))
