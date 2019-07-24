@@ -200,9 +200,6 @@ class TorchModel:
             verbose = True,
             threshold = 0.001
             )
-        scheduler = LRScheduler(step_scheduler)
-        val_evaluator.add_event_handler(Events.COMPLETED, scheduler)
-
 
 
 
@@ -275,6 +272,7 @@ class TorchModel:
                     m['loss'],
                     m['accuracy'],
                     m['f1']))
+            step_scheduler.step(engine.metrics['loss']);
 
         trainer.run(train_loader, max_epochs=15)
         # logger.info('Finished training after {} iterations'.format(trainer.state.iteration))
