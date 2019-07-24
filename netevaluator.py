@@ -256,6 +256,7 @@ class TorchModel:
 
         @val_evaluator.on(Events.EPOCH_COMPLETED)
         def log_validation_results(engine):
+            pdb.set_trace()
             m = engine.state.metrics
             self.append_scalar_to_plot(vis, m['loss'],
                                        trainer.state.iteration,
