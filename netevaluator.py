@@ -195,7 +195,6 @@ class TorchModel:
         step_scheduler = ReduceLROnPlateau(
             optimizer,
             mode = 'min',
-            factor = 0.1,
             patience = 5,
             verbose = True,
             threshold = 0.001
