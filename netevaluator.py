@@ -272,7 +272,7 @@ class TorchModel:
                     m['loss'],
                     m['accuracy'],
                     m['f1']))
-            step_scheduler.step(engine.metrics['loss']);
+            step_scheduler.step(m['loss']);
 
         trainer.run(train_loader, max_epochs=15)
         # logger.info('Finished training after {} iterations'.format(trainer.state.iteration))
