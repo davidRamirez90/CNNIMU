@@ -9,6 +9,7 @@ from ignite.engine import Events, create_supervised_trainer, create_supervised_e
 from ignite.metrics import Accuracy, Loss, Precision, Recall, MetricsLambda
 from ignite.contrib.handlers import CustomPeriodicEvent, tqdm_logger
 from ignite.handlers import EarlyStopping, ModelCheckpoint
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 # TORCH IMPORTS
 from torch.utils.data import DataLoader
@@ -201,6 +202,14 @@ class TorchModel:
                                      trainer=trainer)
         val_evaluator.add_event_handler(Events.COMPLETED, earlyStopper)
 
+        # LR ADAPTER HANDLER
+        step_scheduler = ReduceLROnPlateau(
+            optimizer,
+            mode='min',
+            factor=0.1,
+            patience=5,
+            verbose=True)
+
         # CREATING VISDOM INITIAL GRAPH OBJECTS
 
         train_metrics_window = self.create_plot_window(
@@ -255,6 +264,7 @@ class TorchModel:
         @val_evaluator.on(Events.EPOCH_COMPLETED)
         def log_validation_results(engine):
             m = engine.state.metrics
+            step_scheduler.step(m['loss']);
             self.append_scalar_to_plot(vis, m['loss'],
                                        trainer.state.iteration,
                                        'append', train_metrics_window,

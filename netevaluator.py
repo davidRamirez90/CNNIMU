@@ -8,7 +8,6 @@ from ignite.engine import Events, create_supervised_trainer, create_supervised_e
 from ignite.metrics import Accuracy, Loss, Precision, Recall, MetricsLambda
 from ignite.contrib.handlers import CustomPeriodicEvent, tqdm_logger
 from ignite.handlers import EarlyStopping, ModelCheckpoint
-from ignite.contrib.handlers.param_scheduler import LRScheduler
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 
@@ -196,9 +195,8 @@ class TorchModel:
             optimizer,
             mode = 'min',
             factor = 0.1,
-            patience = 2,
-            verbose = True,
-            )
+            patience = 5,
+            verbose = True)
 
 
 
