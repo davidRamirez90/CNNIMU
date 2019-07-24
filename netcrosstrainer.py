@@ -43,12 +43,12 @@ class TorchModel:
         print('[netevaluator] - Init Crosstrain Torchmodel')
         self.type = type
         if self.type == 0:
-            self.envname = '100/1/0.001_skeleton(preMK)'
+            self.envname = 'LRPLATEAU_skeleton(preMK)'
             self.win_url = env.window_url
             self.save_model_url = env.cross_models_url
             self.load_model_url = env.marker_models_url
         else:
-            self.envname = '100/1/0.001_markers(preSK)'
+            self.envname = 'LRPLATEAU_markers(preSK)'
             self.win_url = env.marker_window_url
             self.save_model_url = env.cross_marker_models_url
             self.load_model_url = env.models_url
