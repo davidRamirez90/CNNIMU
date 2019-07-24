@@ -195,9 +195,9 @@ class TorchModel:
         step_scheduler = ReduceLROnPlateau(
             optimizer,
             mode = 'min',
-            patience = 5,
+            factor = 0.1,
+            patience = 2,
             verbose = True,
-            threshold = 0.001
             )
 
 
@@ -255,8 +255,8 @@ class TorchModel:
 
         @val_evaluator.on(Events.EPOCH_COMPLETED)
         def log_validation_results(engine):
-            pdb.set_trace()
             m = engine.state.metrics
+            step_scheduler.step(m['loss']);
             self.append_scalar_to_plot(vis, m['loss'],
                                        trainer.state.iteration,
                                        'append', train_metrics_window,
@@ -272,7 +272,7 @@ class TorchModel:
                     m['loss'],
                     m['accuracy'],
                     m['f1']))
-            step_scheduler.step(m['loss']);
+
 
         trainer.run(train_loader, max_epochs=15)
         # logger.info('Finished training after {} iterations'.format(trainer.state.iteration))
