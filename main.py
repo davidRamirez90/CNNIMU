@@ -84,7 +84,7 @@ def init(args):
         'gpucore': 'cuda:0',
         'momentum': 0.9,
         'win_len': 100,
-        'win_step': 5,
+        'win_step': 1,
         'lr': 0.0001
     }
 
