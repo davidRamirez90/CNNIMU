@@ -141,13 +141,15 @@ if __name__ == "__main__":
     # name = getName(args.type)
     configs = init(args)
 
-    for i, config in enumerate(configs):
-        tester = Tester(type=config['type'])
-        name = getName(config['type'])
-        with open('testResults.csv', mode='w') as csv_file:
-            fields = ['name', 'accuracy', 'loss', 'f1']
-            writer = csv.DictWriter(csv_file, fieldnames=fields)
-            writer.writeheader()
+    with open('testResults.csv', mode='w') as csv_file:
+        fields = ['name', 'accuracy', 'loss', 'f1']
+        writer = csv.DictWriter(csv_file, fieldnames=fields)
+        writer.writeheader()
+        for i, config in enumerate(configs):
+            tester = Tester(type=config['type'])
+            name = getName(config['type'])
+
+
             for i, iteration in enumerate(range(0,10), start=1):
                 res = tester.runTest(config, i)
                 print(res)
