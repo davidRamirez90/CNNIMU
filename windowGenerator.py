@@ -287,6 +287,7 @@ class WindowGenerator:
             for j, dir in enumerate(dataset_dict[folder]):
                 print('[WindowGen] - Saving for person {}'.format(dir))
                 files = glob.glob(self.dataset_dir.format(dir))
+                pdb.set_trace()
                 for k, file in enumerate(files):
                     print('[WindowGen] - Saving for found file {}'.format(file))
                     rawData = self.read_data(file)
