@@ -49,6 +49,13 @@ def init(args):
         3: 3
     }
 
+    names = {
+        0:"[SK]simple",
+        1: "[MK]simple",
+        2: "[SK]pretrained",
+        3: "[MK]pretrained"
+    }
+
     config = {
         'channels': 132,
         'depth': 1,
@@ -75,6 +82,7 @@ def init(args):
     for i in range(types.__len__()):
         c = copy.deepcopy(config)
         c['type'] = types[i]
+        c['name'] = names[i]
         if types[i] == 1 or types[i] == 3:
             c['channels'] = 38
             c['depth'] = 3
@@ -136,11 +144,11 @@ if __name__ == "__main__":
     for i, config in enumerate(configs):
         tester = Tester(type=config['type'])
         name = getName(config['type'])
-        with open('{}.csv'.format(name), mode='w') as csv_file:
-            fields = ['win_len', 'win_step', 'lr', 'accuracy', 'loss', 'f1']
+        with open('testResults.csv', mode='w') as csv_file:
+            fields = ['name', 'accuracy', 'loss', 'f1']
             writer = csv.DictWriter(csv_file, fieldnames=fields)
             writer.writeheader()
-            for i, iteration in enumerate(range(0,5), start=1):
+            for i, iteration in enumerate(range(0,10), start=1):
                 res = tester.runTest(config, i)
                 print(res)
                 fullr = {**config, **res}
