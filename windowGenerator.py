@@ -140,7 +140,7 @@ class WindowGenerator:
         Serializes and saves windows using pickle
         @:param windows: Object with windows to be saved to disk
         '''
-
+        
         for i, window in enumerate(tqdm.tqdm(windows)):
             label = self.getMostCommonClass(window)
             data = window[:, 1:]
@@ -258,7 +258,7 @@ class WindowGenerator:
         :return: Dataset with windows exists
         """
 
-        labels = ['train', 'validate', 'test']
+        labels = [ 'train', 'validate', 'test']
         # labels = ['test']
 
         if self.checkDirExists(self.save_dataset_dir):
@@ -287,7 +287,7 @@ class WindowGenerator:
             for j, dir in enumerate(dataset_dict[folder]):
                 print('[WindowGen] - Saving for person {}'.format(dir))
                 files = glob.glob(self.dataset_dir.format(dir))
-                pdb.set_trace()
+                #  pdb.set_trace()
                 for k, file in enumerate(files):
                     print('[WindowGen] - Saving for found file {}'.format(file))
                     rawData = self.read_data(file)
@@ -313,13 +313,8 @@ if __name__ == '__main__':
     window_step = 1
 
     wg1 = WindowGenerator(100, 1)
-    wg2 = WindowGenerator(100, 5)
-    wg3 = WindowGenerator(85, 1)
-    wg4 = WindowGenerator(85, 5)
-    wg5 = WindowGenerator(70, 1)
-    wg6 = WindowGenerator(70, 5)
     wg1.runMarkers()
-    # wg1.run()
+    wg1.run()
     # wg2.run()
     # wg3.run()
     # wg4.run()
