@@ -292,6 +292,8 @@ class WindowGenerator:
                     print('[WindowGen] - Saving for found file {}'.format(file))
                     rawData = self.read_data(file)
                     filteredData = self.removeClass(rawData, 7)
+                    if filteredData.shape[0] == 0:
+                        break;
                     normalizedData = self.normalizeData(filteredData)
                     data_windows = sliding_window(normalizedData,
                                                   (self.win_size, normalizedData.shape[1]),
