@@ -116,9 +116,9 @@ class TorchModel:
         saved_model_path = os.path.join(self.load_model_url, saved_model_name)
 
         currdict = net.state_dict()
-        pdb.set_trace()
+        # pdb.set_trace()
         for k,v in currdict.items():
-            if 'fc' in k:
+            if 'conv' in k:
                 currdict.update({k: v})
 
         net.load_state_dict(currdict)
