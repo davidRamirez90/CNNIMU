@@ -45,11 +45,11 @@ class TorchModel:
         if self.type == 0:
             self.win_url = env.window_url
             self.model_url = env.models_url
-            self.envname = "stride1_skeletons"
+            self.envname = "[V2]_skeletons"
         else:
             self.win_url = env.marker_window_url
             self.model_url = env.marker_models_url
-            self.envname = "stride1_markers"
+            self.envname = "[V2]_markers"
 
     def get_data_loaders(self, config):
 
