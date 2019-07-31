@@ -43,12 +43,12 @@ class TorchModel:
         print('[netevaluator] - Init Crosstrain Torchmodel')
         self.type = type
         if self.type == 0:
-            self.envname = 'stride1_skeleton(preMK)'
+            self.envname = '[V2]_skeleton(preMK)'
             self.win_url = env.window_url
             self.save_model_url = env.cross_models_url
             self.load_model_url = env.marker_models_url
         else:
-            self.envname = 'stride1_markers(preSK)'
+            self.envname = '[V2]_markers(preSK)'
             self.win_url = env.marker_window_url
             self.save_model_url = env.cross_marker_models_url
             self.load_model_url = env.models_url
@@ -116,7 +116,7 @@ class TorchModel:
         saved_model_path = os.path.join(self.load_model_url, saved_model_name)
 
         currdict = net.state_dict()
-
+        pdb.set_trace()
         for k,v in currdict.items():
             if 'fc' in k:
                 currdict.update({k: v})
