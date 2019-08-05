@@ -44,7 +44,7 @@ class TorchModel:
         self.type = type
         self.freeze = freeze
         if self.type == 0:
-            if self.freeze:
+            if not self.freeze:
                 self.envname = '[V2]_skeleton(preMK)'
             else:
                 self.envname = '[V2]_skeleton(preMK)(frozen)'
@@ -52,7 +52,7 @@ class TorchModel:
             self.save_model_url = env.cross_models_url
             self.load_model_url = env.marker_models_url
         else:
-            if self.freeze:
+            if not self.freeze:
                 self.envname = '[V2]_markers(preSK)'
             else:
                 self.envname = '[V2]_markers(preSK)(frozen)'
@@ -132,7 +132,7 @@ class TorchModel:
 
         for name, param in net.named_parameters():
             if 'conv' in name:
-                print(param)
+                print(name)
 
         pdb.set_trace()
 
