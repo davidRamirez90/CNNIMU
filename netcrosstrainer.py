@@ -135,7 +135,6 @@ class TorchModel:
                 if 'conv' in name:
                     param.requires_grad = False;
                     print(name)
-                    print(param.requires_grad())
 
         pdb.set_trace()
 
