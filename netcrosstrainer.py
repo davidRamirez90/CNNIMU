@@ -39,10 +39,11 @@ class TorchModel:
     """
     Allows to evaluate one instance of torch model
     """
-    def __init__(self, type, freeze):
+    def __init__(self, type, freeze, lr):
         print('[netevaluator] - Init Crosstrain Torchmodel')
         self.type = type
         self.freeze = freeze
+        self.lr = lr
         if self.type == 0:
             if not self.freeze:
                 self.envname = '[V2]_skeleton(preMK)'
@@ -281,7 +282,8 @@ class TorchModel:
         @val_evaluator.on(Events.EPOCH_COMPLETED)
         def log_validation_results(engine):
             m = engine.state.metrics
-            # step_scheduler.step(m['loss']);
+            if self.lr:
+                step_scheduler.step(m['loss'])
             self.append_scalar_to_plot(vis, m['loss'],
                                        trainer.state.iteration,
                                        'append', train_metrics_window,
