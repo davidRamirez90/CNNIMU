@@ -130,8 +130,9 @@ class TorchModel:
 
         net.load_state_dict(currdict)
 
-        for param in net.parameters():
-            print(param)
+        for name, param in net.named_parameters():
+            if 'conv' in name:
+                print(param)
 
         pdb.set_trace()
 
