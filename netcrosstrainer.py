@@ -305,6 +305,7 @@ class TorchModel:
         del training_losses_acc
         del trainer
         del val_evaluator
+        del step_scheduler
         del net
 
 
