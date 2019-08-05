@@ -130,9 +130,12 @@ class TorchModel:
 
         net.load_state_dict(currdict)
 
-        for name, param in net.named_parameters():
-            if 'conv' in name:
-                print(name)
+        if self.freeze:
+            for name, param in net.named_parameters():
+                if 'conv' in name:
+                    param.requires_grad = False;
+                    print(name)
+                    print(param.requires_grad())
 
         pdb.set_trace()
 
