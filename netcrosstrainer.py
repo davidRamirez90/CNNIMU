@@ -154,6 +154,9 @@ class TorchModel:
 
         net = self.loadPretrainedModel(config)
 
+        for param in net.parameters():
+            print(param.requires_grad)
+
         net = net.to(device)
         print(device)
         print(net)
