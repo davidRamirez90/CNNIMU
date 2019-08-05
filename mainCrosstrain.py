@@ -118,6 +118,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--core", "-c", help="Specify GPU core to use")
     parser.add_argument("--type", "-t", help="Specify net type: 0: Skeleton, 1: Markers", default=0, type=int)
+    parser.add_argument("--freeze", "-f", help="Specify if Conv Layers should be frozen", default=False, type=bool)
 
     args = parser.parse_args()
 
@@ -130,7 +131,7 @@ if __name__ == "__main__":
 
     configs = init(args)
     
-    hyParamChecker = TorchModel(args.type)
+    hyParamChecker = TorchModel(args.type, args.freeze)
 
     for i, iteration in enumerate(range(0,10), start=1):
         model_time = time.time()

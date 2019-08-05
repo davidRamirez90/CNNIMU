@@ -39,16 +39,23 @@ class TorchModel:
     """
     Allows to evaluate one instance of torch model
     """
-    def __init__(self, type):
+    def __init__(self, type, freeze):
         print('[netevaluator] - Init Crosstrain Torchmodel')
         self.type = type
+        self.freeze = freeze
         if self.type == 0:
-            self.envname = '[V2]_skeleton(preMK)'
+            if self.freeze:
+                self.envname = '[V2]_skeleton(preMK)'
+            else:
+                self.envname = '[V2]_skeleton(preMK)(frozen)'
             self.win_url = env.window_url
             self.save_model_url = env.cross_models_url
             self.load_model_url = env.marker_models_url
         else:
-            self.envname = '[V2]_markers(preSK)'
+            if self.freeze:
+                self.envname = '[V2]_markers(preSK)'
+            else:
+                self.envname = '[V2]_markers(preSK)(frozen)'
             self.win_url = env.marker_window_url
             self.save_model_url = env.cross_marker_models_url
             self.load_model_url = env.models_url
@@ -123,6 +130,11 @@ class TorchModel:
 
         net.load_state_dict(currdict)
 
+        for param in net.parameters():
+            print(param)
+
+        pdb.set_trace()
+
         return net
 
 
@@ -184,11 +196,12 @@ class TorchModel:
         # CREATING EARLY STOPPING AND SAVE HANDLERS
         checkpoint = ModelCheckpoint(
             dirname=self.save_model_url,
-            filename_prefix='[{}]-CNNIMU_{}_{}_{}'.format(
+            filename_prefix='[{}]-CNNIMU_{}_{}_{}_{}'.format(
                 iteration,
                 config['win_len'],
                 config['win_step'],
-                config['lr']),
+                config['lr'],
+                self.freeze),
             score_function=self.score_function,
             score_name='loss',
             create_dir=True,
