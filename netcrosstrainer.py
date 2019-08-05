@@ -136,8 +136,6 @@ class TorchModel:
                     param.requires_grad = False;
                     print(name)
 
-        pdb.set_trace()
-
         return net
 
 
