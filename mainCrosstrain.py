@@ -134,7 +134,7 @@ if __name__ == "__main__":
     
     hyParamChecker = TorchModel(args.type, args.freeze, args.lr)
 
-    for i, iteration in enumerate(range(0,10), start=1):
+    for i, iteration in enumerate(range(0,1), start=10):
         model_time = time.time()
         print('Executing CROSSTRAINING for MODE [{}] / ITERATION [{}]'.format(
             args.type, i))
