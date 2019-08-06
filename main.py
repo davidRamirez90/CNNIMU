@@ -110,7 +110,7 @@ def init(args):
 
 def clean_memory():
     gc.collect()
-    torch.cuda.empty_cache()
+    # torch.cuda.empty_cache()
     torch.cuda.ipc_collect()
 
 
