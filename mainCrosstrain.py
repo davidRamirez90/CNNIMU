@@ -109,7 +109,7 @@ def init(args):
 
 def clean_memory():
     gc.collect()
-    torch.cuda.empty_cache()
+    #  torch.cuda.empty_cache()
     torch.cuda.ipc_collect()
 
 
@@ -143,7 +143,7 @@ if __name__ == "__main__":
         memory_dump(configs['gpucore'])
         hyParamChecker.execute_instance(configs, i, type=args.type)
         # memory_dump(configs['gpucore'])
-        # clean_memory()
+        clean_memory()
         memory_dump(configs['gpucore'])
         print('CROSSTRAINING ---[# {}] --- [m: {}] --- Took: {:.6} seconds'.format(i, args.type, time.time() - model_time))
         logger.info('CROSSTRAINING ---[# {}] --- [m: {}] --- Took: {:.6} seconds'.format(i, args.type, time.time() - model_time))
