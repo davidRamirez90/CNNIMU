@@ -65,6 +65,7 @@ class Tester:
         # {window length} - {window step} - {Learning rate}
         
         keystr = "[{}]-CNNIMU_{}_{}_{}".format(it, config['win_len'],config['win_step'],config['lr'])
+        pdb.set_trace()
         saved_model_name = [n for n in os.listdir(self.modelurl) if keystr in n][0]
         saved_model_path = os.path.join(self.modelurl, saved_model_name)
         print(saved_model_path)
