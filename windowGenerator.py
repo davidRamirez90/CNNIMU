@@ -314,7 +314,10 @@ if __name__ == '__main__':
     window_size = 200
     window_step = 10
 
-    wg1 = WindowGenerator(window_size, window_step)
+    wg1 = WindowGenerator(200, 10)
+    wg1.runMarkers()
+    wg1.run()
+    wg1 = WindowGenerator(300, 15)
     wg1.runMarkers()
     wg1.run()
     # wg2.run()
