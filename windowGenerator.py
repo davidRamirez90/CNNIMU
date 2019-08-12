@@ -311,10 +311,10 @@ class WindowGenerator:
         return True
 
 if __name__ == '__main__':
-    window_size = 100
-    window_step = 1
+    window_size = 200
+    window_step = 10
 
-    wg1 = WindowGenerator(100, 1)
+    wg1 = WindowGenerator(window_size, window_step)
     wg1.runMarkers()
     wg1.run()
     # wg2.run()
