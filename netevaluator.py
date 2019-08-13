@@ -39,18 +39,18 @@ class TorchModel:
     """
     Allows to evaluate one instance of torch model
     """
-    def __init__(self, type, lr):
+    def __init__(self, args):
         print('[netevaluator] - Init Torchmodel')
-        self.type = type
-        self.lr = lr
+        self.type = args.type
+        self.lr = args.lr
         if self.type == 0:
             self.win_url = env.window_url
             self.model_url = env.models_url
-            self.envname = "[V2]_skeletons"
+            self.envname = "[{}|{}]_skeletons".format(args.win_len, args.win_step)
         else:
             self.win_url = env.marker_window_url
             self.model_url = env.marker_models_url
-            self.envname = "[V2]_markers"
+            self.envname = "[{}|{}]_markers".format(args.win_len, args.win_step)
 
     def get_data_loaders(self, config):
 
