@@ -83,8 +83,8 @@ def init(args):
         'noise': (0, 1e-2),
         'gpucore': 'cuda:0',
         'momentum': 0.9,
-        'win_len': 200,
-        'win_step': 10,
+        'win_len': 300,
+        'win_step': 15,
         'lr': 0.0001
     }
 
