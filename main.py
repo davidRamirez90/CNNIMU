@@ -85,7 +85,7 @@ def init(args):
         'momentum': 0.9,
         'win_len': 100,
         'win_step': 5,
-        'lr': 0.00001
+        'lr': 0.0001
     }
 
     if args.type == 1:
