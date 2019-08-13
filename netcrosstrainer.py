@@ -39,24 +39,28 @@ class TorchModel:
     """
     Allows to evaluate one instance of torch model
     """
-    def __init__(self, type, freeze, lr):
+    def __init__(self, type, freeze, lr, conf):
         print('[netevaluator] - Init Crosstrain Torchmodel')
         self.type = type
         self.freeze = freeze
         self.lr = lr
         if self.type == 0:
             if not self.freeze:
-                self.envname = '[V2]_skeleton(preMK)'
+                self.envname = '[{}|{}]_skeleton(preMK)'.format(conf['win_len'],
+                                                                conf['win_step'])
             else:
-                self.envname = '[V2]_skeleton(preMK)(frozen)'
+                self.envname = '[{}|{}]_skeleton(preMK)(frozen)'.format(conf['win_len'],
+                                                                        conf['win_step'])
             self.win_url = env.window_url
             self.save_model_url = env.cross_models_url
             self.load_model_url = env.marker_models_url
         else:
             if not self.freeze:
-                self.envname = '[V2]_markers(preSK)'
+                self.envname = '[{}|{}]_markers(preSK)'.format(conf['win_len'],
+                                                               conf['win_step'])
             else:
-                self.envname = '[V2]_markers(preSK)(frozen)'
+                self.envname = '[{}|{}]_markers(preSK)(frozen)'.format(conf['win_len'],
+                                                                       conf['win_step'])
             self.win_url = env.marker_window_url
             self.save_model_url = env.cross_marker_models_url
             self.load_model_url = env.models_url
