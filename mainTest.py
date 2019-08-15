@@ -161,6 +161,7 @@ if __name__ == "__main__":
 
     with open('testResults.csv', mode='w') as csv_file:
         fields = ['win_len','win_step','name', 'accuracy', 'loss', 'f1', 'accPerClass']
+        fieldsNoPerClass = ['win_len','win_step','name', 'accuracy', 'loss', 'f1']
         writer = csv.DictWriter(csv_file, fieldnames=fields)
         writer.writeheader()
         for i, config in enumerate(configs):
@@ -172,9 +173,12 @@ if __name__ == "__main__":
                 res = tester.runTest(config, i)
                 print(res)
                 fullr = {**config, **res}
-                filtr = {key: value for key, value in fullr.items() if key in fields}
+                filtr = {key: value for key, value in fullr.items() if key in fieldsNoPerClass}
+                # writer.writerow(filtr)
+                accPC = {key: value for key, value in res['accPerClass']}
                 pdb.set_trace()
-                writer.writerow(filtr)
+                fullFiltr = {**filtr, **accPC}
+                writer.writerow(fullFiltr)
                 clean_memory()
                 memory_dump(args.core)
                 #pdb.set_trace()
