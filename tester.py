@@ -214,7 +214,7 @@ class LabelwiseAccuracy(Accuracy):
 
         # Number of correct predictions per class
         r_class, r_amount = torch.unique(corr_preds, return_counts=True)
-
+        pdb.set_trace()
         for i, s_class in enumerate(r_class):
             self._num_correct[s_class.item()] += r_amount[i].item()
 
