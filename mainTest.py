@@ -160,7 +160,7 @@ if __name__ == "__main__":
     configs = init(args)
 
     with open('testResults.csv', mode='w') as csv_file:
-        fields = ['win_len','win_step','name', 'accuracy', 'loss', 'f1']
+        fields = ['win_len','win_step','name', 'accuracy', 'loss', 'f1', 'accPerClass']
         writer = csv.DictWriter(csv_file, fieldnames=fields)
         writer.writeheader()
         for i, config in enumerate(configs):
@@ -173,6 +173,7 @@ if __name__ == "__main__":
                 print(res)
                 fullr = {**config, **res}
                 filtr = {key: value for key, value in fullr.items() if key in fields}
+                pdb.set_trace()
                 writer.writerow(filtr)
                 clean_memory()
                 memory_dump(args.core)
