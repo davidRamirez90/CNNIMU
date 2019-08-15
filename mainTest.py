@@ -176,7 +176,7 @@ if __name__ == "__main__":
                 filtr = {key: value for key, value in fullr.items() if key in fieldsShort}
                 # writer.writerow(filtr)
                 accList = res['accPerClass']
-                accPc = { "acc_[{}]".format(i): accList[i] for i in range(0, len(accList))}
+                accPc = { "acc_[{}]".format(i): accList[i].item() for i in range(0, len(accList))}
                 pdb.set_trace()
                 fullFiltr = {**filtr, **accPc}
                 writer.writerow(fullFiltr)
