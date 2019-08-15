@@ -226,7 +226,6 @@ class LabelwiseAccuracy(Accuracy):
         self._num_correct += true_examples
         self._num_examples += all_examples
 
-        pdb.set_trace()
 
     def compute(self):
         if self._num_examples == 0:
