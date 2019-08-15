@@ -177,7 +177,6 @@ if __name__ == "__main__":
                 # writer.writerow(filtr)
                 accList = res['accPerClass']
                 accPc = { "acc_[{}]".format(i): accList[i].item() for i in range(0, len(accList))}
-                pdb.set_trace()
                 fullFiltr = {**filtr, **accPc}
                 writer.writerow(fullFiltr)
                 clean_memory()
