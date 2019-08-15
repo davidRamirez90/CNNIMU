@@ -228,6 +228,7 @@ class LabelwiseAccuracy(Accuracy):
 
 
     def compute(self):
-        if self._num_examples == 0:
-            raise NotComputableError('Accuracy must have at least one example before it can be computed.')
-        return self._num_correct.type(torch.float) / self._num_examples
+        if not (isinstance(self._positives, torch.Tensor) or self._positives > 0):
+            raise NotComputableError("{} must have at least one example before"
+                                     " it can be computed.".format(self.__class__.__name__))
+        return self._num_correct / self._num_examples
