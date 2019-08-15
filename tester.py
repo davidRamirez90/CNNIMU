@@ -197,29 +197,31 @@ class LabelwiseAccuracy(Accuracy):
         super(LabelwiseAccuracy, self).__init__(output_transform=output_transform)
 
     def reset(self):
-        self._num_correct = None
-        self._num_examples = 0
+        self._num_correct = {}
+        self._num_examples = {}
         super(LabelwiseAccuracy, self).reset()
 
     def update(self, output):
 
-        pdb.set_trace()
         y_pred, y = self._check_shape(output)
         self._check_type((y_pred, y))
 
-        num_classes = y_pred.size(1)
-        last_dim = y_pred.ndimension()
-        y_pred = torch.transpose(y_pred, 1, last_dim - 1).reshape(-1, num_classes)
-        y = torch.transpose(y, 1, last_dim - 1).reshape(-1, num_classes)
-        correct_exact = torch.all(y == y_pred.type_as(y), dim=-1)  # Sample-wise
-        correct_elementwise = torch.sum(y == y_pred.type_as(y), dim=0)
+        indices = torch.argmax(y_pred, dim=1)   # predicted classes
+        correct = torch.eq(indices, y).view(-1) # indices of correctly pred classes
+        corr_preds = indices[correct]           # filtered array with only predicted
+        # Total number of predictions per class
+        p_class, p_amount = torch.unique(indices, return_counts=True)
 
-        if self._num_correct is not None:
-            self._num_correct = torch.add(self._num_correct,
-                                                    correct_elementwise)
-        else:
-            self._num_correct = correct_elementwise
-        self._num_examples += correct_exact.shape[0]
+        # Number of correct predictions per class
+        r_class, r_amount = torch.unique(corr_preds, return_counts=True)
+
+        for i, s_class in enumerate(r_class):
+            self._num_correct[s_class.item()] += r_amount[i].item()
+
+        for i, s_class in enumerate(p_class):
+            self._num_examples[s_class.item()] += p_amount[i].item()
+
+        pdb.set_trace()
 
     def compute(self):
         if self._num_examples == 0:
