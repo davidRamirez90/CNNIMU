@@ -203,6 +203,7 @@ class LabelwiseAccuracy(Accuracy):
 
     def update(self, output):
 
+        pdb.set_trace()
         y_pred, y = self._check_shape(output)
         self._check_type((y_pred, y))
 
