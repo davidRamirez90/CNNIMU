@@ -72,7 +72,7 @@ def init(args):
         'momentum': 0.9,
         'win_len': 100,
         'win_step': 5,
-        'lr': 0.00001
+        'lr': 0.0001
     }
 
     if args.core:
@@ -142,7 +142,7 @@ if __name__ == "__main__":
     configs = init(args)
 
     with open('testResults.csv', mode='w') as csv_file:
-        fields = ['name', 'accuracy', 'loss', 'f1']
+        fields = ['win_len','win_step','name', 'accuracy', 'loss', 'f1']
         writer = csv.DictWriter(csv_file, fieldnames=fields)
         writer.writeheader()
         for i, config in enumerate(configs):

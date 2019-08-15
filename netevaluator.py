@@ -148,6 +148,7 @@ class TorchModel:
 
         metrics = {
             'accuracy': Accuracy(),
+            'accPerClass': LabelwiseAccuracy(),
             'loss': Loss(criterion),
             'precision': precision,
             'recall': recall,
@@ -257,6 +258,8 @@ class TorchModel:
         @val_evaluator.on(Events.EPOCH_COMPLETED)
         def log_validation_results(engine):
             m = engine.state.metrics
+            print(m)
+            pdb.set_trace()
             if self.lr:
                 step_scheduler.step(m['loss'])
             self.append_scalar_to_plot(vis, m['loss'],
@@ -306,3 +309,39 @@ class GaussianNoise(object):
         if self.type == 0 or self.type == 2:
             data = np.expand_dims(data, 0)
         return (data, label)
+
+
+class LabelwiseAccuracy(Accuracy):
+    def __init__(self, output_transform=lambda x: x):
+        self._num_correct = None
+        self._num_examples = None
+        super(LabelwiseAccuracy, self).__init__(output_transform=output_transform)
+
+    def reset(self):
+        self._num_correct = None
+        self._num_examples = 0
+        super(LabelwiseAccuracy, self).reset()
+
+    def update(self, output):
+
+        y_pred, y = self._check_shape(output)
+        self._check_type((y_pred, y))
+
+        num_classes = y_pred.size(1)
+        last_dim = y_pred.ndimension()
+        y_pred = torch.transpose(y_pred, 1, last_dim - 1).reshape(-1, num_classes)
+        y = torch.transpose(y, 1, last_dim - 1).reshape(-1, num_classes)
+        correct_exact = torch.all(y == y_pred.type_as(y), dim=-1)  # Sample-wise
+        correct_elementwise = torch.sum(y == y_pred.type_as(y), dim=0)
+
+        if self._num_correct is not None:
+            self._num_correct = torch.add(self._num_correct,
+                                                    correct_elementwise)
+        else:
+            self._num_correct = correct_elementwise
+        self._num_examples += correct_exact.shape[0]
+
+    def compute(self):
+        if self._num_examples == 0:
+            raise NotComputableError('Accuracy must have at least one example before it can be computed.')
+        return self._num_correct.type(torch.float) / self._num_examples
