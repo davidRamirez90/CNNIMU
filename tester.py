@@ -10,6 +10,7 @@ from ignite.engine import Events, create_supervised_evaluator
 from ignite.metrics import Accuracy, Loss, Precision, Recall, MetricsLambda
 from ignite.contrib.handlers import tqdm_logger
 from ignite.exceptions import NotComputableError
+from ignite.utils import to_onehot
 
 
 import env
@@ -197,8 +198,8 @@ class LabelwiseAccuracy(Accuracy):
         super(LabelwiseAccuracy, self).__init__(output_transform=output_transform)
 
     def reset(self):
-        self._num_correct = {}
-        self._num_examples = {}
+        self._num_correct = torch.DoubleTensor(0)
+        self._num_examples = torch.DoubleTensor(0)
         super(LabelwiseAccuracy, self).reset()
 
     def update(self, output):
@@ -206,20 +207,24 @@ class LabelwiseAccuracy(Accuracy):
         y_pred, y = self._check_shape(output)
         self._check_type((y_pred, y))
 
-        indices = torch.argmax(y_pred, dim=1)   # predicted classes
-        correct = torch.eq(indices, y).view(-1) # indices of correctly pred classes
-        corr_preds = indices[correct]           # filtered array with only predicted
-        # Total number of predictions per class
-        p_class, p_amount = torch.unique(indices, return_counts=True)
+        num_classes = y_pred.size(1)
+        y = to_onehot(y.view(-1), num_classes=num_classes)
+        indices = torch.argmax(y_pred, dim=1).view(-1)
+        y_pred = to_onehot(indices, num_classes=num_classes)
 
-        # Number of correct predictions per class
-        r_class, r_amount = torch.unique(corr_preds, return_counts=True)
-        pdb.set_trace()
-        for i, s_class in enumerate(r_class):
-            self._num_correct[s_class.item()] += r_amount[i].item()
+        y = y.type_as(y_pred)
+        correct = y * y_pred
+        all_examples = y_pred.sum(dim=0).type(torch.DoubleTensor)
 
-        for i, s_class in enumerate(p_class):
-            self._num_examples[s_class.item()] += p_amount[i].item()
+        if correct.sum() == 0:
+            true_examples = torch.zeros_like(all_examples)
+        else:
+            true_examples = correct.sum(dim=0)
+
+        true_examples = true_examples.type(torch.DoubleTensor)
+
+        self._num_correct += true_examples
+        self._num_examples += all_examples
 
         pdb.set_trace()
 
