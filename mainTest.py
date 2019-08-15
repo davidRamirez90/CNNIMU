@@ -174,6 +174,7 @@ if __name__ == "__main__":
                 print(res)
                 fullr = {**config, **res}
                 filtr = {key: value for key, value in fullr.items() if key in fieldsNoPerClass}
+                pdb.set_trace()
                 # writer.writerow(filtr)
                 accPC = {key: value for key, value in res['accPerClass']}
                 pdb.set_trace()
