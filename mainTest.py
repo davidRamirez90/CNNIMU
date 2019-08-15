@@ -160,8 +160,8 @@ if __name__ == "__main__":
     configs = init(args)
 
     with open('testResults.csv', mode='w') as csv_file:
-        fields = ['win_len','win_step','name', 'accuracy', 'loss', 'f1', 'accPerClass']
-        fieldsNoPerClass = ['win_len','win_step','name', 'accuracy', 'loss', 'f1']
+        fields = ['win_len','win_step','name', 'accuracy', 'loss', 'f1', 'acc_[0]', 'acc_[1]', 'acc_[2]', 'acc_[3]', 'acc_[4]', 'acc_[5]', 'acc_[6]']
+        fieldsShort = ['win_len', 'win_step', 'name', 'accuracy', 'loss', 'f1']
         writer = csv.DictWriter(csv_file, fieldnames=fields)
         writer.writeheader()
         for i, config in enumerate(configs):
@@ -173,12 +173,12 @@ if __name__ == "__main__":
                 res = tester.runTest(config, i)
                 print(res)
                 fullr = {**config, **res}
-                filtr = {key: value for key, value in fullr.items() if key in fieldsNoPerClass}
-                pdb.set_trace()
+                filtr = {key: value for key, value in fullr.items() if key in fieldsShort}
                 # writer.writerow(filtr)
-                accPC = {key: value for key, value in res['accPerClass']}
+                accList = res['accPerClass']
+                accPc = { "acc_[{}]".format(i): accList[i] for i in range(0, len(accList))}
                 pdb.set_trace()
-                fullFiltr = {**filtr, **accPC}
+                fullFiltr = {**filtr, **accPc}
                 writer.writerow(fullFiltr)
                 clean_memory()
                 memory_dump(args.core)
