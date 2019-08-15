@@ -158,7 +158,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     # name = getName(args.type)
     configs = init(args)
-    pdb.set_trace()
 
     with open('testResults.csv', mode='w') as csv_file:
         fields = ['win_len','win_step','name', 'accuracy', 'loss', 'f1']
