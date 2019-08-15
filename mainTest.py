@@ -49,8 +49,23 @@ def init(args):
         3: 3
     }
 
+    windows = {
+        0: {
+            'win_len': 100,
+            'win_step': 5
+        },
+        1: {
+            'win_len': 150,
+            'win_step': 7
+        },
+        2: {
+            'win_len': 200,
+            'win_step': 10
+        }
+    }
+
     names = {
-        0:"[SK]simple",
+        0: "[SK]simple",
         1: "[MK]simple",
         2: "[SK]pretrained",
         3: "[MK]pretrained"
@@ -80,13 +95,16 @@ def init(args):
         config['gpucore'] = "cuda:{}".format(args.core)
 
     for i in range(types.__len__()):
-        c = copy.deepcopy(config)
-        c['type'] = types[i]
-        c['name'] = names[i]
-        if types[i] == 1 or types[i] == 3:
-            c['channels'] = 38
-            c['depth'] = 3
-        configArr.append(c)
+        for j in range(windows.__len__()):
+            c = copy.deepcopy(config)
+            c['type'] = types[i]
+            c['name'] = names[i]
+            c['win_len'] = windows[j]['win_len']
+            c['win_step'] = windows[j]['win_step']
+            if types[i] == 1 or types[i] == 3:
+                c['channels'] = 38
+                c['depth'] = 3
+            configArr.append(c)
 
     # return config
     return configArr
@@ -140,6 +158,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     # name = getName(args.type)
     configs = init(args)
+    pdb.set_trace()
 
     with open('testResults.csv', mode='w') as csv_file:
         fields = ['win_len','win_step','name', 'accuracy', 'loss', 'f1']
