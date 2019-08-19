@@ -7,7 +7,7 @@ from torch import nn
 import torch
 
 from ignite.engine import Events, create_supervised_evaluator
-from ignite.metrics import Accuracy, Loss, Precision, Recall, MetricsLambda
+from ignite.metrics import Accuracy, Loss, Precision, Recall, MetricsLambda, ConfusionMatrix
 from ignite.contrib.handlers import tqdm_logger
 from ignite.exceptions import NotComputableError
 from ignite.utils import to_onehot
@@ -116,6 +116,7 @@ class Tester:
         metrics = {
             'accuracy': Accuracy(),
             'accPerClass': LabelwiseAccuracy(),
+            'confMatrix': ConfusionMatrix(),
             'loss': Loss(criterion),
             'precision': precision,
             'recall': recall,
