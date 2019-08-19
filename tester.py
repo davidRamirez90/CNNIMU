@@ -116,7 +116,7 @@ class Tester:
         metrics = {
             'accuracy': Accuracy(),
             'accPerClass': LabelwiseAccuracy(),
-            'confMatrix': ConfusionMatrix(),
+            'confMatrix': ConfusionMatrix(num_classes=7),
             'loss': Loss(criterion),
             'precision': precision,
             'recall': recall,
