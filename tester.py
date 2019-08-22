@@ -158,7 +158,7 @@ class Tester:
                                                                   m['accuracy'],
                                                                   m['f1']))
 
-        print tester
+        print(tester)
         return tester
         
         
