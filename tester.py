@@ -160,7 +160,9 @@ class Tester:
     def runTest(self, config, it):
         # GET DATA AND TESTER
         test_loader, test_len = self.get_data_loader(config)
+        pdb.set_trace()
         tester = self.create_supervisor(config, it)
+        pdb.set_trace()
         
         # RUN TEST
         tester.run(test_loader)
