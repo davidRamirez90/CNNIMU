@@ -175,7 +175,6 @@ if __name__ == "__main__":
             for i, iteration in enumerate(range(0,10), start=1):
                 res = tester.runTest(config, i)
                 print(res)
-                pdb.set_trace()
                 fullr = {**config, **res}
                 filtr = {key: value for key, value in fullr.items() if key in fieldsShort}
                 # writer.writerow(filtr)
