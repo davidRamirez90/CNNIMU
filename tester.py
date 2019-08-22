@@ -157,6 +157,8 @@ class Tester:
                                                                   m['loss'],
                                                                   m['accuracy'],
                                                                   m['f1']))
+
+        print tester
         return tester
         
         
