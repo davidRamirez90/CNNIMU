@@ -48,11 +48,17 @@ class TorchModel:
             self.model_url = env.models_url
             self.envname = "[{}|{}]_skeletons".format(conf['win_len'],
                                                       conf['win_step'])
-        else:
+        elif self.type == 1:
             self.win_url = env.marker_window_url
             self.model_url = env.marker_models_url
             self.envname = "[{}|{}]_markers".format(conf['win_len'],
                                                     conf['win_step'])
+        else:
+            self.win_url = env.accel_window_url
+            self.model_url = env.accel_models_url
+            self.envname = "[{}|{}]_accel".format(conf['win_len'],
+                                                  conf['win_step'])
+
 
     def get_data_loaders(self, config):
 
@@ -208,8 +214,15 @@ class TorchModel:
         # CREATING VISDOM INITIAL GRAPH OBJECTS
 
         train_metrics_window = self.create_plot_window(
-            vis, '# Iterations', 'Loss', 'Val / Train Losses W [{}/{}] - LR [{}]'.format(
-                config['win_len'], config['win_step'], config['lr']), 'trainingloss')
+            vis,
+            '# Iterations',
+            'Loss',
+            '[{}] Val / Train Losses W [{}/{}] - LR [{}]'.format(
+                iteration,
+                config['win_len'],
+                config['win_step'],
+                config['lr']),
+            'trainingloss')
         self.append_plot_to_window(
             vis,
             train_metrics_window,
@@ -219,13 +232,20 @@ class TorchModel:
             vis,
             '# Iterations',
             'Accuracy',
-            'Validation Accuracy W [{}/{}] - LR [{}]'.format(
+            '[{}] Validation Accuracy W [{}/{}] - LR [{}]'.format(
+                iteration,
                 config['win_len'],
                 config['win_step'],
                 config['lr']))
         val_f1_window = self.create_plot_window(
-            vis, '# Iterations', 'F1', 'F1 score W [{}/{}] - LR [{}]'.format(
-                config['win_len'], config['win_step'], config['lr']))
+            vis,
+            '# Iterations',
+            'F1',
+            '[{}] F1 score W [{}/{}] - LR [{}]'.format(
+                iteration,
+                config['win_len'],
+                config['win_step'],
+                config['lr']))
 
         training_losses_acc = list()
 
@@ -307,7 +327,8 @@ class GaussianNoise(object):
         data += np.random.normal(self.mu,
                                  self.sigma,
                                  data.shape)
-        if self.type == 0 or self.type == 2:
+        # THIS TWO TYPES BELONG TO SKELETON TRAINING NEED EXPANDED DIMS
+        if self.type == 0 or self.type == 4:
             data = np.expand_dims(data, 0)
         return (data, label)
 

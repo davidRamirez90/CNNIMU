@@ -45,8 +45,8 @@ def init(args):
     types = {
         0: 0,
         1: 1,
-        2: 2,
-        3: 3
+        2: 4,
+        3: 5
     }
 
     windows = {
@@ -67,8 +67,8 @@ def init(args):
     names = {
         0: "[SK]simple",
         1: "[MK]simple",
-        2: "[SK]pretrained",
-        3: "[MK]pretrained"
+        4: "[SK]pretrained",
+        5: "[MK]pretrained"
     }
 
     config = {
@@ -101,7 +101,7 @@ def init(args):
             c['name'] = names[i]
             c['win_len'] = windows[j]['win_len']
             c['win_step'] = windows[j]['win_step']
-            if types[i] == 1 or types[i] == 3:
+            if types[i] == 1 or types[i] == 5:
                 c['channels'] = 38
                 c['depth'] = 3
             configArr.append(c)
@@ -142,9 +142,9 @@ def getName(type):
         return "[SK]simple"
     elif type == 1:
         return "[MK]simple"
-    elif type == 2:
+    elif type == 4:
         return "[SK]pretrained"
-    elif type == 3:
+    elif type == 5:
         return "[MK]pretrained"
 
 
