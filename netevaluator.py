@@ -280,7 +280,6 @@ class TorchModel:
         def log_validation_results(engine):
             m = engine.state.metrics
             print(m)
-            pdb.set_trace()
             if self.lr:
                 step_scheduler.step(m['loss'])
             self.append_scalar_to_plot(vis, m['loss'],
