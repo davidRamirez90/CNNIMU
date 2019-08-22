@@ -116,8 +116,10 @@ class TorchModel:
                                  config['win_step'])
         if type == 0:
             win_generated = winGen.run()
-        else:
+        elif type == 1:
             win_generated = winGen.runMarkers()
+        else:
+            win_generated = winGen.runDerivation()
 
         assert win_generated
 

@@ -5,9 +5,6 @@ import matplotlib.pyplot as plt
 import pdb
 
 
-sequrl = "/vol/corpora/har/MoCap/recordings_2019/03_Markers_Exports/{}"
-
-
 def read_data(path):
         '''
         Reads CSV file from path
@@ -75,15 +72,23 @@ if __name__ == "__main__":
 
     print("Starting program execution")
 
-    # d = read_data(sequrl.format('Subject01_01.csv'))
     # d2 = coords_to_channels(d)
     # d = d[:,0].astype(float)
     #
     # calculate(d)
 
-    x = np.arange(0, 10, (1/120))
-    y = np.sin(x)
+    x1 = np.arange(0, 1, (1/120))
+    x2 = np.arange(1, 2, (1/120))
+    x3 = np.arange(2, 3, (1 / 120))
+    x4 = np.arange(3, 4, (1 / 120))
+    mat_x = np.vstack((x1,x2,x3,x4)).transpose()
+    y = np.sin(x1)
+    mat_y = np.sin(mat_x)
     calculate(y)
     print(y)
 
 
+class AccVelDerivator:
+
+    def __init__(self):
+        print("Initiating Derivator")

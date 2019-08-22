@@ -37,6 +37,7 @@ class WindowGenerator:
         self.save_dataset_dir = env.window_url
         self.markerset_dir = env.markers_url
         self.save_marker_dataset_dir = env.marker_window_url
+        self.save_accel_dataset_dir = env.accel_window_url
 
 
     def read_data(self, path):
@@ -310,16 +311,135 @@ class WindowGenerator:
 
         return True
 
-if __name__ == '__main__':
-    window_size = 200
-    window_step = 10
+    def plot(self, data, t, fulldata):
+        (pos, vel, acc) = data
+        fig, axis = plt.subplots(3, 1)
+        axis[0].plot(t, pos)
+        axis[0].set_xlabel('Time')
+        axis[0].set_ylabel('pos')
+        axis[1].plot(t, vel)
+        axis[1].set_xlabel('Velocity')
+        axis[1].set_ylabel('vel')
+        axis[2].plot(t, acc)
+        axis[2].set_xlabel('Acceleration')
+        axis[2].set_ylabel('acc')
+        plt.show()
 
-    wg1 = WindowGenerator(200, 10)
+    def calculate(self, data):
+        dt = 1 / 120
+        seconds = data.shape[0] / 120
+        time = np.arange(0, seconds, dt).reshape(-1,1)
+        time = np.repeat(time, data.shape[1], axis=1)
+        pos = data
+        vel = self.diff(pos, dt)
+        acc = self.diff(vel, dt)
+
+        # self.plot((np.resize(pos, (300, acc.shape[1]))[:,1].reshape(-1,1),
+        #            np.resize(vel, (300, acc.shape[1]))[:,1].reshape(-1,1),
+        #            np.resize(acc, (300, acc.shape[1]))[:,1].reshape(-1,1)),
+        #           np.resize(time, (300, acc.shape[1]))[:,1].reshape(-1,1),
+        #           acc)
+
+        return (vel, acc)
+
+
+    def diff(self, base, dt):
+        dbase = list()
+        for i, pos in enumerate(base):
+            if i == 0:
+                prevpos = pos
+            else:
+                dif = (pos - prevpos) / dt
+                dbase.append(dif)
+                prevpos = pos
+        return np.asarray(dbase)
+
+
+    def runDerivation(self):
+        """
+        Main function to generate new windows for marker derivated accel dataset
+        :return: Dataset with windows exists
+        """
+
+        labels = ['train', 'validate', 'test']
+
+        if self.checkDirExists(self.save_accel_dataset_dir):
+            print('[WindowGen] - Dataset already exists, skipping generation...')
+            return True
+        else:
+            for folder in labels:
+                os.makedirs(self.save_accel_dataset_dir.format(self.win_size,
+                                                                self.win_stride,
+                                                                folder))
+        markers_dict = dict(
+            train=['01', '02', '03'],
+            validate=['04'],
+            test=['05', '06']
+        )
+
+        print('[WindowGen] - Creating Training Windows')
+
+        start = time.time()
+
+        for i, folder in enumerate(labels):
+            print('[WindowGen] - Saving on folder {}'.format(folder))
+            win_amount = 0
+            for j, dir in enumerate(markers_dict[folder]):
+                skeletondir = 'P{}'.format(dir)
+                files = glob.glob(self.dataset_dir.format(skeletondir))
+                for k, file in enumerate(files):
+                    print('[WindowGen] - Saving for found file {}'.format(file))
+                    # pdb.set_trace()
+                    try:
+                        markerseq = re.search('P[0-9]*_R(.+?)_A[0-9]*', file).group(1)
+                        markerfile = self.markerset_dir.format(dir, markerseq)
+                        skdata = self.read_data(file)
+                        mkdata = self.read_data_markers(markerfile).astype('float64')
+                        (_, accdata) = self.calculate(mkdata)
+                        labels = skdata[0:accdata.shape[0], 0].reshape((-1, 1))
+                        nanfilter = np.isnan(accdata).any(axis=1)
+                        labels = labels[~nanfilter]
+                        accdata = accdata[~nanfilter]
+                        filteredData, filteredLabels = self.removeClassMarkers(accdata, labels,
+                                                                               7)  # Removed unused 7 class
+                        if filteredData.shape[0] == 0:
+                            break;
+                        normalizedData = self.normalizeData(filteredData,
+                                                            haslabels=False)  # Normalize data per sensor channel
+                        stackedData = self.coords_to_channels(normalizedData)  # (X,Y,Z) coords to Channels(dims)
+                        # pdb.set_trace()
+                        data_windows = sliding_window(stackedData,
+                                                      (stackedData.shape[0], self.win_size, stackedData.shape[2]),
+                                                      (1, self.win_stride, 1))
+                        label_windows = sliding_window(filteredLabels,
+                                                       (self.win_size, labels.shape[1]),
+                                                       (self.win_stride, 1))
+
+                        win_amount = self.saveMarkerWindows(data_windows,
+                                                            label_windows,
+                                                            self.save_accel_dataset_dir.format(self.win_size,
+                                                                                                self.win_stride,
+                                                                                                folder),
+                                                            win_amount)
+                    except AttributeError:
+                        print('something wrong on regexp side')
+
+        end = time.time()
+        t = end - start
+        print('[WindowGen] - Process has been finished after: {}'.format(t))
+
+        return True
+
+
+if __name__ == '__main__':
+
+    wg1 = WindowGenerator(100, 5)
     wg1.runMarkers()
-    wg1.run()
-    wg1 = WindowGenerator(300, 15)
-    wg1.runMarkers()
-    wg1.run()
+    # wg1.runDerivation()
+    # wg1.run()
+    # wg1 = WindowGenerator(300, 15)
+    # wg1.runMarkers()
+    # wg1.run()
     # wg2.run()
     # wg3.run()
     # wg4.run()
