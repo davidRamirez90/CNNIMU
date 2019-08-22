@@ -78,6 +78,9 @@ class Tester:
         # self.filterStateDict(saved_model_path, net)
         net.load_state_dict(torch.load(saved_model_path))
         net = net.to(device)
+
+        print(net)
+        print(device)
         
         return net, device
     
