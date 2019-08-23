@@ -42,11 +42,15 @@ def init(args):
         3: 5
     }
 
+    # types = {
+    #     0: 0,
+    #     1: 1,
+    #     2: 2,
+    #     3: 3,
+    #     4: 4
+    # }
     types = {
-        0: 0,
-        1: 1,
-        2: 4,
-        3: 5
+        0: 2
     }
 
     windows = {
@@ -67,8 +71,9 @@ def init(args):
     names = {
         0: "[SK]simple",
         1: "[MK]simple",
-        4: "[SK]pretrained",
-        5: "[MK]pretrained"
+        2: "[ACC]simple",
+        3: "[SK]pretrained",
+        4: "[MK]pretrained"
     }
 
     config = {
@@ -101,7 +106,7 @@ def init(args):
             c['name'] = names[i]
             c['win_len'] = windows[j]['win_len']
             c['win_step'] = windows[j]['win_step']
-            if types[i] == 1 or types[i] == 5:
+            if types[i] == 1 or args.type == 2 or types[i] == 4:
                 c['channels'] = 38
                 c['depth'] = 3
             configArr.append(c)
@@ -142,9 +147,9 @@ def getName(type):
         return "[SK]simple"
     elif type == 1:
         return "[MK]simple"
-    elif type == 4:
+    elif type == 3:
         return "[SK]pretrained"
-    elif type == 5:
+    elif type == 4:
         return "[MK]pretrained"
 
 
@@ -152,7 +157,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--core", "-c", help="Specify GPU core to use", default=0, type=int)
-    parser.add_argument("--type", "-t", help="Specify net type: 0: Skeleton, 1: Markers, 2: PreSkeleton, 3: PreMarkers", default=0, type=int)
+    parser.add_argument("--type", "-t", help="Specify net type: 0: Skeleton, 1: Markers, 2: Deriv ,3: PreSkeleton, 4: PreMarkers", default=0, type=int)
 
 
     args = parser.parse_args()

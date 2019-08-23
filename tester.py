@@ -33,9 +33,12 @@ class Tester:
             self.modelurl = env.marker_models_url
             self.dataurl = env.marker_window_url
         elif type == 2:
+            self.modelurl = env.accel_models_url
+            self.dataurl = env.accel_window_url
+        elif type == 3:
             self.modelurl = env.cross_models_url
             self.dataurl = env.window_url
-        elif type == 3:
+        elif type == 4:
             self.modelurl = env.cross_marker_models_url
             self.dataurl = env.marker_window_url
 

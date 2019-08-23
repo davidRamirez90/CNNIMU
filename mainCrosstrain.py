@@ -87,7 +87,7 @@ def init(args):
         'lr': 0.0001
     }
 
-    if args.type == 1:
+    if args.type == 1 or args.type == 2:
         config['channels'] = 38
         config['depth'] = 3
 
