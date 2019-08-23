@@ -57,14 +57,6 @@ def init(args):
         0: {
             'win_len': 100,
             'win_step': 5
-        },
-        1: {
-            'win_len': 150,
-            'win_step': 7
-        },
-        2: {
-            'win_len': 200,
-            'win_step': 10
         }
     }
 
@@ -103,10 +95,10 @@ def init(args):
         for j in range(windows.__len__()):
             c = copy.deepcopy(config)
             c['type'] = types[i]
-            c['name'] = names[i]
+            c['name'] = names[types[i]]
             c['win_len'] = windows[j]['win_len']
             c['win_step'] = windows[j]['win_step']
-            if types[i] == 1 or args.type == 2 or types[i] == 4:
+            if types[i] == 1 or types[i] == 2 or types[i] == 4:
                 c['channels'] = 38
                 c['depth'] = 3
             configArr.append(c)
