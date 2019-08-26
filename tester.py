@@ -74,7 +74,7 @@ class Tester:
         saved_model_name = [n for n in os.listdir(self.modelurl) if keystr in n][0]
         saved_model_path = os.path.join(self.modelurl, saved_model_name)
         print(saved_model_path)
-        pdb.set_trace()
+        #pdb.set_trace()
         device = torch.device(
             config['gpucore'] if torch.cuda.is_available() else "cpu")
         net = CNN_IMU(config)
@@ -123,7 +123,6 @@ class Tester:
         metrics = {
             'accuracy': Accuracy(),
             'accPerClass': LabelwiseAccuracy(),
-            'confMatrix': ConfusionMatrix(num_classes=7),
             'loss': Loss(criterion),
             'precision': precision,
             'recall': recall,
@@ -169,9 +168,9 @@ class Tester:
     def runTest(self, config, it):
         # GET DATA AND TESTER
         test_loader, test_len = self.get_data_loader(config)
-        pdb.set_trace()
+        #pdb.set_trace()
         tester = self.create_supervisor(config, it)
-        pdb.set_trace()
+        #pdb.set_trace()
         
         # RUN TEST
         tester.run(test_loader)
