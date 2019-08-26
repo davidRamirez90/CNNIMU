@@ -215,6 +215,7 @@ class customConfusionMatrix(Metric):
         super(customConfusionMatrix, self).__init__(output_transform=output_transform)
 
     def reset(self):
+        pdb.set_trace()
         self.confusion_matrix = torch.zeros(self.num_classes, self.num_classes, dtype=torch.float, device=self.device)
         self._num_examples = 0
 
