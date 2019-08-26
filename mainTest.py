@@ -158,9 +158,9 @@ if __name__ == "__main__":
 
     with open('testResults.csv', mode='w') as csv_file:
         fields = ['win_len','win_step','name', 'accuracy', 'loss', 'f1', 'acc_[0]', 'acc_[1]', 'acc_[2]', 'acc_[3]', 'acc_[4]', 'acc_[5]', 'acc_[6]']
-        #for i in range(0, 7):
-            #for j in range(0, 7):
-                #fields.append("CM{}{}".format(i, j))
+        for i in range(0, 7):
+            for j in range(0, 7):
+                fields.append("CM{}{}".format(i, j))
         fieldsShort = ['win_len', 'win_step', 'name', 'accuracy', 'loss', 'f1']
         writer = csv.DictWriter(csv_file, fieldnames=fields)
         writer.writeheader()
@@ -177,10 +177,10 @@ if __name__ == "__main__":
                 # writer.writerow(filtr)
                 accList = res['accPerClass']
                 accPc = { "acc_[{}]".format(i): accList[i].item() for i in range(0, len(accList))}
-                #confMat = res['confMatrix']
-                #confList = {"CM{}{}".format(i,j): confMat[i][j].item() for i in range(0, len(confMat)) for j in range(0, len(confMat))}
-                fullFiltr = {**filtr, **accPc}
-                #fullFiltr = {**filtr, **accPc, **confList}
+                confMat = res['confMatrix']
+                confList = {"CM{}{}".format(i,j): confMat[i][j].item() for i in range(0, len(confMat)) for j in range(0, len(confMat))}
+                #fullFiltr = {**filtr, **accPc}
+                fullFiltr = {**filtr, **accPc, **confList}
                 writer.writerow(fullFiltr)
                 clean_memory()
                 memory_dump(args.core)
