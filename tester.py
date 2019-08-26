@@ -261,9 +261,6 @@ class customConfusionMatrix(Metric):
 
         if self.confusion_matrix.type() != y_ohe_t.type():
             self.confusion_matrix = self.confusion_matrix.type_as(y_ohe_t)
-        print("confmat: {}".format(self.confusion_matrix.device))
-        print("y_ohe_t: {}".format(y_ohe_t.device))
-        print("y_pred_ohe: {}".format(y_pred_ohe.device))
         self.confusion_matrix += torch.matmul(y_ohe_t, y_pred_ohe).float()
         self._num_examples += y_pred.shape[0]
 
