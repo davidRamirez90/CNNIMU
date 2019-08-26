@@ -113,7 +113,7 @@ class Tester:
         return (precision * recall * 2 / (precision + recall + 1e-20)).mean()
     
     
-    def get_metrics(self):
+    def get_metrics(self, device):
         
         criterion = nn.CrossEntropyLoss()
         
@@ -123,7 +123,7 @@ class Tester:
         metrics = {
             'accuracy': Accuracy(),
             'accPerClass': LabelwiseAccuracy(),
-            'confMatrix': customConfusionMatrix(num_classes=7),
+            'confMatrix': customConfusionMatrix(num_classes=7, device=device),
             'loss': Loss(criterion),
             'precision': precision,
             'recall': recall,
@@ -139,7 +139,7 @@ class Tester:
         net, device = self.load_checkpoint(config, it)
         
         # SET METRICS
-        metrics = self.get_metrics()
+        metrics = self.get_metrics(device=device)
         
         # CREATE IGNITE TESTER
         tester = create_supervised_evaluator(net,
@@ -203,7 +203,7 @@ class Tester:
 #
 
 class customConfusionMatrix(Metric):
-    def __init__(self, num_classes, average=None, output_transform=lambda x: x):
+    def __init__(self, num_classes, device, average=None, output_transform=lambda x: x):
         if average is not None and average not in ("samples", "recall", "precision"):
             raise ValueError("Argument average can None or one of ['samples', 'recall', 'precision']")
 
@@ -211,10 +211,11 @@ class customConfusionMatrix(Metric):
         self._num_examples = 0
         self.average = average
         self.confusion_matrix = None
+        self.device = device
         super(customConfusionMatrix, self).__init__(output_transform=output_transform)
 
     def reset(self):
-        self.confusion_matrix = torch.zeros(self.num_classes, self.num_classes, dtype=torch.float)
+        self.confusion_matrix = torch.zeros(self.num_classes, self.num_classes, dtype=torch.float, device=self.device)
         self._num_examples = 0
 
     def _check_shape(self, output):
