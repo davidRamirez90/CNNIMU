@@ -119,11 +119,12 @@ class Tester:
         
         precision = Precision(average=False)
         recall = Recall(average=False)
+        confmatrix = ConfusionMatrix(num_classes=7)
 
         metrics = {
             'accuracy': Accuracy(),
             'accPerClass': LabelwiseAccuracy(),
-            'confMatrix': ConfusionMatrix(num_classes=7),
+            'confMatrix': confmatrix,
             'loss': Loss(criterion),
             'precision': precision,
             'recall': recall,
