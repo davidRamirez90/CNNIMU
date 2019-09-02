@@ -99,7 +99,10 @@ def init(args):
             c['win_len'] = windows[j]['win_len']
             c['win_step'] = windows[j]['win_step']
             if types[i] == 1 or types[i] == 2 or types[i] == 4:
-                c['channels'] = 38
+                if args.channels != 0:
+                    config['channels'] = 38
+                else:
+                    config['channels'] = args.channels
                 c['depth'] = 3
             configArr.append(c)
 
@@ -150,6 +153,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--core", "-c", help="Specify GPU core to use", default=0, type=int)
     parser.add_argument("--type", "-t", help="Specify net type: 0: Skeleton, 1: Markers, 2: Deriv ,3: PreSkeleton, 4: PreMarkers", default=0, type=int)
+    parser.add_argument("--channels", "-ch", help="Specify number of channels to use", default=0, type=int)
 
 
     args = parser.parse_args()

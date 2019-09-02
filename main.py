@@ -89,8 +89,13 @@ def init(args):
     }
 
     if args.type == 1 or args.type == 2:
-        config['channels'] = 38
+        if args.channels != 0:
+            config['channels'] = 38
+        else:
+            config['channels'] = args.channels
         config['depth'] = 3
+
+
 
     if args.core:
         print("Using cuda core: cuda:{}".format(args.core))
@@ -118,6 +123,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--core", "-c", help="Specify GPU core to use")
+    parser.add_argument("--channels", "-ch", help="Specify number of channels to use", default=0, type=int)
     parser.add_argument("--type", "-t", help="Specify net type: 0: Skeletons, 1: Markers, 2: Deriv", default=0, type=int)
     parser.add_argument("--lr", "-l", help="Specify if LR reduction used", default=False, type=bool)
 
