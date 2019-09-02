@@ -328,17 +328,12 @@ class WindowGenerator:
     def basicSel(self, data):
         index = [0,21,20,7,32,31]
         for i in index:
-            print(i)
             try:
-                print('success')
                 n = data[:, i:i+3]
                 prev = np.concatenate((prev, n), axis=1)  # does a exist in the current namespace
-                print(prev)
             except NameError:
-                print('error')
                 prev = data[:, i:3]  # nope
 
-        print(prev)
         return prev
 
     def calculate(self, data):
