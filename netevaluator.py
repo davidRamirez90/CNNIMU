@@ -9,6 +9,7 @@ from ignite.metrics import Accuracy, Loss, Precision, Recall, MetricsLambda
 from ignite.contrib.handlers import CustomPeriodicEvent, tqdm_logger
 from ignite.handlers import EarlyStopping, ModelCheckpoint
 from torch.optim.lr_scheduler import ReduceLROnPlateau
+from ignite.utils import to_onehot
 
 
 # TORCH IMPORTS
