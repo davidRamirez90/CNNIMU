@@ -311,7 +311,7 @@ class WindowGenerator:
 
         return True
 
-    def plot(self, data, t, fulldata):
+    def plot(self, data, t):
         (pos, vel, acc) = data
         fig, axis = plt.subplots(3, 1)
         axis[0].plot(t, pos)
@@ -326,8 +326,9 @@ class WindowGenerator:
         plt.show()
 
     def calculate(self, data):
-        dt = 1 / 120
-        seconds = data.shape[0] / 120
+        freq = 200
+        dt = 1 / freq
+        seconds = data.shape[0] / freq
         time = np.arange(0, seconds, dt).reshape(-1,1)
         time = np.repeat(time, data.shape[1], axis=1)
         pos = data
