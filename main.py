@@ -138,7 +138,7 @@ if __name__ == "__main__":
     total_time = time.time()
 
     configs = init(args)
-    
+    print(configs)
     hyParamChecker = TorchModel(args.type, args.lr, configs)
 
     for i, iteration in enumerate(range(0,10), start=1):
