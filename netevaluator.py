@@ -240,15 +240,33 @@ class TorchModel:
                 config['win_len'],
                 config['win_step'],
                 config['lr']))
-        val_f1_window = self.create_plot_window(
+        # ACCURACY PER CLASS VISDOM CONFIG
+        acc_per_class_window = self.create_plot_window(
             vis,
             '# Iterations',
-            'F1',
-            '[{}] F1 score W [{}/{}] - LR [{}]'.format(
+            'Accuracy',
+            '[{}] Acc per class W [{}/{}] - LR [{}]'.format(
                 iteration,
                 config['win_len'],
                 config['win_step'],
-                config['lr']))
+                config['lr']),
+            '0')
+        self.append_plot_to_window(vis, acc_per_class_window, '1', 'append')
+        self.append_plot_to_window(vis, acc_per_class_window, '2', 'append')
+        self.append_plot_to_window(vis, acc_per_class_window, '3', 'append')
+        self.append_plot_to_window(vis, acc_per_class_window, '4', 'append')
+        self.append_plot_to_window(vis, acc_per_class_window, '5', 'append')
+        self.append_plot_to_window(vis, acc_per_class_window, '6', 'append')
+
+        # val_f1_window = self.create_plot_window(
+        #     vis,
+        #     '# Iterations',
+        #     'F1',
+        #     '[{}] F1 score W [{}/{}] - LR [{}]'.format(
+        #         iteration,
+        #         config['win_len'],
+        #         config['win_step'],
+        #         config['lr']))
 
         training_losses_acc = list()
 
@@ -292,9 +310,23 @@ class TorchModel:
             self.append_scalar_to_plot(vis, m['accuracy'],
                                        trainer.state.iteration,
                                        'append', val_acc_window)
-            self.append_scalar_to_plot(vis, m['f1'],
-                                       trainer.state.iteration,
-                                       'append', val_f1_window)
+            self.append_scalar_to_plot(vis, m['accPerClass'][0], trainer.state.iteration, 'append',
+                                       acc_per_class_window, name='0')
+            self.append_scalar_to_plot(vis, m['accPerClass'][1], trainer.state.iteration, 'append',
+                                       acc_per_class_window, name='1')
+            self.append_scalar_to_plot(vis, m['accPerClass'][2], trainer.state.iteration, 'append',
+                                       acc_per_class_window, name='2')
+            self.append_scalar_to_plot(vis, m['accPerClass'][3], trainer.state.iteration, 'append',
+                                       acc_per_class_window, name='3')
+            self.append_scalar_to_plot(vis, m['accPerClass'][4], trainer.state.iteration, 'append',
+                                       acc_per_class_window, name='4')
+            self.append_scalar_to_plot(vis, m['accPerClass'][5], trainer.state.iteration, 'append',
+                                       acc_per_class_window, name='5')
+            self.append_scalar_to_plot(vis, m['accPerClass'][6], trainer.state.iteration, 'append',
+                                       acc_per_class_window, name='6')
+            # self.append_scalar_to_plot(vis, m['f1'],
+            #                            trainer.state.iteration,
+            #                            'append', val_f1_window)
             print(
                 "Validation Result: ----------->  Loss: {:.4f}, Accuracy: {:.4f}, F1: {:.4f}".format(
                     m['loss'],
