@@ -9,6 +9,7 @@ from ignite.metrics import Accuracy, Loss, Precision, Recall, MetricsLambda
 from ignite.contrib.handlers import CustomPeriodicEvent, tqdm_logger
 from ignite.handlers import EarlyStopping, ModelCheckpoint
 from torch.optim.lr_scheduler import ReduceLROnPlateau
+from ignite.exceptions import NotComputableError
 from ignite.utils import to_onehot
 
 
@@ -368,3 +369,9 @@ class LabelwiseAccuracy(Accuracy):
 
         self._num_correct += true_examples
         self._num_examples += all_examples
+
+    def compute(self):
+        if not (isinstance(self._num_examples, torch.Tensor) or self._num_examples > 0):
+            raise NotComputableError("{} must have at least one example before"
+                                     " it can be computed.".format(self.__class__.__name__))
+        return self._num_correct / self._num_examples
