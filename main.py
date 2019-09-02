@@ -89,7 +89,7 @@ def init(args):
     }
 
     if args.type == 1 or args.type == 2:
-        if args.channels != 0:
+        if args.channels == 0:
             config['channels'] = 38
         else:
             config['channels'] = args.channels

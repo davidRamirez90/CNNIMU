@@ -99,7 +99,7 @@ def init(args):
             c['win_len'] = windows[j]['win_len']
             c['win_step'] = windows[j]['win_step']
             if types[i] == 1 or types[i] == 2 or types[i] == 4:
-                if args.channels != 0:
+                if args.channels == 0:
                     config['channels'] = 38
                 else:
                     config['channels'] = args.channels
