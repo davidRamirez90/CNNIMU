@@ -7,7 +7,7 @@ from torch import nn
 import torch
 
 from ignite.engine import Events, create_supervised_evaluator
-from ignite.metrics import Accuracy, Loss, Precision, Recall, MetricsLambda, ConfusionMatrix
+from ignite.metrics import Accuracy, Loss, Precision, Recall, MetricsLambda, ConfusionMatrix, Metric
 from ignite.contrib.handlers import tqdm_logger
 from ignite.exceptions import NotComputableError
 from ignite.utils import to_onehot
@@ -74,7 +74,7 @@ class Tester:
         saved_model_name = [n for n in os.listdir(self.modelurl) if keystr in n][0]
         saved_model_path = os.path.join(self.modelurl, saved_model_name)
         print(saved_model_path)
-        pdb.set_trace()
+        #pdb.set_trace()
         device = torch.device(
             config['gpucore'] if torch.cuda.is_available() else "cpu")
         net = CNN_IMU(config)
@@ -113,18 +113,17 @@ class Tester:
         return (precision * recall * 2 / (precision + recall + 1e-20)).mean()
     
     
-    def get_metrics(self):
+    def get_metrics(self, device):
         
         criterion = nn.CrossEntropyLoss()
         
         precision = Precision(average=False)
         recall = Recall(average=False)
-        confmatrix = ConfusionMatrix(num_classes=7)
 
         metrics = {
             'accuracy': Accuracy(),
             'accPerClass': LabelwiseAccuracy(),
-            'confMatrix': confmatrix,
+            'confMatrix': customConfusionMatrix(num_classes=7, device=device),
             'loss': Loss(criterion),
             'precision': precision,
             'recall': recall,
@@ -140,7 +139,7 @@ class Tester:
         net, device = self.load_checkpoint(config, it)
         
         # SET METRICS
-        metrics = self.get_metrics()
+        metrics = self.get_metrics(device=device)
         
         # CREATE IGNITE TESTER
         tester = create_supervised_evaluator(net,
@@ -170,9 +169,9 @@ class Tester:
     def runTest(self, config, it):
         # GET DATA AND TESTER
         test_loader, test_len = self.get_data_loader(config)
-        pdb.set_trace()
+        #pdb.set_trace()
         tester = self.create_supervisor(config, it)
-        pdb.set_trace()
+        #pdb.set_trace()
         
         # RUN TEST
         tester.run(test_loader)
@@ -202,6 +201,80 @@ class Tester:
 #
 #
 #
+
+class customConfusionMatrix(Metric):
+    def __init__(self, num_classes, device, average=None, output_transform=lambda x: x):
+        if average is not None and average not in ("samples", "recall", "precision"):
+            raise ValueError("Argument average can None or one of ['samples', 'recall', 'precision']")
+
+        self.num_classes = num_classes
+        self._num_examples = 0
+        self.average = average
+        self.confusion_matrix = None
+        self.device = device
+        super(customConfusionMatrix, self).__init__(output_transform=output_transform)
+
+    def reset(self):
+        self.confusion_matrix = torch.zeros(self.num_classes, self.num_classes, dtype=torch.float, device=self.device)
+        print(self.confusion_matrix.device)
+        self._num_examples = 0
+
+    def _check_shape(self, output):
+        y_pred, y = output
+
+        if y_pred.ndimension() < 2:
+            raise ValueError("y_pred must have shape (batch_size, num_categories, ...), "
+                             "but given {}".format(y_pred.shape))
+
+        if y_pred.shape[1] != self.num_classes:
+            raise ValueError("y_pred does not have correct number of categories: {} vs {}"
+                             .format(y_pred.shape[1], self.num_classes))
+
+        if not (y.ndimension() == y_pred.ndimension() or y.ndimension() + 1 == y_pred.ndimension()):
+            raise ValueError("y_pred must have shape (batch_size, num_categories, ...) and y must have "
+                             "shape of (batch_size, num_categories, ...) or (batch_size, ...), "
+                             "but given {} vs {}.".format(y.shape, y_pred.shape))
+
+        y_shape = y.shape
+        y_pred_shape = y_pred.shape
+
+        if y.ndimension() + 1 == y_pred.ndimension():
+            y_pred_shape = (y_pred_shape[0],) + y_pred_shape[2:]
+
+        if y_shape != y_pred_shape:
+            raise ValueError("y and y_pred must have compatible shapes.")
+
+        return y_pred, y
+
+    def update(self, output):
+        y_pred, y = self._check_shape(output)
+
+        if y_pred.shape != y.shape:
+            y_ohe = to_onehot(y.reshape(-1), self.num_classes)
+            y_ohe_t = y_ohe.transpose(0, 1).float()
+        else:
+            y_ohe_t = y.transpose(1, -1).reshape(y.shape[1], -1).float()
+
+        indices = torch.argmax(y_pred, dim=1)
+        y_pred_ohe = to_onehot(indices.reshape(-1), self.num_classes)
+        y_pred_ohe = y_pred_ohe.float()
+
+        if self.confusion_matrix.type() != y_ohe_t.type():
+            self.confusion_matrix = self.confusion_matrix.type_as(y_ohe_t)
+        self.confusion_matrix += torch.matmul(y_ohe_t, y_pred_ohe).float()
+        self._num_examples += y_pred.shape[0]
+
+    def compute(self):
+        if self._num_examples == 0:
+            raise NotComputableError('Confusion matrix must have at least one example before it can be computed.')
+        if self.average:
+            if self.average == "samples":
+                return self.confusion_matrix / self._num_examples
+            elif self.average == "recall":
+                return self.confusion_matrix / (self.confusion_matrix.sum(dim=1) + 1e-15)
+            elif self.average == "precision":
+                return self.confusion_matrix / (self.confusion_matrix.sum(dim=0) + 1e-15)
+        return self.confusion_matrix.cpu()
 
 
 class LabelwiseAccuracy(Accuracy):

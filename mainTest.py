@@ -179,6 +179,7 @@ if __name__ == "__main__":
                 accPc = { "acc_[{}]".format(i): accList[i].item() for i in range(0, len(accList))}
                 confMat = res['confMatrix']
                 confList = {"CM{}{}".format(i,j): confMat[i][j].item() for i in range(0, len(confMat)) for j in range(0, len(confMat))}
+                #fullFiltr = {**filtr, **accPc}
                 fullFiltr = {**filtr, **accPc, **confList}
                 writer.writerow(fullFiltr)
                 clean_memory()
