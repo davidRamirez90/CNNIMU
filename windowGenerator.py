@@ -325,6 +325,22 @@ class WindowGenerator:
         axis[2].set_ylabel('acc')
         plt.show()
 
+    def basicSel(self, data):
+        index = [0,21,20,7,32,31]
+        for i in index:
+            print(i)
+            try:
+                print('success')
+                n = data[:, i:i+3]
+                prev = np.concatenate((prev, n), axis=1)  # does a exist in the current namespace
+                print(prev)
+            except NameError:
+                print('error')
+                prev = data[:, i:3]  # nope
+
+        print(prev)
+        return prev
+
     def calculate(self, data):
         freq = 200
         dt = 1 / freq
@@ -396,6 +412,7 @@ class WindowGenerator:
                         markerfile = self.markerset_dir.format(dir, markerseq)
                         skdata = self.read_data(file)
                         mkdata = self.read_data_markers(markerfile).astype('float64')
+                        mkdata = self.basicSel(mkdata)
                         (_, accdata) = self.calculate(mkdata)
                         labels = skdata[0:accdata.shape[0], 0].reshape((-1, 1))
                         nanfilter = np.isnan(accdata).any(axis=1)
@@ -435,8 +452,8 @@ class WindowGenerator:
 if __name__ == '__main__':
 
     wg1 = WindowGenerator(100, 5)
-    wg1.runMarkers()
-    # wg1.runDerivation()
+    # wg1.runMarkers()
+    wg1.runDerivation()
     # wg1.run()
     # wg1 = WindowGenerator(300, 15)
     # wg1.runMarkers()
