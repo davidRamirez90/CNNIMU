@@ -156,6 +156,7 @@ class TorchModel:
 
         metrics = {
             'accuracy': Accuracy(),
+            'accPerClass': LabelwiseAccuracy(),
             'loss': Loss(criterion),
             'precision': precision,
             'recall': recall,
@@ -331,3 +332,38 @@ class GaussianNoise(object):
             data = np.expand_dims(data, 0)
         return (data, label)
 
+
+class LabelwiseAccuracy(Accuracy):
+    def __init__(self, output_transform=lambda x: x):
+        self._num_correct = None
+        self._num_examples = None
+        super(LabelwiseAccuracy, self).__init__(output_transform=output_transform)
+
+    def reset(self):
+        self._num_correct = torch.DoubleTensor(0)
+        self._num_examples = torch.DoubleTensor(0)
+        super(LabelwiseAccuracy, self).reset()
+
+    def update(self, output):
+
+        y_pred, y = self._check_shape(output)
+        self._check_type((y_pred, y))
+
+        num_classes = y_pred.size(1)
+        y = to_onehot(y.view(-1), num_classes=num_classes)
+        indices = torch.argmax(y_pred, dim=1).view(-1)
+        y_pred = to_onehot(indices, num_classes=num_classes)
+
+        y = y.type_as(y_pred)
+        correct = y * y_pred
+        all_examples = y_pred.sum(dim=0).type(torch.DoubleTensor)
+
+        if correct.sum() == 0:
+            true_examples = torch.zeros_like(all_examples)
+        else:
+            true_examples = correct.sum(dim=0)
+
+        true_examples = true_examples.type(torch.DoubleTensor)
+
+        self._num_correct += true_examples
+        self._num_examples += all_examples
