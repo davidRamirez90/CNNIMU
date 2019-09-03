@@ -30,7 +30,7 @@ import re
 
 class WindowGenerator:
 
-    def __init__(self, win_size=100, win_stride=1):
+    def __init__(self, win_size=100, win_stride=1, channels=38):
         self.win_size = win_size
         self.win_stride = win_stride
         self.dataset_dir = env.dataset_url
@@ -38,6 +38,7 @@ class WindowGenerator:
         self.markerset_dir = env.markers_url
         self.save_marker_dataset_dir = env.marker_window_url
         self.save_accel_dataset_dir = env.accel_window_url
+        self.channels = channels
 
 
     def read_data(self, path):
@@ -127,7 +128,7 @@ class WindowGenerator:
         else:
             # pdb.set_trace()
             base = data[:, 6:9]
-            conv = np.tile(base, 12)
+            conv = np.tile(base, self.channels)
             relative = data-conv
             normalized = preprocessing.scale(relative)
 
@@ -326,7 +327,7 @@ class WindowGenerator:
         plt.show()
 
     def basicSel(self, data):
-        index = [0,2,7,12,13,20,21,25,27,28,33,34]
+        index = [0,2,7,12,13,20,21,25,27,28,33,34,30,31,32,38]
         for i in index:
             try:
                 n = data[:, i:i+3]

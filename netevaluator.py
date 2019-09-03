@@ -121,7 +121,8 @@ class TorchModel:
     def execute_instance(self, config, iteration, type=0):
         # CREATING CUSTOM WINDOWS FOR THIS LOOP
         winGen = WindowGenerator(config['win_len'],
-                                 config['win_step'])
+                                 config['win_step'],
+                                 config['channels'])
         if type == 0:
             win_generated = winGen.run()
         elif type == 1:
