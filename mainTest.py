@@ -93,7 +93,6 @@ def init(args):
 
     for i in range(types.__len__()):
         for j in range(windows.__len__()):
-            pdb.set_trace()
             c = copy.deepcopy(config)
             c['type'] = types[i]
             c['name'] = names[types[i]]
@@ -101,9 +100,9 @@ def init(args):
             c['win_step'] = windows[j]['win_step']
             if types[i] == 1 or types[i] == 2 or types[i] == 4:
                 if args.channels == 0:
-                    config['channels'] = 38
+                    c['channels'] = 38
                 else:
-                    config['channels'] = args.channels
+                    c['channels'] = args.channels
                 c['depth'] = 3
             configArr.append(c)
 
