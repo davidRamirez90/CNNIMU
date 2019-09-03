@@ -80,8 +80,6 @@ class Tester:
         net = CNN_IMU(config)
         # net.load_state_dict(torch.load(saved_model_path))
         # self.filterStateDict(saved_model_path, net)
-        aa = torch.load(saved_model_path)
-        pdb.set_trace()
         net.load_state_dict(torch.load(saved_model_path))
         net = net.to(device)
 
