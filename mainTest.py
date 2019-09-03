@@ -93,6 +93,7 @@ def init(args):
 
     for i in range(types.__len__()):
         for j in range(windows.__len__()):
+            pdb.set_trace()
             c = copy.deepcopy(config)
             c['type'] = types[i]
             c['name'] = names[types[i]]
