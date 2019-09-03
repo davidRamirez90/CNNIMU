@@ -158,6 +158,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     # name = getName(args.type)
+    print(args)
     configs = init(args)
     print(configs)
 
