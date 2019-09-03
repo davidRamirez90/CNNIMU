@@ -126,8 +126,8 @@ class WindowGenerator:
             normalized = np.squeeze(np.asarray(normalized))
         else:
             # pdb.set_trace()
-            base = data[:, 9:12]
-            conv = np.tile(base, 6)
+            base = data[:, 6:9]
+            conv = np.tile(base, 12)
             relative = data-conv
             normalized = preprocessing.scale(relative)
 
@@ -326,7 +326,7 @@ class WindowGenerator:
         plt.show()
 
     def basicSel(self, data):
-        index = [0,21,20,7,32,31]
+        index = [0,2,7,12,13,20,21,25,27,28,33,34]
         for i in index:
             try:
                 n = data[:, i:i+3]
