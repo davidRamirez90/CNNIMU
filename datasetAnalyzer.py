@@ -28,11 +28,12 @@ class Analyzer:
         data = pd.read_csv(path)
         data = data.iloc[:, 1]
         data = self.remove_class(data, 7)
-        data = torch.tensor(data.values)
-        data2 = to_onehot(data, 7)
-        t_sum = data2.sum(dim=0).type(torch.IntTensor)
-        self.sum = self.sum + t_sum
-        print(data)
+
+        if (data.size > 0):
+            data = torch.tensor(data.values)
+            data2 = to_onehot(data, 7)
+            t_sum = data2.sum(dim=0).type(torch.IntTensor)
+            self.sum = self.sum + t_sum
 
     def run(self):
         for dir in self.data_dict:
