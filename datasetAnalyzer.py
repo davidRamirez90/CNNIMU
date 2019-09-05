@@ -13,7 +13,7 @@ class Analyzer:
     def __init__(self):
         # self.markers_folder = "/Users/dramirez.c90/Desktop/dataset/m/"
         self.data_folder = env.dataset_url
-        self.data_dict = ['P01', 'P02', 'P03', 'P04', 'P05', 'P06']
+        self.data_dict = ['P01', 'P02', 'P03']
         self.device = torch.device(
             'cuda:0' if torch.cuda.is_available() else "cpu")
         self.sum = torch.zeros(7).type(torch.IntTensor)
