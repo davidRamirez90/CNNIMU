@@ -18,11 +18,17 @@ class Analyzer:
             'cuda:0' if torch.cuda.is_available() else "cpu")
         self.sum = torch.zeros(7).type(torch.IntTensor)
 
+    def remove_class(self, data, cl):
+
+        indices = data != cl
+
+        return data[indices]
+
     def read_data(self, path):
         data = pd.read_csv(path)
         data = data.iloc[:, 1]
+        data = self.remove_class(data, 7)
         data = torch.tensor(data.values)
-        pdb.set_trace()
         data2 = to_onehot(data, 7)
         t_sum = data2.sum(dim=0).type(torch.IntTensor)
         self.sum = self.sum + t_sum
@@ -32,6 +38,7 @@ class Analyzer:
         for dir in self.data_dict:
             files = glob.glob(self.data_folder.format(dir))
             for i, f in enumerate(tqdm.tqdm(files)):
+                print('Running for {}'.format(f))
                 self.read_data(f)
 
         print(self.sum)
