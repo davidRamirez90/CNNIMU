@@ -151,7 +151,8 @@ class TorchModel:
         optimizer = SGD(net.parameters(),
                         lr=config['lr'],
                         momentum=config['momentum'])
-        criterion = nn.CrossEntropyLoss()
+        weights = torch.tensor([0.12, 0.06, 0.05, 0.1, 0.03, 0.09, 0.55])
+        criterion = nn.CrossEntropyLoss(weight=weights)
 
         # IGNITE METRICS DEFINED INCLUDING CUSTOM F1
         precision = Precision(average=False)
