@@ -5,6 +5,7 @@ import torch
 import glob
 import env
 import tqdm
+import pdb
 
 
 class Analyzer:
@@ -21,6 +22,7 @@ class Analyzer:
         data = pd.read_csv(path)
         data = data.iloc[:, 1]
         data = torch.tensor(data.values)
+        pdb.set_trace()
         data2 = to_onehot(data, 7)
         t_sum = data2.sum(dim=0).type(torch.IntTensor)
         self.sum = self.sum + t_sum
