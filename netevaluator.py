@@ -152,6 +152,7 @@ class TorchModel:
                         lr=config['lr'],
                         momentum=config['momentum'])
         weights = torch.tensor([0.12, 0.06, 0.05, 0.1, 0.03, 0.09, 0.55])
+        weights.to(device)
         criterion = nn.CrossEntropyLoss(weight=weights)
 
         # IGNITE METRICS DEFINED INCLUDING CUSTOM F1
