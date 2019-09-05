@@ -4,6 +4,7 @@ import numpy as np
 import torch
 import glob
 import env
+import csv
 
 
 class Analyzer:
@@ -38,6 +39,7 @@ class Analyzer:
 if __name__ == '__main__':
     an = Analyzer()
     an.run()
+
 
 
     # /Users/dramirez.c90/Desktop/dataset/m/Subject01_01.csv
