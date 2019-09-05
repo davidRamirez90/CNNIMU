@@ -4,7 +4,7 @@ import numpy as np
 import torch
 import glob
 import env
-import csv
+import tqdm
 
 
 class Analyzer:
@@ -29,7 +29,7 @@ class Analyzer:
     def run(self):
         for dir in self.data_dict:
             files = glob.glob(self.data_folder.format(dir))
-            for f in files:
+            for i, f in enumerate(tqdm.tqdm(files)):
                 self.read_data(f)
 
         print(self.sum)
