@@ -449,9 +449,9 @@ class WindowGenerator:
 if __name__ == '__main__':
 
     wg1 = WindowGenerator(100, 5)
-    # wg1.runMarkers()
+    wg1.runMarkers()
     wg1.runDerivation()
-    # wg1.run()
+    wg1.run()
     # wg1 = WindowGenerator(300, 15)
     # wg1.runMarkers()
     # wg1.run()
