@@ -115,10 +115,10 @@ class Tester:
     
     def get_metrics(self, device):
 
-        weights = torch.tensor([2.6, 1.5, 1.1, 3.1, 3, 13.8, 6.6])
-        weights = weights.to(device)
+        # weights = torch.tensor([2.6, 1.5, 1.1, 3.1, 3, 13.8, 6.6])
+        # weights = weights.to(device)
 
-        criterion = nn.CrossEntropyLoss(weight=weights)
+        criterion = nn.CrossEntropyLoss()
         
         precision = Precision(average=False)
         recall = Recall(average=False)
