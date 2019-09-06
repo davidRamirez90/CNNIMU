@@ -134,7 +134,7 @@ class TorchModel:
 
 
         print('[Main] - Initializing Visdom')
-        vis = visdom.Visdom(env=self.envname)
+        vis = visdom.Visdom(env="N{}".format(self.envname))
 
         # GETTING DATA
         train_loader, val_loader, train_size, val_size = self.get_data_loaders(
