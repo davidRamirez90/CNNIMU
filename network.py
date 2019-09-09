@@ -12,11 +12,19 @@ class CNN_IMU(nn.Module):
     def __init__(self, config):
         super(CNN_IMU, self).__init__()
 
-        self.conv1 = nn.Conv2d(config['depth'],
+        self.conv11 = nn.Conv2d(config['depth'],
                                config['n_filters'],
                                config['f_size'])
+        self.conv12 = nn.Conv2d(config['n_filters'],
+                                config['n_filters'],
+                                config['f_size'])
         out_dim = (config['win_len']-4)/2
-        self.conv2 = nn.Conv2d(config['n_filters'], config['n_filters'], config['f_size'])
+        self.conv21 = nn.Conv2d(config['n_filters'],
+                               config['n_filters'],
+                               config['f_size'])
+        self.conv22 = nn.Conv2d(config['n_filters'],
+                                config['n_filters'],
+                                config['f_size'])
         out_dim = (out_dim-4)/2
         self.fc1 = nn.Linear(int(out_dim)*config['n_filters']*config['channels'], 512)
         self.fc2 = nn.Linear(512, config['n_classes'])
@@ -40,8 +48,10 @@ class CNN_IMU(nn.Module):
         :return: Output of network forward pass
         """
         x = x.float()
-        x = F.max_pool2d(F.relu(self.conv1(x)), (2,1))
-        x = F.max_pool2d(F.relu(self.conv2(x)), (2,1))
+        x = F.relu(self.conv11(x))
+        x = F.max_pool2d(F.relu(self.conv12(x)), (2,1))
+        x = F.relu(self.conv21(x))
+        x = F.max_pool2d(F.relu(self.conv22(x)), (2,1))
         x = x.view(-1, self.num_flat_features(x))
         x = F.dropout(x, training=self.training)
         x = F.relu(self.fc1(x))

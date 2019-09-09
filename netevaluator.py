@@ -7,7 +7,7 @@ import visdom
 from ignite.engine import Events, create_supervised_trainer, create_supervised_evaluator
 from ignite.metrics import Accuracy, Loss, Precision, Recall, MetricsLambda
 from ignite.contrib.handlers import CustomPeriodicEvent, tqdm_logger
-from ignite.handlers import EarlyStopping, ModelCheckpoint
+from ignite.handlers import EarlyStopping, ModelCheckpoint, Timer
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from ignite.exceptions import NotComputableError
 from ignite.utils import to_onehot
@@ -119,6 +119,8 @@ class TorchModel:
 
 
     def execute_instance(self, config, iteration, type=0):
+        t = Timer(average=False)
+
         # CREATING CUSTOM WINDOWS FOR THIS LOOP
         winGen = WindowGenerator(config['win_len'],
                                  config['win_step'],
@@ -191,11 +193,12 @@ class TorchModel:
         # CREATING EARLY STOPPING AND SAVE HANDLERS
         checkpoint = ModelCheckpoint(
             dirname=self.model_url,
-            filename_prefix='[{}]-CNNIMU_{}_{}_{}'.format(
+            filename_prefix='[{}]-CNNIMU_{}_{}_{}_ T[{}]'.format(
                 iteration,
                 config['win_len'],
                 config['win_step'],
-                config['lr']),
+                config['lr'],
+                t.value()),
             score_function=self.score_function,
             score_name='loss',
             create_dir=True,
@@ -339,6 +342,7 @@ class TorchModel:
 
 
         trainer.run(train_loader, max_epochs=15)
+
         # logger.info('Finished training after {} iterations'.format(trainer.state.iteration))
         del training_losses_acc
         del trainer
