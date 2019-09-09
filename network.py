@@ -49,9 +49,10 @@ class CNN_IMU(nn.Module):
         :param x: Input to perform forward pass
         :return: Output of network forward pass
         """
+        pdb.set_trace()
         x = x.float()
         x = F.relu(self.conv11(x))
-        pdb.set_trace()
+
         x = F.max_pool2d(F.relu(self.conv12(x)), (2,1))
         x = F.relu(self.conv21(x))
         x = F.max_pool2d(F.relu(self.conv22(x)), (2,1))
