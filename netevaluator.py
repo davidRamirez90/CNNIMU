@@ -120,6 +120,7 @@ class TorchModel:
 
     def execute_instance(self, config, iteration, type=0):
         t = Timer(average=False)
+        t.start()
 
         # CREATING CUSTOM WINDOWS FOR THIS LOOP
         winGen = WindowGenerator(config['win_len'],
