@@ -35,8 +35,10 @@ class CNN_IMU(nn.Module):
         """
         ORTHONORMAL WEIGHT INITIALIZATION
         """
-        init.orthogonal_(self.conv1.weight, init.calculate_gain('relu'))
-        init.orthogonal_(self.conv2.weight, init.calculate_gain('relu'))
+        init.orthogonal_(self.conv11.weight, init.calculate_gain('relu'))
+        init.orthogonal_(self.conv12.weight, init.calculate_gain('relu'))
+        init.orthogonal_(self.conv21.weight, init.calculate_gain('relu'))
+        init.orthogonal_(self.conv22.weight, init.calculate_gain('relu'))
         init.orthogonal_(self.fc1.weight, init.calculate_gain('relu'))
         init.orthogonal_(self.fc2.weight, init.calculate_gain('relu'))
 
