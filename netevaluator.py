@@ -119,8 +119,6 @@ class TorchModel:
 
 
     def execute_instance(self, config, iteration, type=0):
-        t = Timer(average=False)
-        t.start()
 
         # CREATING CUSTOM WINDOWS FOR THIS LOOP
         winGen = WindowGenerator(config['win_len'],
@@ -194,12 +192,11 @@ class TorchModel:
         # CREATING EARLY STOPPING AND SAVE HANDLERS
         checkpoint = ModelCheckpoint(
             dirname=self.model_url,
-            filename_prefix='[{}]-CNNIMU_{}_{}_{}_ T[{}]'.format(
+            filename_prefix='[{}]-CNNIMU_{}_{}_{}'.format(
                 iteration,
                 config['win_len'],
                 config['win_step'],
-                config['lr'],
-                t.value()),
+                config['lr']),
             score_function=self.score_function,
             score_name='loss',
             create_dir=True,
