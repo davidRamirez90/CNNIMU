@@ -144,6 +144,8 @@ def getName(type):
         return "[SK]simple"
     elif type == 1:
         return "[MK]simple"
+    elif type == 2:
+        return "[ACC]simple"
     elif type == 3:
         return "[SK]pretrained"
     elif type == 4:
