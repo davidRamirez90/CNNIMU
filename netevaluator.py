@@ -431,7 +431,9 @@ class EvaluatedSamplesPerClass(Metric):
         if not (isinstance(self._num_examples, torch.Tensor) or self._num_examples > 0):
             raise NotComputableError("{} must have at least one example before"
                                      " it can be computed.".format(self.__class__.__name__))
-        return self._num_examples.numpy()
+        n = self._num_examples.numpy()
+        max = n.max()
+        return (n*100)/max
 
 
 
