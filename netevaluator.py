@@ -45,6 +45,7 @@ class TorchModel:
         print('[netevaluator] - Init Torchmodel')
         self.type = type
         self.lr = lr
+        self.best_loss = 10
         if self.type == 0:
             self.win_url = env.window_url
             self.model_url = env.models_url
@@ -238,6 +239,12 @@ class TorchModel:
             train_metrics_window,
             'validationloss',
             'append')
+        self.append_plot_to_window(
+            vis,
+            train_metrics_window,
+            'best_model',
+            'update'
+        )
         val_acc_window = self.create_plot_window(
             vis,
             '# Iterations',
@@ -307,6 +314,16 @@ class TorchModel:
         @val_evaluator.on(Events.EPOCH_COMPLETED)
         def log_validation_results(engine):
             m = engine.state.metrics
+            if m['loss'] < self.best_loss:
+                self.best_loss = m['loss']
+                self.append_scalar_to_plot(
+                    vis,
+                    [0, m['loss']],
+                    [trainer.state.iteration, trainer.state.iteration],
+                    train_metrics_window,
+                    name='best_model'
+                )
+
             if self.lr:
                 step_scheduler.step(m['loss'])
             self.append_scalar_to_plot(vis, m['loss'],
