@@ -409,7 +409,7 @@ class EvaluatedSamplesPerClass(Metric):
         super(EvaluatedSamplesPerClass, self).__init__(output_transform=output_transform)
 
     def reset(self):
-        self._num_examples = torch.DoubleTensor(0)
+        self._num_examples = torch.DoubleTensor(7)
         super(EvaluatedSamplesPerClass, self).reset()
 
     def update(self, output):
@@ -426,7 +426,7 @@ class EvaluatedSamplesPerClass(Metric):
         if not (isinstance(self._num_examples, torch.Tensor) or self._num_examples > 0):
             raise NotComputableError("{} must have at least one example before"
                                      " it can be computed.".format(self.__class__.__name__))
-        return self._num_examples
+        return self._num_examples.numpy()
 
 
 
