@@ -320,6 +320,7 @@ class TorchModel:
                     vis,
                     [0, m['loss']],
                     [trainer.state.iteration, trainer.state.iteration],
+                    'update',
                     train_metrics_window,
                     name='best_model'
                 )
