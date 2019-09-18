@@ -247,6 +247,11 @@ class TorchModel:
             'best_model',
             'update'
         )
+        sample_number_window = vis.bar(
+            X=np.zeros(7),
+            Y=np.zeros(7)
+        )
+
         val_acc_window = self.create_plot_window(
             vis,
             '# Iterations',
@@ -328,6 +333,11 @@ class TorchModel:
 
             if self.lr:
                 step_scheduler.step(m['loss'])
+
+            vis.bar(
+                X=m['samplesPerClass'],
+                win=val_acc_window
+            )
             self.append_scalar_to_plot(vis, m['loss'],
                                        trainer.state.iteration,
                                        'append', train_metrics_window,
@@ -410,7 +420,6 @@ class EvaluatedSamplesPerClass(Metric):
         indices = torch.argmax(y_pred, dim=1).view(-1)
         y_pred = to_onehot(indices, num_classes=num_classes)
         all_examples = y_pred.sum(dim=0).type(torch.DoubleTensor)
-        pdb.set_trace()
         self._num_examples += all_examples
 
     def compute(self):
