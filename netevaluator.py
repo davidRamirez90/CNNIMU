@@ -249,7 +249,6 @@ class TorchModel:
         )
         sample_number_window = vis.bar(
             X=np.zeros(7),
-            Y=np.zeros(7),
             opts=dict(xlabel='classes',
                       ylabel='samples',
                       title='[{}] Samples per Class W [{}/{}] - LR [{}]'.format(
