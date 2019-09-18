@@ -315,6 +315,7 @@ class TorchModel:
         def log_validation_results(engine):
             m = engine.state.metrics
             if m['loss'] < self.best_loss:
+                print('found best loss here')
                 self.best_loss = m['loss']
                 self.append_scalar_to_plot(
                     vis,
