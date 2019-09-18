@@ -10,6 +10,7 @@ from ignite.contrib.handlers import CustomPeriodicEvent, tqdm_logger
 from ignite.handlers import EarlyStopping, ModelCheckpoint, Timer
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from ignite.exceptions import NotComputableError
+from ignite.metrics.metric import Metric
 from ignite.utils import to_onehot
 
 
@@ -167,6 +168,7 @@ class TorchModel:
         metrics = {
             'accuracy': Accuracy(),
             'accPerClass': LabelwiseAccuracy(),
+            'samplesPerClass': EvaluatedSamplesPerClass(),
             'loss': Loss(criterion),
             'precision': precision,
             'recall': recall,
@@ -314,6 +316,7 @@ class TorchModel:
         @val_evaluator.on(Events.EPOCH_COMPLETED)
         def log_validation_results(engine):
             m = engine.state.metrics
+            print(m['samplesPerClass'])
             if m['loss'] < self.best_loss:
                 print('found best loss here')
                 self.best_loss = m['loss']
@@ -388,6 +391,30 @@ class GaussianNoise(object):
         if self.type == 0 or self.type == 4:
             data = np.expand_dims(data, 0)
         return (data, label)
+
+
+class EvaluatedSamplesPerClass(Metric):
+    def __init__(self, output_transform=lambda x: x):
+        self._num_examples = None
+        super(EvaluatedSamplesPerClass, self).__init__(output_transform=output_transform)
+
+    def reset(self):
+        self._num_examples = torch.DoubleTensor(0)
+        super(EvaluatedSamplesPerClass, self).reset()
+
+    def update(self, output):
+
+        y_pred, y = output
+        all_examples = y_pred.sum(dim=0).type(torch.DoubleTensor)
+        self._num_examples += all_examples
+
+    def compute(self):
+        if not (isinstance(self._num_examples, torch.Tensor) or self._num_examples > 0):
+            raise NotComputableError("{} must have at least one example before"
+                                     " it can be computed.".format(self.__class__.__name__))
+        return self._num_examples
+
+
 
 
 class LabelwiseAccuracy(Accuracy):
