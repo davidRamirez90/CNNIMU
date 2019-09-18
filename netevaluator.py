@@ -317,14 +317,11 @@ class TorchModel:
             if m['loss'] < self.best_loss:
                 print('found best loss here')
                 self.best_loss = m['loss']
-                self.append_scalar_to_plot(
-                    vis,
-                    [0, m['loss']],
-                    [trainer.state.iteration, trainer.state.iteration],
-                    'update',
-                    train_metrics_window,
-                    name='best_model'
-                )
+                vis.line(Y=[0, m['loss']],
+                         X=[trainer.state.iteration, trainer.state.iteration],
+                         name='best_model',
+                         update='update',
+                         win=train_metrics_window)
 
             if self.lr:
                 step_scheduler.step(m['loss'])
