@@ -403,7 +403,8 @@ class EvaluatedSamplesPerClass(Metric):
         super(EvaluatedSamplesPerClass, self).reset()
 
     def update(self, output):
-
+        print(output)
+        pdb.set_trace()
         y_pred, y = output
         all_examples = y_pred.sum(dim=0).type(torch.DoubleTensor)
         self._num_examples += all_examples
