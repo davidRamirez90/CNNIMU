@@ -249,7 +249,14 @@ class TorchModel:
         )
         sample_number_window = vis.bar(
             X=np.zeros(7),
-            Y=np.zeros(7)
+            Y=np.zeros(7),
+            opts=dict(xlabel='classes',
+                      ylabel='samples',
+                      title='[{}] Samples per Class W [{}/{}] - LR [{}]'.format(
+                iteration,
+                config['win_len'],
+                config['win_step'],
+                config['lr']))
         )
 
         val_acc_window = self.create_plot_window(
@@ -413,8 +420,6 @@ class EvaluatedSamplesPerClass(Metric):
         super(EvaluatedSamplesPerClass, self).reset()
 
     def update(self, output):
-        print(output)
-
         y_pred, y = output
         num_classes = y_pred.size(1)
         indices = torch.argmax(y_pred, dim=1).view(-1)
