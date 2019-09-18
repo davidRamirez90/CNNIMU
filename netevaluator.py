@@ -247,16 +247,16 @@ class TorchModel:
             'best_model',
             'update'
         )
-        sample_number_window = vis.bar(
-            X=np.zeros(7),
-            opts=dict(xlabel='classes',
-                      ylabel='samples',
-                      title='[{}] Samples per Class W [{}/{}] - LR [{}]'.format(
-                iteration,
-                config['win_len'],
-                config['win_step'],
-                config['lr']))
-        )
+        # sample_number_window = vis.bar(
+        #     X=np.zeros(7),
+        #     opts=dict(xlabel='classes',
+        #               ylabel='samples',
+        #               title='[{}] Samples per Class W [{}/{}] - LR [{}]'.format(
+        #         iteration,
+        #         config['win_len'],
+        #         config['win_step'],
+        #         config['lr']))
+        # )
 
         val_acc_window = self.create_plot_window(
             vis,
@@ -340,10 +340,10 @@ class TorchModel:
             if self.lr:
                 step_scheduler.step(m['loss'])
 
-            vis.bar(
-                X=m['samplesPerClass'],
-                win=sample_number_window
-            )
+            # vis.bar(
+            #     X=m['samplesPerClass'],
+            #     win=sample_number_window
+            # )
             self.append_scalar_to_plot(vis, m['loss'],
                                        trainer.state.iteration,
                                        'append', train_metrics_window,
