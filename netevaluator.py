@@ -343,7 +343,7 @@ class TorchModel:
 
             vis.bar(
                 X=m['samplesPerClass'],
-                win=val_acc_window
+                win=sample_number_window
             )
             self.append_scalar_to_plot(vis, m['loss'],
                                        trainer.state.iteration,
