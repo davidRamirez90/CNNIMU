@@ -77,7 +77,7 @@ def init(args):
         'f_size': (5, 1),
         'batch_train': 100,
         'batch_validate': 100,
-        'patience': 13,
+        'patience': 8,
         'train_info_iter': 10,
         'val_iter': 90,
         'noise': (0, 1e-2),

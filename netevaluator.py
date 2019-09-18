@@ -219,7 +219,7 @@ class TorchModel:
             optimizer,
             mode = 'min',
             factor = 0.1,
-            patience = 7,
+            patience = 4,
             verbose = True)
 
 
