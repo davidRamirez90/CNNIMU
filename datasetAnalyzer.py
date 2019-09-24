@@ -13,7 +13,6 @@ class Analyzer:
     def __init__(self):
         # self.markers_folder = "/Users/dramirez.c90/Desktop/dataset/m/"
         self.data_folder = env.dataset_url
-        self.data_dict = ['P01', 'P02', 'P03']
         self.device = torch.device(
             'cuda:0' if torch.cuda.is_available() else "cpu")
         self.sum = torch.zeros(7).type(torch.IntTensor)
@@ -35,20 +34,25 @@ class Analyzer:
             t_sum = data2.sum(dim=0).type(torch.IntTensor)
             self.sum = self.sum + t_sum
 
-    def run(self):
-        for dir in self.data_dict:
+    def run(self, input):
+        data_dict = input['data_sets']
+        name = input['name']
+        for dir in data_dict:
             files = glob.glob(self.data_folder.format(dir))
             for i, f in enumerate(tqdm.tqdm(files)):
                 # print('Running for {}'.format(f))
                 self.read_data(f)
-
+        print('Results for {}'.format(name))
         print(self.sum)
 
 
 
 if __name__ == '__main__':
     an = Analyzer()
-    an.run()
+
+    an.run({'name': 'Training', 'data_sets': ['P01', 'P02', 'P03']})
+    an.run({'name': 'Validating', 'data_sets': ['P04']})
+    an.run({'name': 'Testing', 'data_sets': ['P05', 'P06']})
 
 
 
