@@ -51,6 +51,8 @@ def init(args):
     # }
     types = {
         0: 0,
+        1: 1,
+        2: 2
     }
 
     windows = {
