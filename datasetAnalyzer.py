@@ -38,6 +38,7 @@ class Analyzer:
     def run(self):
         for dir in self.data_dict:
             files = glob.glob(self.data_folder.format(dir))
+            pdb.set_trace()
             for i, f in enumerate(tqdm.tqdm(files)):
                 print('Running for {}'.format(f))
                 self.read_data(f)
