@@ -251,7 +251,8 @@ class WindowGenerator:
                         skdata = self.read_data(file)
                         mkdata = self.read_data_markers(markerfile).astype('float64')
                         labels = skdata[:mkdata.shape[0],0].reshape((-1,1))
-
+                        if file == '/vol/corpora/har/DFG_Project/2019/MoCap/recordings_2019/14_i219/S01_P03_R06_A08_N01_norm.csv':
+                            pdb.set_trace()
                         nanfilter = np.isnan(mkdata).any(axis=1)
                         labels = labels[~nanfilter]
                         mkdata = mkdata[~nanfilter]
