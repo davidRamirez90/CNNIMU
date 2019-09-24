@@ -250,7 +250,7 @@ class WindowGenerator:
                         markerfile = self.markerset_dir.format(dir, markerseq)
                         skdata = self.read_data(file)
                         mkdata = self.read_data_markers(markerfile).astype('float64')
-                        mkdata = mkdata[:skdata.shape[0],0]
+                        mkdata = mkdata[:skdata.shape[0],:]
                         labels = skdata[:,0].reshape((-1,1))
                         nanfilter = np.isnan(mkdata).any(axis=1)
                         labels = labels[~nanfilter]
