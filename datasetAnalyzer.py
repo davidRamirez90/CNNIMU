@@ -39,7 +39,7 @@ class Analyzer:
         for dir in self.data_dict:
             files = glob.glob(self.data_folder.format(dir))
             for i, f in enumerate(tqdm.tqdm(files)):
-                print('Running for {}'.format(f))
+                # print('Running for {}'.format(f))
                 self.read_data(f)
 
         print(self.sum)
