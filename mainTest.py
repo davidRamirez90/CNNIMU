@@ -51,8 +51,6 @@ def init(args):
     # }
     types = {
         0: 0,
-        1: 1,
-        2: 2
     }
 
     windows = {
@@ -179,7 +177,7 @@ if __name__ == "__main__":
             name = getName(config['type'])
 
 
-            for i, iteration in enumerate(range(0,10), start=1):
+            for i, iteration in enumerate(range(0,4), start=1):
                 res = tester.runTest(config, i)
                 print(res)
                 fullr = {**config, **res}
