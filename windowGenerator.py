@@ -157,7 +157,7 @@ class WindowGenerator:
 
             # SAMPLING FRON RANDOM DIST AND DECIDING IF WINDOW SHOULD BE RESAMPLED
             randSample = rand.random_sample()
-            if (randSample > self.probabilities[label]):
+            if (randSample > self.probabilities[int(label)]):
                 curri += 1
                 data += rand.normal(0, 1e-1, data.shape)
                 obj = {"data": data, "label": label}
@@ -185,7 +185,7 @@ class WindowGenerator:
 
             # SAMPLING FRON RANDOM DIST AND DECIDING IF WINDOW SHOULD BE RESAMPLED
             randSample = rand.random_sample()
-            if(randSample > self.probabilities[label]):
+            if(randSample > self.probabilities[int(label)]):
                 curri += 1
                 window_data += rand.normal(0, 1e-1, window_data.shape)
                 obj = {"data": window_data, "label": label}
