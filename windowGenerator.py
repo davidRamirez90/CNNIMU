@@ -140,7 +140,7 @@ class WindowGenerator:
         return normalized
 
 
-    def saveWindows(self, windows, data_dir, curri):
+    def saveWindows(self, windows, data_dir, curri, folder):
         '''
         Serializes and saves windows using pickle
         @:param windows: Object with windows to be saved to disk
@@ -156,20 +156,21 @@ class WindowGenerator:
             curri += 1
 
             # SAMPLING FRON RANDOM DIST AND DECIDING IF WINDOW SHOULD BE RESAMPLED
-            randSample = rand.random_sample()
-            if (randSample > self.probabilities[int(label)]):
-                data += rand.normal(0, 1e-1, data.shape)
-                obj = {"data": data, "label": label}
-                f = open(os.path.join(data_dir, 'seq_{0:06}.pkl'.format(curri)), 'wb')
-                pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
-                f.close()
-                curri += 1
+            if folder == "train":
+                randSample = rand.random_sample()
+                if (randSample > self.probabilities[int(label)]):
+                    data += rand.normal(0, 1e-1, data.shape)
+                    obj = {"data": data, "label": label}
+                    f = open(os.path.join(data_dir, 'seq_{0:06}.pkl'.format(curri)), 'wb')
+                    pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
+                    f.close()
+                    curri += 1
 
         print('[WindowGen] - Saved windows {}'.format(curri))
 
         return curri
 
-    def saveMarkerWindows(self, d_wins, l_wins, data_dir, curri):
+    def saveMarkerWindows(self, d_wins, l_wins, data_dir, curri, folder):
         '''
         Serializes and saves windows using pickle
         @:param windows: Object with windows to be saved to disk
@@ -185,14 +186,15 @@ class WindowGenerator:
             curri += 1
 
             # SAMPLING FRON RANDOM DIST AND DECIDING IF WINDOW SHOULD BE RESAMPLED
-            randSample = rand.random_sample()
-            if(randSample > self.probabilities[int(label)]):
-                window_data += rand.normal(0, 1e-1, window_data.shape)
-                obj = {"data": window_data, "label": label}
-                f = open(os.path.join(data_dir, 'seq_{0:06}.pkl'.format(curri)), 'wb')
-                pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
-                f.close()
-                curri += 1
+            if folder == "train":
+                randSample = rand.random_sample()
+                if(randSample > self.probabilities[int(label)]):
+                    window_data += rand.normal(0, 1e-1, window_data.shape)
+                    obj = {"data": window_data, "label": label}
+                    f = open(os.path.join(data_dir, 'seq_{0:06}.pkl'.format(curri)), 'wb')
+                    pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
+                    f.close()
+                    curri += 1
 
 
 
@@ -271,7 +273,8 @@ class WindowGenerator:
                                                             self.save_marker_dataset_dir.format(self.win_size,
                                                                                          self.win_stride,
                                                                                          folder),
-                                                            win_amount)
+                                                            win_amount,
+                                                            folder)
                     except AttributeError:
                         print('something wrong on regexp side')
 
@@ -330,10 +333,11 @@ class WindowGenerator:
                                                   (self.win_size, normalizedData.shape[1]),
                                                   (self.win_stride, 1))
                     win_amount = self.saveWindows(data_windows,
-                                             self.save_dataset_dir.format(self.win_size,
-                                                                      self.win_stride,
-                                                                      folder),
-                                             win_amount)
+                                                  self.save_dataset_dir.format(self.win_size,
+                                                                               self.win_stride,
+                                                                               folder),
+                                                  win_amount,
+                                                  folder)
 
         end = time.time()
         t = end - start
@@ -463,7 +467,8 @@ class WindowGenerator:
                                                             self.save_accel_dataset_dir.format(self.win_size,
                                                                                                 self.win_stride,
                                                                                                 folder),
-                                                            win_amount)
+                                                            win_amount,
+                                                            folder)
                     except AttributeError:
                         print('something wrong on regexp side')
 
