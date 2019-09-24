@@ -147,23 +147,23 @@ class WindowGenerator:
         '''
         
         for i, window in enumerate(tqdm.tqdm(windows)):
-            curri +=1
             label = self.getMostCommonClass(window)
             data = window[:, 1:]
             obj = {"data": data, "label": label}
             f = open(os.path.join(data_dir, 'seq_{0:06}.pkl'.format(curri)), 'wb')
             pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
             f.close()
+            curri += 1
 
             # SAMPLING FRON RANDOM DIST AND DECIDING IF WINDOW SHOULD BE RESAMPLED
             randSample = rand.random_sample()
             if (randSample > self.probabilities[int(label)]):
-                curri += 1
                 data += rand.normal(0, 1e-1, data.shape)
                 obj = {"data": data, "label": label}
                 f = open(os.path.join(data_dir, 'seq_{0:06}.pkl'.format(curri)), 'wb')
                 pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
                 f.close()
+                curri += 1
 
         print('[WindowGen] - Saved windows {}'.format(curri))
 
@@ -176,22 +176,23 @@ class WindowGenerator:
         '''
 
         for i, (window_data, label_data) in enumerate(tqdm.tqdm(zip(d_wins, l_wins), total=d_wins.shape[0])):
-            curri += 1
+
             label = self.getMostCommonClass(label_data)
             obj = {"data": window_data, "label": label}
             f = open(os.path.join(data_dir, 'seq_{0:06}.pkl'.format(curri)), 'wb')
             pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
             f.close()
+            curri += 1
 
             # SAMPLING FRON RANDOM DIST AND DECIDING IF WINDOW SHOULD BE RESAMPLED
             randSample = rand.random_sample()
             if(randSample > self.probabilities[int(label)]):
-                curri += 1
                 window_data += rand.normal(0, 1e-1, window_data.shape)
                 obj = {"data": window_data, "label": label}
                 f = open(os.path.join(data_dir, 'seq_{0:06}.pkl'.format(curri)), 'wb')
                 pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
                 f.close()
+                curri += 1
 
 
 
