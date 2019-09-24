@@ -3,6 +3,7 @@ from scipy import stats
 from sklearn import preprocessing
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.random as rand
 import os
 import pandas as pd
 import logging
@@ -39,6 +40,7 @@ class WindowGenerator:
         self.save_marker_dataset_dir = env.marker_window_url
         self.save_accel_dataset_dir = env.accel_window_url
         self.channels = channels
+        self.probabilities = [0, 0.5, 0.83, 0, 1, 0, 0]
 
 
     def read_data(self, path):
@@ -145,16 +147,27 @@ class WindowGenerator:
         '''
         
         for i, window in enumerate(tqdm.tqdm(windows)):
+            curri +=1
             label = self.getMostCommonClass(window)
             data = window[:, 1:]
             obj = {"data": data, "label": label}
-            f = open(os.path.join(data_dir, 'seq_{0:06}.pkl'.format(curri + i)), 'wb')
+            f = open(os.path.join(data_dir, 'seq_{0:06}.pkl'.format(curri)), 'wb')
             pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
             f.close()
 
-        print('[WindowGen] - Saved windows {}'.format(curri + i))
+            # SAMPLING FRON RANDOM DIST AND DECIDING IF WINDOW SHOULD BE RESAMPLED
+            randSample = rand.random_sample()
+            if (randSample > self.probabilities[label]):
+                curri += 1
+                data += rand.normal(0, 1e-1, data.shape)
+                obj = {"data": data, "label": label}
+                f = open(os.path.join(data_dir, 'seq_{0:06}.pkl'.format(curri)), 'wb')
+                pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
+                f.close()
 
-        return curri + i
+        print('[WindowGen] - Saved windows {}'.format(curri))
+
+        return curri
 
     def saveMarkerWindows(self, d_wins, l_wins, data_dir, curri):
         '''
@@ -163,15 +176,29 @@ class WindowGenerator:
         '''
 
         for i, (window_data, label_data) in enumerate(tqdm.tqdm(zip(d_wins, l_wins), total=d_wins.shape[0])):
+            curri += 1
             label = self.getMostCommonClass(label_data)
             obj = {"data": window_data, "label": label}
-            f = open(os.path.join(data_dir, 'seq_{0:06}.pkl'.format(curri + i)), 'wb')
+            f = open(os.path.join(data_dir, 'seq_{0:06}.pkl'.format(curri)), 'wb')
             pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
             f.close()
 
-        print('[WindowGen] - Saved windows {}'.format(curri + i))
+            # SAMPLING FRON RANDOM DIST AND DECIDING IF WINDOW SHOULD BE RESAMPLED
+            randSample = rand.random_sample()
+            if(randSample > self.probabilities[label]):
+                curri += 1
+                window_data += rand.normal(0, 1e-1, window_data.shape)
+                obj = {"data": window_data, "label": label}
+                f = open(os.path.join(data_dir, 'seq_{0:06}.pkl'.format(curri)), 'wb')
+                pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
+                f.close()
 
-        return curri + i
+
+
+
+        print('[WindowGen] - Saved windows {}'.format(curri))
+
+        return curri
 
     def checkDirExists(self, dir):
         dir = dir.format(self.win_size,
