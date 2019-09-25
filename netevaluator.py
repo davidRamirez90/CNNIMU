@@ -327,7 +327,7 @@ class TorchModel:
         @val_evaluator.on(Events.EPOCH_COMPLETED)
         def log_validation_results(engine):
             m = engine.state.metrics
-            print(m['samplesPerClass'])
+            print(m)
             if m['loss'] < self.best_loss:
                 print('found best loss here')
                 self.best_loss = m['loss']
