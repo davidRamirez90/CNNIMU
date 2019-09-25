@@ -159,7 +159,7 @@ class WindowGenerator:
             if folder == "train":
                 randSample = rand.random_sample()
                 if (randSample > self.probabilities[int(label)]):
-                    data += rand.normal(0, 1e-1, data.shape)
+                    data += rand.normal(0, 1e-2, data.shape)
                     obj = {"data": data, "label": label}
                     f = open(os.path.join(data_dir, 'seq_{0:06}.pkl'.format(curri)), 'wb')
                     pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
@@ -189,7 +189,7 @@ class WindowGenerator:
             if folder == "train":
                 randSample = rand.random_sample()
                 if(randSample > self.probabilities[int(label)]):
-                    window_data += rand.normal(0, 1e-1, window_data.shape)
+                    window_data += rand.normal(0, 1e-2, window_data.shape)
                     obj = {"data": window_data, "label": label}
                     f = open(os.path.join(data_dir, 'seq_{0:06}.pkl'.format(curri)), 'wb')
                     pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
