@@ -420,10 +420,10 @@ class EvaluatedSamplesPerClass(Metric):
 
     def update(self, output):
         y_pred, y = output
-        num_classes = y_pred.size(1)
-        indices = torch.argmax(y_pred, dim=1).view(-1)
-        y_pred = to_onehot(indices, num_classes=num_classes)
-        all_examples = y_pred.sum(dim=0).type(torch.DoubleTensor)
+        num_classes = y.size(1)
+        indices = torch.argmax(y, dim=1).view(-1)
+        y = to_onehot(indices, num_classes=num_classes)
+        all_examples = y.sum(dim=0).type(torch.DoubleTensor)
         self._num_examples += all_examples
 
     def compute(self):
