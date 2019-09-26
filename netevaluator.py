@@ -415,16 +415,15 @@ class EvaluatedSamplesPerClass(Metric):
         super(EvaluatedSamplesPerClass, self).__init__(output_transform=output_transform)
 
     def reset(self):
-        self._num_examples = torch.DoubleTensor(7)
+        self._num_examples = torch.zeros(7, dtype=torch.int32)
         super(EvaluatedSamplesPerClass, self).reset()
 
     def update(self, output):
         y_pred, y = output
-        pdb.set_trace()
-        num_classes = y.size(1)
-        indices = torch.argmax(y, dim=1).view(-1)
-        y = to_onehot(indices, num_classes=num_classes)
-        all_examples = y.sum(dim=0).type(torch.DoubleTensor)
+        num_classes = y_pred.size(1)
+        indices = torch.argmax(y_pred, dim=1).view(-1)
+        y_pred = to_onehot(indices, num_classes=num_classes)
+        all_examples = y_pred.sum(dim=0).type(torch.IntTensor)
         self._num_examples += all_examples
 
     def compute(self):
@@ -432,8 +431,7 @@ class EvaluatedSamplesPerClass(Metric):
             raise NotComputableError("{} must have at least one example before"
                                      " it can be computed.".format(self.__class__.__name__))
         n = self._num_examples.numpy()
-        max = n.max()
-        return (n*100)/max
+        return n
 
 
 
