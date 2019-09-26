@@ -420,6 +420,7 @@ class EvaluatedSamplesPerClass(Metric):
 
     def update(self, output):
         y_pred, y = output
+        pdb.set_trace()
         num_classes = y.size(1)
         indices = torch.argmax(y, dim=1).view(-1)
         y = to_onehot(indices, num_classes=num_classes)
