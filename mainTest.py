@@ -55,13 +55,6 @@ def init(args):
         2: 2
     }
 
-    windows = {
-        0: {
-            'win_len': 100,
-            'win_step': 20
-        }
-    }
-
     names = {
         0: "[SK]simple",
         1: "[MK]simple",
@@ -94,19 +87,19 @@ def init(args):
         config['gpucore'] = "cuda:{}".format(args.core)
 
     for i in range(types.__len__()):
-        for j in range(windows.__len__()):
-            c = copy.deepcopy(config)
-            c['type'] = types[i]
-            c['name'] = names[types[i]]
-            c['win_len'] = windows[j]['win_len']
-            c['win_step'] = windows[j]['win_step']
-            if types[i] == 1 or types[i] == 2 or types[i] == 4:
-                if args.channels == 0:
-                    c['channels'] = 38
-                else:
-                    c['channels'] = args.channels
-                c['depth'] = 3
-            configArr.append(c)
+        # for j in range(windows.__len__()):
+        c = copy.deepcopy(config)
+        c['type'] = types[i]
+        c['name'] = names[types[i]]
+        # c['win_len'] = windows[j]['win_len']
+        # c['win_step'] = windows[j]['win_step']
+        if types[i] == 1 or types[i] == 2 or types[i] == 4:
+            if args.channels == 0:
+                c['channels'] = 38
+            else:
+                c['channels'] = args.channels
+            c['depth'] = 3
+        configArr.append(c)
 
     # return config
     return configArr
