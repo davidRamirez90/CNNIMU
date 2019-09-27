@@ -29,7 +29,8 @@ class CNN_IMU(nn.Module):
         # out_dim = (out_dim-8)/2
         out_dim = (out_dim - 4) / 2
         self.fc1 = nn.Linear(int(out_dim)*config['n_filters']*config['channels'], 512)
-        self.fc2 = nn.Linear(512, config['n_classes'])
+        self.fc12 = nn.Linear(512, 128)
+        self.fc2 = nn.Linear(128, config['n_classes'])
 
         self.initializeWeights()
 
@@ -42,6 +43,7 @@ class CNN_IMU(nn.Module):
         init.orthogonal_(self.conv21.weight, init.calculate_gain('relu'))
         # init.orthogonal_(self.conv22.weight, init.calculate_gain('relu'))
         init.orthogonal_(self.fc1.weight, init.calculate_gain('relu'))
+        init.orthogonal_(self.fc12.weight, init.calculate_gain('relu'))
         init.orthogonal_(self.fc2.weight, init.calculate_gain('relu'))
 
 
@@ -61,6 +63,7 @@ class CNN_IMU(nn.Module):
         x = x.view(-1, self.num_flat_features(x))
         x = F.dropout(x, training=self.training)
         x = F.relu(self.fc1(x))
+        x = F.relu(self.fc12(x))
         x = self.fc2(x)
 
         return x
