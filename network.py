@@ -63,6 +63,7 @@ class CNN_IMU(nn.Module):
         x = x.view(-1, self.num_flat_features(x))
         x = F.dropout(x, training=self.training)
         x = F.relu(self.fc1(x))
+        x = F.dropout(x, training=self.training)
         x = F.relu(self.fc12(x))
         x = self.fc2(x)
 
