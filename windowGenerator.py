@@ -232,6 +232,11 @@ class WindowGenerator:
             test=['05', '06']
         )
 
+        # seenSequences = dict(
+        #     P07=list(),
+        #     P08=list()
+        # )
+
         print('[WindowGen] - Creating Training Windows')
 
         start = time.time()
