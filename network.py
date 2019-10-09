@@ -30,7 +30,7 @@ class CNN_IMU(nn.Module):
         out_dim = (out_dim - 4) / 2
         self.fc1 = nn.Linear(int(out_dim)*config['n_filters']*config['channels'], 512)
         # self.fc12 = nn.Linear(512, 128)
-        self.fc2 = nn.Linear(128, config['n_classes'])
+        self.fc2 = nn.Linear(512, config['n_classes'])
 
         self.initializeWeights()
 
