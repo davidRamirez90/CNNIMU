@@ -332,6 +332,7 @@ class TorchModel:
         @val_evaluator.on(Events.EPOCH_COMPLETED)
         def log_validation_results(engine):
             self.currit+=1
+            print('Training iteration: [{}]/[{}]'.format(self.currit, self.maxIt))
             if self.maxIt != -1 and self.currit >= self.maxIt:
                 trainer.terminate()
             m = engine.state.metrics
