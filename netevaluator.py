@@ -327,14 +327,16 @@ class TorchModel:
 
         @trainer.on(val_cpe.Events.ITERATIONS_90_COMPLETED)
         def run_validation(engine):
-            val_evaluator.run(val_loader)
-
-        @val_evaluator.on(Events.EPOCH_COMPLETED)
-        def log_validation_results(engine):
-            self.currit+=1
+            self.currit += 1
             print('Training iteration: [{}]/[{}]'.format(self.currit, self.maxIt))
             if self.maxIt != -1 and self.currit >= self.maxIt:
                 trainer.terminate()
+            else:
+                val_evaluator.run(val_loader)
+
+        @val_evaluator.on(Events.EPOCH_COMPLETED)
+        def log_validation_results(engine):
+
             m = engine.state.metrics
             print(m)
             if m['loss'] < self.best_loss:
