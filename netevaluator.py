@@ -47,6 +47,8 @@ class TorchModel:
         self.type = type
         self.lr = lr
         self.best_loss = 10
+        self.maxIt = conf['maxit']
+        self.currit = 0
         if self.type == 0:
             self.win_url = env.window_url
             self.model_url = env.models_url
@@ -121,6 +123,8 @@ class TorchModel:
 
 
     def execute_instance(self, config, iteration, type=0):
+
+        self.currit = 0
 
         # CREATING CUSTOM WINDOWS FOR THIS LOOP
         winGen = WindowGenerator(config['win_len'],
@@ -208,11 +212,11 @@ class TorchModel:
         val_evaluator.add_event_handler(Events.EPOCH_COMPLETED,
                                         checkpoint,
                                         {'network': net})
-
-        earlyStopper = EarlyStopping(patience=config['patience'],
-                                     score_function=self.score_function,
-                                     trainer=trainer)
-        val_evaluator.add_event_handler(Events.COMPLETED, earlyStopper)
+        if self.maxIt == -1:
+            earlyStopper = EarlyStopping(patience=config['patience'],
+                                         score_function=self.score_function,
+                                         trainer=trainer)
+            val_evaluator.add_event_handler(Events.COMPLETED, earlyStopper)
 
         # LR ADAPTER HANDLER
         step_scheduler = ReduceLROnPlateau(
@@ -327,6 +331,9 @@ class TorchModel:
 
         @val_evaluator.on(Events.EPOCH_COMPLETED)
         def log_validation_results(engine):
+            self.currit+=1
+            if self.maxIt != -1 and self.currit >= self.maxIt:
+                trainer.terminate()
             m = engine.state.metrics
             print(m)
             if m['loss'] < self.best_loss:

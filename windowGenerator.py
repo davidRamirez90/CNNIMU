@@ -226,9 +226,14 @@ class WindowGenerator:
                 os.makedirs(self.save_marker_dataset_dir.format(self.win_size,
                                                                 self.win_stride,
                                                                 folder))
+        # markers_dict = dict(
+        #     train=['01', '02', '03'],
+        #     validate=['04'],
+        #     test=['05', '06']
+        # )
+
         markers_dict = dict(
-            train=['01', '02', '03'],
-            validate=['04'],
+            train=['01', '02', '03', '04'],
             test=['05', '06']
         )
 

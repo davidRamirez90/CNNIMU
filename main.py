@@ -85,7 +85,8 @@ def init(args):
         'momentum': 0.9,
         'win_len': 100,
         'win_step': 5,
-        'lr': 0.0001
+        'lr': 0.0001,
+        'maxit': args.it
     }
 
     if args.type == 1 or args.type == 2:
@@ -126,6 +127,7 @@ if __name__ == "__main__":
     parser.add_argument("--channels", "-ch", help="Specify number of channels to use", default=0, type=int)
     parser.add_argument("--type", "-t", help="Specify net type: 0: Skeletons, 1: Markers, 2: Deriv", default=0, type=int)
     parser.add_argument("--lr", "-l", help="Specify if LR reduction used", default=False, type=bool)
+    parser.add_argument("--iterations", "-it", help="Specify max iterations for training", default=-1, type=int)
 
 
     args = parser.parse_args()
