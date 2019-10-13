@@ -217,17 +217,29 @@ class TorchModel:
             pbar.attach(val_evaluator)
 
         # CREATING EARLY STOPPING AND SAVE HANDLERS
-        checkpoint = ModelCheckpoint(
-            dirname=self.model_url,
-            filename_prefix='[{}]-CNNIMU_{}_{}_{}'.format(
-                iteration,
-                config['win_len'],
-                config['win_step'],
-                config['lr']),
-            score_function=self.score_function,
-            score_name='loss',
-            create_dir=True,
-            require_empty=False)
+        if self.maxIt == -1:
+            checkpoint = ModelCheckpoint(
+                dirname=self.model_url,
+                filename_prefix='[{}]-CNNIMU_{}_{}_{}'.format(
+                    iteration,
+                    config['win_len'],
+                    config['win_step'],
+                    config['lr']),
+                score_function=self.score_function,
+                score_name='loss',
+                create_dir=True,
+                require_empty=False)
+        else:
+            checkpoint = ModelCheckpoint(
+                dirname=self.model_url,
+                filename_prefix='[{}]-CNNIMU_{}_{}_{}'.format(
+                    iteration,
+                    config['win_len'],
+                    config['win_step'],
+                    config['lr']),
+                save_interval=1,
+                create_dir=True,
+                require_empty=False)
 
 
 
