@@ -242,7 +242,6 @@ class TorchModel:
             val_evaluator.add_event_handler(Events.COMPLETED, earlyStopper)
         else:
             # STOPPING DECIDED BY MAX ITERATIONS
-            pdb.set_trace()
             trainer.add_event_handler(tr_cpe.Events.ITERATIONS_10_COMPLETED,
                                       checkpoint,
                                       {'network': net})
@@ -360,8 +359,10 @@ class TorchModel:
         def run_validation(engine):
             self.currit += 1
             print('Training iteration: [{}]/[{}]'.format(self.currit, self.maxIt))
-            if self.maxIt != -1 and self.currit >= self.maxIt:
-                trainer.terminate()
+
+            if self.maxIt != -1:
+                if self.currit >= self.maxIt:
+                    trainer.terminate()
             else:
                 val_evaluator.run(val_loader)
 
