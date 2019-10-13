@@ -86,7 +86,7 @@ def init(args):
         'win_len': 100,
         'win_step': 5,
         'lr': 0.0001,
-        'maxit': args.it
+        'maxit': args.iterations
     }
 
     if args.type == 1 or args.type == 2:
