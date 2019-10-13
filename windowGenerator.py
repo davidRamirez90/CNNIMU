@@ -323,8 +323,8 @@ class WindowGenerator:
         # )
 
         dataset_dict = dict(
-            train=['01', '02', '03', '04'],
-            test=['05', '06']
+            train=['P01', 'P02', 'P03', 'P04'],
+            test=['P05', 'P06']
         )
         
 
