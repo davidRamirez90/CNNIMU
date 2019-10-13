@@ -242,7 +242,7 @@ class TorchModel:
             val_evaluator.add_event_handler(Events.COMPLETED, earlyStopper)
         else:
             # STOPPING DECIDED BY MAX ITERATIONS
-            trainer.add_event_handler(Events.ITERATIONS_90_COMPLETED,
+            trainer.add_event_handler(tr_cpe.Events.ITERATIONS_90_COMPLETED,
                                       checkpoint,
                                       {'network': net})
 
