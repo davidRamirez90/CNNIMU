@@ -158,7 +158,7 @@ class TorchModel:
         vis = visdom.Visdom(env="N{}".format(self.envname))
 
         # GETTING DATA
-        if self.maxIt != -1:
+        if self.maxIt == -1:
             train_loader, val_loader, train_size, val_size = self.get_data_loaders(
                 config)
         else:
@@ -201,7 +201,7 @@ class TorchModel:
                                             optimizer,
                                             criterion,
                                             device=device)
-        if self.maxIt != -1:
+        if self.maxIt == -1:
             val_evaluator = create_supervised_evaluator(
                 net, metrics=metrics, device=device)
 
@@ -213,7 +213,7 @@ class TorchModel:
 
         # TQDM OBSERVERS
         pbar = tqdm_logger.ProgressBar()
-        if self.maxIt != -1:
+        if self.maxIt == -1:
             pbar.attach(val_evaluator)
 
         # CREATING EARLY STOPPING AND SAVE HANDLERS
@@ -229,7 +229,10 @@ class TorchModel:
             create_dir=True,
             require_empty=False)
 
+
+
         if self.maxIt == -1:
+            # STOPPING DECIDED BY PLATEAU
             val_evaluator.add_event_handler(Events.EPOCH_COMPLETED,
                                             checkpoint,
                                             {'network': net})
@@ -237,6 +240,12 @@ class TorchModel:
                                          score_function=self.score_function,
                                          trainer=trainer)
             val_evaluator.add_event_handler(Events.COMPLETED, earlyStopper)
+        else:
+            # STOPPING DECIDED BY MAX ITERATIONS
+            trainer.add_event_handler(Events.ITERATIONS_90_COMPLETED,
+                                      checkpoint,
+                                      {'network': net})
+
 
         # LR ADAPTER HANDLER
         step_scheduler = ReduceLROnPlateau(
