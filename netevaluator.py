@@ -65,6 +65,20 @@ class TorchModel:
             self.envname = "NEWARCH_accel".format(conf['win_len'],
                                                   conf['win_step'])
 
+    def get_train_data_loader(self, config):
+        train_batch_size = config['batch_train']
+
+        # OBTAINING TRAINING / VALIDATION - DATASET / DATALOADER
+        train_dataset = windowDataSet(dir=self.win_url.format(config['win_len'],
+                                                              config['win_step'],
+                                                              'train'),
+                                      transform=GaussianNoise(0, 1e-2, self.type))
+        train_loader = DataLoader(train_dataset, batch_size=train_batch_size,
+                                  shuffle=True, num_workers=4)
+
+        return train_loader, train_dataset.__len__()
+
+
 
     def get_data_loaders(self, config):
 
@@ -144,8 +158,11 @@ class TorchModel:
         vis = visdom.Visdom(env="N{}".format(self.envname))
 
         # GETTING DATA
-        train_loader, val_loader, train_size, val_size = self.get_data_loaders(
-            config)
+        if self.maxIt != -1:
+            train_loader, val_loader, train_size, val_size = self.get_data_loaders(
+                config)
+        else:
+            train_loader, train_size = self.get_train_data_loader(config)
         # NETWORK CREATION
         device = torch.device(
             config['gpucore'] if torch.cuda.is_available() else "cpu")
@@ -184,8 +201,9 @@ class TorchModel:
                                             optimizer,
                                             criterion,
                                             device=device)
-        val_evaluator = create_supervised_evaluator(
-            net, metrics=metrics, device=device)
+        if self.maxIt != -1:
+            val_evaluator = create_supervised_evaluator(
+                net, metrics=metrics, device=device)
 
         # LIFETIME EVENTS FOR PRINTING CALCULATING AND PLOTTING
         tr_cpe = CustomPeriodicEvent(n_iterations=config['train_info_iter'])
@@ -195,7 +213,8 @@ class TorchModel:
 
         # TQDM OBSERVERS
         pbar = tqdm_logger.ProgressBar()
-        pbar.attach(val_evaluator)
+        if self.maxIt != -1:
+            pbar.attach(val_evaluator)
 
         # CREATING EARLY STOPPING AND SAVE HANDLERS
         checkpoint = ModelCheckpoint(
@@ -209,10 +228,11 @@ class TorchModel:
             score_name='loss',
             create_dir=True,
             require_empty=False)
-        val_evaluator.add_event_handler(Events.EPOCH_COMPLETED,
-                                        checkpoint,
-                                        {'network': net})
+
         if self.maxIt == -1:
+            val_evaluator.add_event_handler(Events.EPOCH_COMPLETED,
+                                            checkpoint,
+                                            {'network': net})
             earlyStopper = EarlyStopping(patience=config['patience'],
                                          score_function=self.score_function,
                                          trainer=trainer)
