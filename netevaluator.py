@@ -428,7 +428,7 @@ class TorchModel:
         # logger.info('Finished training after {} iterations'.format(trainer.state.iteration))
         del training_losses_acc
         del trainer
-        del val_evaluator
+        # del val_evaluator
         del step_scheduler
         del net
 
