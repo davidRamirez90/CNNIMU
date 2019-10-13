@@ -216,7 +216,8 @@ class WindowGenerator:
         :return: Dataset with windows exists
         """
 
-        labels = ['train', 'validate', 'test']
+        # labels = ['train', 'validate', 'test']
+        labels = ['train', 'test']
 
         if self.checkDirExists(self.save_marker_dataset_dir):
             print('[WindowGen] - Dataset already exists, skipping generation...')
@@ -303,8 +304,8 @@ class WindowGenerator:
         :return: Dataset with windows exists
         """
 
-        labels = [ 'train', 'validate', 'test']
-        # labels = ['test']
+        # labels = [ 'train', 'validate', 'test']
+        labels = ['train', 'test']
 
         if self.checkDirExists(self.save_dataset_dir):
             print('[WindowGen] - Dataset already exists, skipping generation...')

@@ -305,7 +305,8 @@ class TorchModel:
         # IGNITE EVENTS DEFINITION
         @trainer.on(Events.EPOCH_STARTED)
         def initial_eval(engine):
-            val_evaluator.run(val_loader)
+            if self.maxIt != -1:
+                val_evaluator.run(val_loader)
 
         @trainer.on(Events.ITERATION_COMPLETED)
         def accumulate_trainlosses(engine):
