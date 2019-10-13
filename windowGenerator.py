@@ -315,10 +315,15 @@ class WindowGenerator:
                                                          self.win_stride,
                                                          folder))
 
+        # dataset_dict = dict(
+        #     train=['P01', 'P02', 'P03'],
+        #     validate=['P04'],
+        #     test=['P05', 'P06']
+        # )
+
         dataset_dict = dict(
-            train=['P01', 'P02', 'P03'],
-            validate=['P04'],
-            test=['P05', 'P06']
+            train=['01', '02', '03', '04'],
+            test=['05', '06']
         )
         
 
