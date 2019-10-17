@@ -398,7 +398,7 @@ class WindowGenerator:
 
                 #  pdb.set_trace()
                 for k, file in enumerate(files):
-                    print('[WindowGen] - Saving for found file {}'.format(file))
+                    # print('[WindowGen] - Saving for found file {}'.format(file))
                     try:
                         markerseq = re.search('P[0-9]*_R(.+?)_A[0-9]*', file).group(1)
 
@@ -409,7 +409,7 @@ class WindowGenerator:
                                 markerfile = self.new_mk_url.format(dir, markerseq)
                             else:
                                 markerfile = self.markerset_dir.format(dir, markerseq)
-                            print("Generating windows for file {}".format(markerfile))
+                            print("Generating windows for {}".format(file))
                             # rawData = self.read_data(file)
                             # filteredData = self.removeClass(rawData, 7)
                             # if filteredData.shape[0] == 0:
