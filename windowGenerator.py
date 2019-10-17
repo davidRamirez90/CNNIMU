@@ -335,14 +335,24 @@ class WindowGenerator:
         labels = ['test']
 
 
-        if self.checkDirExists(self.save_dataset_dir):
-            print('[WindowGen] - Dataset already exists, skipping generation...')
-            return True
-        else:
-            for folder in labels:
+        for folder in labels:
+            if self.checkDirExists(self.save_dataset_dir+folder):
+                print('[WindowGen] - {} folder already exists, skipping generation...'.format(folder))
+                return
+            else:
                 os.makedirs(self.save_dataset_dir.format(self.win_size,
                                                          self.win_stride,
                                                          folder))
+
+
+        # if self.checkDirExists(self.save_dataset_dir):
+        #     print('[WindowGen] - Dataset already exists, skipping generation...')
+        #     return True
+        # else:
+        #     for folder in labels:
+        #         os.makedirs(self.save_dataset_dir.format(self.win_size,
+        #                                                  self.win_stride,
+        #                                                  folder))
 
         # dataset_dict = dict(
         #     train=['P01', 'P02', 'P03'],
