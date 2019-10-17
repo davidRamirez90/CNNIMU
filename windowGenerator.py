@@ -223,14 +223,14 @@ class WindowGenerator:
         # labels = ['train']
         labels = ['test']
 
-        if self.checkDirExists(self.save_marker_dataset_dir):
-            print('[WindowGen] - Dataset already exists, skipping generation...')
-            return True
-        else:
-            for folder in labels:
-                os.makedirs(self.save_marker_dataset_dir.format(self.win_size,
-                                                                self.win_stride,
-                                                                folder))
+        for folder in labels:
+            if self.checkDirExists(self.save_dataset_dir + folder):
+                print('[WindowGen] - {} folder already exists, skipping generation...'.format(folder))
+                return
+            else:
+                os.makedirs(self.save_dataset_dir.format(self.win_size,
+                                                         self.win_stride,
+                                                         folder))
         # markers_dict = dict(
         #     train=['01', '02', '03'],
         #     validate=['04'],
@@ -249,6 +249,10 @@ class WindowGenerator:
 
 
         seenSequences = {
+            "01": list(),
+            "02": list(),
+            "03": list(),
+            "04": list(),
             "07": list(),
             "08": list(),
             "09": list(),
@@ -267,48 +271,55 @@ class WindowGenerator:
             win_amount = 0
             for j, dir in enumerate(markers_dict[folder]):
                 skeletondir = 'P{}'.format(dir)
-                files = glob.glob(self.dataset_dir.format(skeletondir))
+                if folder == "test":
+                    files = glob.glob(self.new_sk_url.format(skeletondir))
+                else:
+                    files = glob.glob(self.dataset_dir.format(skeletondir))
+
                 for k, file in enumerate(files):
-                    print('[WindowGen] - Saving for found file {}'.format(file))
                     # pdb.set_trace()
                     try:
                         markerseq = re.search('P[0-9]*_R(.+?)_A[0-9]*', file).group(1)
 
                         if markerseq not in seenSequences[dir]:
+                            print('[WindowGen] - Saving for found file {}'.format(file))
                             # FIRST TIME WE SEE THIS RECORDING FOR THIS SPECIFIC PERSON E.G. R01, R02
                             seenSequences[dir].append(markerseq)
-                            markerfile = self.markerset_dir.format(dir, markerseq)
-                            print("Generating windows for file {}".format(markerfile))
-                            # skdata = self.read_data(file)
-                            # mkdata = self.read_data_markers(markerfile).astype('float64')
-                            # mkdata = mkdata[:skdata.shape[0], :]
-                            # labels = skdata[:, 0].reshape((-1, 1))
-                            # nanfilter = np.isnan(mkdata).any(axis=1)
-                            # labels = labels[~nanfilter]
-                            # mkdata = mkdata[~nanfilter]
-                            # mergedata = np.hstack((labels, mkdata))  # Combined markers with labels
-                            # filteredData, filteredLabels = self.removeClassMarkers(mkdata, labels,
-                            #                                                        7)  # Removed unused 7 class
-                            # if filteredData.shape[0] == 0:
-                            #     break;
-                            # normalizedData = self.normalizeData(filteredData,
-                            #                                     haslabels=False)  # Normalize data per sensor channel
-                            # stackedData = self.coords_to_channels(normalizedData)  # (X,Y,Z) coords to Channels(dims)
-                            # # pdb.set_trace()
-                            # data_windows = sliding_window(stackedData,
-                            #                               (stackedData.shape[0], self.win_size, stackedData.shape[2]),
-                            #                               (1, self.win_stride, 1))
-                            # label_windows = sliding_window(filteredLabels,
-                            #                                (self.win_size, labels.shape[1]),
-                            #                                (self.win_stride, 1))
-                            #
-                            # win_amount = self.saveMarkerWindows(data_windows,
-                            #                                     label_windows,
-                            #                                     self.save_marker_dataset_dir.format(self.win_size,
-                            #                                                                         self.win_stride,
-                            #                                                                         folder),
-                            #                                     win_amount,
-                            #                                     folder)
+                            if folder == 'test':
+                                markerfile = self.new_mk_url.format(dir, markerseq)
+                            else:
+                                markerfile = self.markerset_dir.format(dir, markerseq)
+
+                            skdata = self.read_data(file)
+                            mkdata = self.read_data_markers(markerfile).astype('float64')
+                            mkdata = mkdata[:skdata.shape[0], :]
+                            labels = skdata[:, 0].reshape((-1, 1))
+                            nanfilter = np.isnan(mkdata).any(axis=1)
+                            labels = labels[~nanfilter]
+                            mkdata = mkdata[~nanfilter]
+                            mergedata = np.hstack((labels, mkdata))  # Combined markers with labels
+                            filteredData, filteredLabels = self.removeClassMarkers(mkdata, labels,
+                                                                                   7)  # Removed unused 7 class
+                            if filteredData.shape[0] == 0:
+                                break;
+                            normalizedData = self.normalizeData(filteredData,
+                                                                haslabels=False)  # Normalize data per sensor channel
+                            stackedData = self.coords_to_channels(normalizedData)  # (X,Y,Z) coords to Channels(dims)
+                            # pdb.set_trace()
+                            data_windows = sliding_window(stackedData,
+                                                          (stackedData.shape[0], self.win_size, stackedData.shape[2]),
+                                                          (1, self.win_stride, 1))
+                            label_windows = sliding_window(filteredLabels,
+                                                           (self.win_size, labels.shape[1]),
+                                                           (self.win_stride, 1))
+
+                            win_amount = self.saveMarkerWindows(data_windows,
+                                                                label_windows,
+                                                                self.save_marker_dataset_dir.format(self.win_size,
+                                                                                                    self.win_stride,
+                                                                                                    folder),
+                                                                win_amount,
+                                                                folder)
                         # else:
                             # print("Skipping person {} for seq {}, cause ive already seen it".format(dir, markerseq))
 
@@ -371,6 +382,10 @@ class WindowGenerator:
         )
 
         seenSequences = {
+            "P01": list(),
+            "P02": list(),
+            "P03": list(),
+            "P04": list(),
             "P07": list(),
             "P08": list(),
             "P09": list(),
@@ -398,32 +413,31 @@ class WindowGenerator:
 
                 #  pdb.set_trace()
                 for k, file in enumerate(files):
-                    # print('[WindowGen] - Saving for found file {}'.format(file))
                     try:
                         markerseq = re.search('P[0-9]*_R(.+?)_A[0-9]*', file).group(1)
 
                         if markerseq not in seenSequences[dir]:
+                            print('[WindowGen] - Saving for found file {}'.format(file))
                             # FIRST TIME WE SEE THIS RECORDING FOR THIS SPECIFIC PERSON E.G. R01, R02
                             seenSequences[dir].append(markerseq)
                             if folder == 'test':
                                 markerfile = self.new_mk_url.format(dir, markerseq)
                             else:
                                 markerfile = self.markerset_dir.format(dir, markerseq)
-                            print("Generating windows for {}".format(file))
-                            # rawData = self.read_data(file)
-                            # filteredData = self.removeClass(rawData, 7)
-                            # if filteredData.shape[0] == 0:
-                            #     break;
-                            # normalizedData = self.normalizeData(filteredData)
-                            # data_windows = sliding_window(normalizedData,
-                            #                               (self.win_size, normalizedData.shape[1]),
-                            #                               (self.win_stride, 1))
-                            # win_amount = self.saveWindows(data_windows,
-                            #                               self.save_dataset_dir.format(self.win_size,
-                            #                                                            self.win_stride,
-                            #                                                            folder),
-                            #                               win_amount,
-                            #                               folder)
+                            rawData = self.read_data(file)
+                            filteredData = self.removeClass(rawData, 7)
+                            if filteredData.shape[0] == 0:
+                                break;
+                            normalizedData = self.normalizeData(filteredData)
+                            data_windows = sliding_window(normalizedData,
+                                                          (self.win_size, normalizedData.shape[1]),
+                                                          (self.win_stride, 1))
+                            win_amount = self.saveWindows(data_windows,
+                                                          self.save_dataset_dir.format(self.win_size,
+                                                                                       self.win_stride,
+                                                                                       folder),
+                                                          win_amount,
+                                                          folder)
                         # else:
                         #     print("Skipping person {} for seq {}, cause ive already seen it".format(dir, markerseq))
 
@@ -503,15 +517,15 @@ class WindowGenerator:
         # labels = ['train']
         labels = ['test']
 
+        for folder in labels:
+            if self.checkDirExists(self.save_dataset_dir+folder):
+                print('[WindowGen] - {} folder already exists, skipping generation...'.format(folder))
+                return
+            else:
+                os.makedirs(self.save_dataset_dir.format(self.win_size,
+                                                         self.win_stride,
+                                                         folder))
 
-        if self.checkDirExists(self.save_accel_dataset_dir):
-            print('[WindowGen] - Dataset already exists, skipping generation...')
-            return True
-        else:
-            for folder in labels:
-                os.makedirs(self.save_accel_dataset_dir.format(self.win_size,
-                                                                self.win_stride,
-                                                                folder))
         # markers_dict = dict(
         #     train=['01', '02', '03'],
         #     validate=['04'],
@@ -528,6 +542,20 @@ class WindowGenerator:
             test=['07', '08', '09', '10', '11', '12', '13']
         )
 
+        seenSequences = {
+            "01": list(),
+            "02": list(),
+            "03": list(),
+            "04": list(),
+            "07": list(),
+            "08": list(),
+            "09": list(),
+            "10": list(),
+            "11": list(),
+            "12": list(),
+            "13": list()
+        }
+
         print('[WindowGen] - Creating Training Windows')
 
         start = time.time()
@@ -537,43 +565,57 @@ class WindowGenerator:
             win_amount = 0
             for j, dir in enumerate(markers_dict[folder]):
                 skeletondir = 'P{}'.format(dir)
-                files = glob.glob(self.dataset_dir.format(skeletondir))
+                if folder == "test":
+                    files = glob.glob(self.new_sk_url.format(skeletondir))
+                else:
+                    files = glob.glob(self.dataset_dir.format(skeletondir))
+
                 for k, file in enumerate(files):
-                    print('[WindowGen] - Saving for found file {}'.format(file))
+
                     # pdb.set_trace()
                     try:
                         markerseq = re.search('P[0-9]*_R(.+?)_A[0-9]*', file).group(1)
-                        markerfile = self.markerset_dir.format(dir, markerseq)
-                        skdata = self.read_data(file)
-                        mkdata = self.read_data_markers(markerfile).astype('float64')
-                        # mkdata = self.basicSel(mkdata)
-                        (_, accdata) = self.calculate(mkdata)
-                        labels = skdata[0:accdata.shape[0], 0].reshape((-1, 1))
-                        nanfilter = np.isnan(accdata).any(axis=1)
-                        labels = labels[~nanfilter]
-                        accdata = accdata[~nanfilter]
-                        filteredData, filteredLabels = self.removeClassMarkers(accdata, labels,
-                                                                               7)  # Removed unused 7 class
-                        if filteredData.shape[0] == 0:
-                            break;
-                        normalizedData = self.normalizeData(filteredData,
-                                                            haslabels=False)  # Normalize data per sensor channel
-                        stackedData = self.coords_to_channels(normalizedData)  # (X,Y,Z) coords to Channels(dims)
-                        # pdb.set_trace()
-                        data_windows = sliding_window(stackedData,
-                                                      (stackedData.shape[0], self.win_size, stackedData.shape[2]),
-                                                      (1, self.win_stride, 1))
-                        label_windows = sliding_window(filteredLabels,
-                                                       (self.win_size, labels.shape[1]),
-                                                       (self.win_stride, 1))
 
-                        win_amount = self.saveMarkerWindows(data_windows,
-                                                            label_windows,
-                                                            self.save_accel_dataset_dir.format(self.win_size,
-                                                                                                self.win_stride,
-                                                                                                folder),
-                                                            win_amount,
-                                                            folder)
+                        if markerseq not in seenSequences[dir]:
+                            print('[WindowGen] - Saving for found file {}'.format(file))
+                            # FIRST TIME WE SEE THIS RECORDING FOR THIS SPECIFIC PERSON E.G. R01, R02
+                            seenSequences[dir].append(markerseq)
+
+                            if folder == 'test':
+                                markerfile = self.new_mk_url.format(dir, markerseq)
+                            else:
+                                markerfile = self.markerset_dir.format(dir, markerseq)
+
+                            skdata = self.read_data(file)
+                            mkdata = self.read_data_markers(markerfile).astype('float64')
+                            # mkdata = self.basicSel(mkdata)
+                            (_, accdata) = self.calculate(mkdata)
+                            labels = skdata[0:accdata.shape[0], 0].reshape((-1, 1))
+                            nanfilter = np.isnan(accdata).any(axis=1)
+                            labels = labels[~nanfilter]
+                            accdata = accdata[~nanfilter]
+                            filteredData, filteredLabels = self.removeClassMarkers(accdata, labels,
+                                                                                   7)  # Removed unused 7 class
+                            if filteredData.shape[0] == 0:
+                                break;
+                            normalizedData = self.normalizeData(filteredData,
+                                                                haslabels=False)  # Normalize data per sensor channel
+                            stackedData = self.coords_to_channels(normalizedData)  # (X,Y,Z) coords to Channels(dims)
+                            # pdb.set_trace()
+                            data_windows = sliding_window(stackedData,
+                                                          (stackedData.shape[0], self.win_size, stackedData.shape[2]),
+                                                          (1, self.win_stride, 1))
+                            label_windows = sliding_window(filteredLabels,
+                                                           (self.win_size, labels.shape[1]),
+                                                           (self.win_stride, 1))
+
+                            win_amount = self.saveMarkerWindows(data_windows,
+                                                                label_windows,
+                                                                self.save_accel_dataset_dir.format(self.win_size,
+                                                                                                    self.win_stride,
+                                                                                                    folder),
+                                                                win_amount,
+                                                                folder)
                     except AttributeError:
                         print('something wrong on regexp side')
 
