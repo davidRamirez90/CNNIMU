@@ -156,15 +156,15 @@ class WindowGenerator:
             curri += 1
 
             # SAMPLING FRON RANDOM DIST AND DECIDING IF WINDOW SHOULD BE RESAMPLED
-            if folder == "train":
-                randSample = rand.random_sample()
-                if (randSample > self.probabilities[int(label)]):
-                    data += rand.normal(0, 1e-2, data.shape)
-                    obj = {"data": data, "label": label}
-                    f = open(os.path.join(data_dir, 'seq_{0:06}.pkl'.format(curri)), 'wb')
-                    pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
-                    f.close()
-                    curri += 1
+            # if folder == "train":
+            #     randSample = rand.random_sample()
+            #     if (randSample > self.probabilities[int(label)]):
+            #         data += rand.normal(0, 1e-2, data.shape)
+            #         obj = {"data": data, "label": label}
+            #         f = open(os.path.join(data_dir, 'seq_{0:06}.pkl'.format(curri)), 'wb')
+            #         pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
+            #         f.close()
+            #         curri += 1
 
         print('[WindowGen] - Saved windows {}'.format(curri))
 
@@ -186,15 +186,15 @@ class WindowGenerator:
             curri += 1
 
             # SAMPLING FRON RANDOM DIST AND DECIDING IF WINDOW SHOULD BE RESAMPLED
-            if folder == "train":
-                randSample = rand.random_sample()
-                if(randSample > self.probabilities[int(label)]):
-                    window_data += rand.normal(0, 1e-2, window_data.shape)
-                    obj = {"data": window_data, "label": label}
-                    f = open(os.path.join(data_dir, 'seq_{0:06}.pkl'.format(curri)), 'wb')
-                    pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
-                    f.close()
-                    curri += 1
+            # if folder == "train":
+            #     randSample = rand.random_sample()
+            #     if(randSample > self.probabilities[int(label)]):
+            #         window_data += rand.normal(0, 1e-2, window_data.shape)
+            #         obj = {"data": window_data, "label": label}
+            #         f = open(os.path.join(data_dir, 'seq_{0:06}.pkl'.format(curri)), 'wb')
+            #         pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
+            #         f.close()
+            #         curri += 1
 
 
 
@@ -217,7 +217,8 @@ class WindowGenerator:
         """
 
         # labels = ['train', 'validate', 'test']
-        labels = ['train', 'test']
+        # labels = ['train', 'test']
+        labels = ['train']
 
         if self.checkDirExists(self.save_marker_dataset_dir):
             print('[WindowGen] - Dataset already exists, skipping generation...')
@@ -233,9 +234,13 @@ class WindowGenerator:
         #     test=['05', '06']
         # )
 
+        # markers_dict = dict(
+        #     train=['01', '02', '03', '04'],
+        #     test=['05', '06']
+        # )
+
         markers_dict = dict(
-            train=['01', '02', '03', '04'],
-            test=['05', '06']
+            train=['01', '02', '03', '04']
         )
 
         # seenSequences = dict(
@@ -305,7 +310,9 @@ class WindowGenerator:
         """
 
         # labels = [ 'train', 'validate', 'test']
-        labels = ['train', 'test']
+        # labels = ['train', 'test']
+        labels = ['train']
+
 
         if self.checkDirExists(self.save_dataset_dir):
             print('[WindowGen] - Dataset already exists, skipping generation...')
@@ -322,9 +329,13 @@ class WindowGenerator:
         #     test=['P05', 'P06']
         # )
 
+        # dataset_dict = dict(
+        #     train=['P01', 'P02', 'P03', 'P04'],
+        #     test=['P05', 'P06']
+        # )
+
         dataset_dict = dict(
-            train=['P01', 'P02', 'P03', 'P04'],
-            test=['P05', 'P06']
+            train=['01', '02', '03', '04']
         )
         
 
