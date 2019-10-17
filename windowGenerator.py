@@ -309,8 +309,8 @@ class WindowGenerator:
                             #                                                                         folder),
                             #                                     win_amount,
                             #                                     folder)
-                        else:
-                            print("Skipping person {} for seq {}, cause ive already seen it".format(dir, markerseq))
+                        # else:
+                            # print("Skipping person {} for seq {}, cause ive already seen it".format(dir, markerseq))
 
                     except AttributeError:
                         print('something wrong on regexp side')
