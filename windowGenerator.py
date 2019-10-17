@@ -510,10 +510,13 @@ class WindowGenerator:
 
 if __name__ == '__main__':
 
-    wg1 = WindowGenerator(100, 5)
-    wg1.runMarkers()
-    wg1.runDerivation()
+    # TYPE 0
+    wg1 = WindowGenerator(100, 5, 138)
     wg1.run()
+
+    wg2 = WindowGenerator(100, 5)
+    wg2.runMarkers()
+    wg2.runDerivation()
     # wg1 = WindowGenerator(300, 15)
     # wg1.runMarkers()
     # wg1.run()
