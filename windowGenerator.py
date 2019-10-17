@@ -224,7 +224,7 @@ class WindowGenerator:
         labels = ['test']
 
         for folder in labels:
-            if self.checkDirExists(self.save_dataset_dir + folder):
+            if self.checkDirExists(self.save_marker_dataset_dir + folder):
                 print('[WindowGen] - {} folder already exists, skipping generation...'.format(folder))
                 return
             else:
@@ -518,7 +518,7 @@ class WindowGenerator:
         labels = ['test']
 
         for folder in labels:
-            if self.checkDirExists(self.save_dataset_dir+folder):
+            if self.checkDirExists(self.save_accel_dataset_dir+folder):
                 print('[WindowGen] - {} folder already exists, skipping generation...'.format(folder))
                 return
             else:
