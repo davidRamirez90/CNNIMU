@@ -228,7 +228,7 @@ class WindowGenerator:
                 print('[WindowGen] - {} folder already exists, skipping generation...'.format(folder))
                 return
             else:
-                os.makedirs(self.save_dataset_dir.format(self.win_size,
+                os.makedirs(self.save_marker_dataset_dir.format(self.win_size,
                                                          self.win_stride,
                                                          folder))
         # markers_dict = dict(
@@ -522,7 +522,7 @@ class WindowGenerator:
                 print('[WindowGen] - {} folder already exists, skipping generation...'.format(folder))
                 return
             else:
-                os.makedirs(self.save_dataset_dir.format(self.win_size,
+                os.makedirs(self.save_accel_dataset_dir.format(self.win_size,
                                                          self.win_stride,
                                                          folder))
 
