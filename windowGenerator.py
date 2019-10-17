@@ -400,20 +400,25 @@ class WindowGenerator:
                             else:
                                 markerfile = self.markerset_dir.format(dir, markerseq)
                             print("Generating windows for file {}".format(markerfile))
-                        # rawData = self.read_data(file)
-                        # filteredData = self.removeClass(rawData, 7)
-                        # if filteredData.shape[0] == 0:
-                        #     break;
-                        # normalizedData = self.normalizeData(filteredData)
-                        # data_windows = sliding_window(normalizedData,
-                        #                               (self.win_size, normalizedData.shape[1]),
-                        #                               (self.win_stride, 1))
-                        # win_amount = self.saveWindows(data_windows,
-                        #                               self.save_dataset_dir.format(self.win_size,
-                        #                                                            self.win_stride,
-                        #                                                            folder),
-                        #                               win_amount,
-                        #                               folder)
+                            # rawData = self.read_data(file)
+                            # filteredData = self.removeClass(rawData, 7)
+                            # if filteredData.shape[0] == 0:
+                            #     break;
+                            # normalizedData = self.normalizeData(filteredData)
+                            # data_windows = sliding_window(normalizedData,
+                            #                               (self.win_size, normalizedData.shape[1]),
+                            #                               (self.win_stride, 1))
+                            # win_amount = self.saveWindows(data_windows,
+                            #                               self.save_dataset_dir.format(self.win_size,
+                            #                                                            self.win_stride,
+                            #                                                            folder),
+                            #                               win_amount,
+                            #                               folder)
+                        else:
+                            print("Skipping person {} for seq {}, cause ive already seen it".format(dir, markerseq))
+
+                    except AttributeError:
+                        print('something wrong on regexp side')
 
         end = time.time()
         t = end - start
