@@ -234,14 +234,11 @@ class WindowGenerator:
         #     test=['05', '06']
         # )
 
-        # markers_dict = dict(
-        #     train=['01', '02', '03', '04'],
-        #     test=['05', '06']
-        # )
-
         markers_dict = dict(
-            train=['01', '02', '03', '04']
+            train=['01', '02', '03', '04'],
+            test=['05', '06']
         )
+
 
         # seenSequences = dict(
         #     P07=list(),
@@ -329,13 +326,9 @@ class WindowGenerator:
         #     test=['P05', 'P06']
         # )
 
-        # dataset_dict = dict(
-        #     train=['P01', 'P02', 'P03', 'P04'],
-        #     test=['P05', 'P06']
-        # )
-
         dataset_dict = dict(
-            train=['01', '02', '03', '04']
+            train=['P01', 'P02', 'P03', 'P04'],
+            test=['P05', 'P06']
         )
         
 
@@ -436,7 +429,8 @@ class WindowGenerator:
         :return: Dataset with windows exists
         """
 
-        labels = ['train', 'validate', 'test']
+        # labels = ['train', 'validate', 'test']
+        labels = ['train']
 
         if self.checkDirExists(self.save_accel_dataset_dir):
             print('[WindowGen] - Dataset already exists, skipping generation...')
@@ -446,9 +440,14 @@ class WindowGenerator:
                 os.makedirs(self.save_accel_dataset_dir.format(self.win_size,
                                                                 self.win_stride,
                                                                 folder))
+        # markers_dict = dict(
+        #     train=['01', '02', '03'],
+        #     validate=['04'],
+        #     test=['05', '06']
+        # )
+
         markers_dict = dict(
-            train=['01', '02', '03'],
-            validate=['04'],
+            train=['01', '02', '03', '04'],
             test=['05', '06']
         )
 
