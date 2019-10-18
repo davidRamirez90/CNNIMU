@@ -11,8 +11,8 @@ import pdb
 class Analyzer:
 
     def __init__(self):
-        # self.markers_folder = "/Users/dramirez.c90/Desktop/dataset/m/"
-        self.data_folder = env.dataset_url
+        self.data_folder = "/Users/dramirez.c90/Desktop/dataset/m/"
+        # self.data_folder = env.dataset_url
         self.device = torch.device(
             'cuda:0' if torch.cuda.is_available() else "cpu")
         self.sum = torch.zeros(7).type(torch.IntTensor)
@@ -88,6 +88,9 @@ if __name__ == '__main__':
     # an.run({'name': 'Training', 'data_sets': ['P01', 'P02', 'P03']})
     # an.run({'name': 'Validating', 'data_sets': ['P04']})
     # an.run({'name': 'Testing', 'data_sets': ['P05', 'P06']})
+
+    path = "/Users/dramirez.c90/Desktop/dataset/m/Subject01_01.csv"
+    data = pd.read_csv(path)
 
 
     a = StatAnalyzer()
