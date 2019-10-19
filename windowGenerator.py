@@ -219,9 +219,9 @@ class WindowGenerator:
         """
 
         # labels = ['train', 'validate', 'test']
-        # labels = ['train', 'test']
+        labels = ['train', 'test']
         # labels = ['train']
-        labels = ['test']
+        # labels = ['test']
 
         for folder in labels:
             if self.checkDirExists(self.save_marker_dataset_dir + folder):
@@ -341,9 +341,9 @@ class WindowGenerator:
         """
 
         # labels = [ 'train', 'validate', 'test']
-        # labels = ['train', 'test']
+        labels = ['train', 'test']
         # labels = ['train']
-        labels = ['test']
+        # labels = ['test']
 
 
         for folder in labels:
@@ -510,8 +510,8 @@ class WindowGenerator:
         """
 
         # labels = ['train', 'validate', 'test']
-        # labels = ['train']
-        labels = ['test']
+        labels = ['train', 'test']
+        # labels = ['test']
 
         for folder in labels:
             if self.checkDirExists(self.save_accel_dataset_dir+folder):
