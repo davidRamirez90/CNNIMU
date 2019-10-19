@@ -158,15 +158,15 @@ class WindowGenerator:
             curri += 1
 
             # SAMPLING FRON RANDOM DIST AND DECIDING IF WINDOW SHOULD BE RESAMPLED
-            # if folder == "train":
-            #     randSample = rand.random_sample()
-            #     if (randSample > self.probabilities[int(label)]):
-            #         data += rand.normal(0, 1e-2, data.shape)
-            #         obj = {"data": data, "label": label}
-            #         f = open(os.path.join(data_dir, 'seq_{0:06}.pkl'.format(curri)), 'wb')
-            #         pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
-            #         f.close()
-            #         curri += 1
+            if folder == "train":
+                randSample = rand.random_sample()
+                if (randSample > self.probabilities[int(label)]):
+                    data += rand.normal(0, 1e-2, data.shape)
+                    obj = {"data": data, "label": label}
+                    f = open(os.path.join(data_dir, 'seq_{0:06}.pkl'.format(curri)), 'wb')
+                    pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
+                    f.close()
+                    curri += 1
 
         print('[WindowGen] - Saved windows {}'.format(curri))
 
@@ -188,15 +188,15 @@ class WindowGenerator:
             curri += 1
 
             # SAMPLING FRON RANDOM DIST AND DECIDING IF WINDOW SHOULD BE RESAMPLED
-            # if folder == "train":
-            #     randSample = rand.random_sample()
-            #     if(randSample > self.probabilities[int(label)]):
-            #         window_data += rand.normal(0, 1e-2, window_data.shape)
-            #         obj = {"data": window_data, "label": label}
-            #         f = open(os.path.join(data_dir, 'seq_{0:06}.pkl'.format(curri)), 'wb')
-            #         pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
-            #         f.close()
-            #         curri += 1
+            if folder == "train":
+                randSample = rand.random_sample()
+                if(randSample > self.probabilities[int(label)]):
+                    window_data += rand.normal(0, 1e-2, window_data.shape)
+                    obj = {"data": window_data, "label": label}
+                    f = open(os.path.join(data_dir, 'seq_{0:06}.pkl'.format(curri)), 'wb')
+                    pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
+                    f.close()
+                    curri += 1
 
 
 
@@ -420,10 +420,6 @@ class WindowGenerator:
                             print('[WindowGen] - Saving for found file {}'.format(file))
                             # FIRST TIME WE SEE THIS RECORDING FOR THIS SPECIFIC PERSON E.G. R01, R02
                             seenSequences[dir].append(markerseq)
-                            if folder == 'test':
-                                markerfile = self.new_mk_url.format(dir, markerseq)
-                            else:
-                                markerfile = self.markerset_dir.format(dir, markerseq)
                             rawData = self.read_data(file)
                             filteredData = self.removeClass(rawData, 7)
                             if filteredData.shape[0] == 0:
