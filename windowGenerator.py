@@ -93,6 +93,7 @@ class WindowGenerator:
         return data
 
     def read_imu_data(self, path):
+        pdb.set_trace()
         data = pd.read_csv(path, skiprows=2)
         data = data.dropna(axis=1, how='all')
         data = data.iloc[1:, 1:]
