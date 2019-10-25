@@ -73,7 +73,7 @@ class WindowGenerator:
         data = pd.read_csv(path)
         data = data.dropna(axis=1, how='all')
         data = data.iloc[:, 1:]
-        data = data.iloc[:, ::2]
+        data = data.iloc[::2, :]
         data = data.to_numpy()
         return data
 
