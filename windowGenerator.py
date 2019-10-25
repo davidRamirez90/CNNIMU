@@ -34,11 +34,18 @@ class WindowGenerator:
     def __init__(self, win_size=100, win_stride=1, channels=38):
         self.win_size = win_size
         self.win_stride = win_stride
+
         self.dataset_dir = env.dataset_url
         self.save_dataset_dir = env.window_url
+
         self.markerset_dir = env.markers_url
         self.save_marker_dataset_dir = env.marker_window_url
+
         self.save_accel_dataset_dir = env.accel_window_url
+
+        self.imuset_dir = env.imu_url
+        self.save_imu_dataset_dir = env.imu_window_url
+
         self.channels = channels
         self.probabilities = [0, 0.5, 0.83, 0, 1, 0, 0]
         self.new_mk_url = env.new_mk_url
@@ -57,6 +64,20 @@ class WindowGenerator:
 
         return data
 
+
+    def read_data_for_imu(self, path):
+        '''
+        Reads CSV file from path
+        @:param File path
+        '''
+        data = pd.read_csv(path)
+        data = data.dropna(axis=1, how='all')
+        data = data.iloc[:, 1:]
+        data = data.iloc[:, ::2]
+        data = data.to_numpy()
+        return data
+
+
     def read_data_markers(self, path):
         '''
         Reads CSV file from path
@@ -70,6 +91,14 @@ class WindowGenerator:
         data = data.to_numpy()
 
         return data
+
+    def read_imu_data(self, path):
+        data = pd.read_csv(path, skiprows=2)
+        data = data.dropna(axis=1, how='all')
+        data = data.iloc[1:, 1:]
+        data = data.to_numpy()
+        return data
+
 
     def coords_to_channels(self, data):
 
@@ -105,6 +134,7 @@ class WindowGenerator:
         filtArray = data[indices, :]
 
         return filtArray
+
 
     def removeClassMarkers(self, data, labels, classN):
         '''
@@ -620,6 +650,108 @@ class WindowGenerator:
         print('[WindowGen] - Process has been finished after: {}'.format(t))
 
         return True
+
+
+
+
+    def runIMUData(self):
+        """
+        Main function to generate new windows for IMU dataset
+        :return: Dataset with windows exists
+        """
+        labels = ['train', 'validate', 'test']
+
+        for folder in labels:
+            if self.checkDirExists(self.save_imu_dataset_dir + folder):
+                print('[WindowGen] - {} folder already exists, skipping generation...'.format(folder))
+                return True
+            else:
+                os.makedirs(self.save_imu_dataset_dir.format(self.win_size,
+                                                                self.win_stride,
+                                                                folder))
+
+            imu_dict = dict(
+                train=['07', '08', '09'],
+                validate=['10'],
+                test=['11', '12', '13']
+            )
+
+            seenSequences = {
+                "07": list(),
+                "08": list(),
+                "09": list(),
+                "10": list(),
+                "11": list(),
+                "12": list(),
+                "13": list()
+            }
+
+            print('[WindowGen] - Creating Training Windows')
+
+            start = time.time()
+
+            for i, folder in enumerate(labels):
+                print('[WindowGen] - Saving on folder {}'.format(folder))
+                win_amount = 0
+                for j, dir in enumerate(imu_dict[folder]):
+                    skeletondir = 'P{}'.format(dir)
+                    files = glob.glob(self.dataset_dir.format(skeletondir))
+                    for k, file in enumerate(files):
+                        try:
+                            imuseq = re.search('P[0-9]*_R(.+?)_A[0-9]*', file).group(1)
+                            if imuseq not in seenSequences[dir]:
+                                print('[WindowGen] - Saving for found file {}'.format(file))
+                                seenSequences[dir].append(imuseq)
+                                imufile = self.imuset_dir.format(dir, imuseq)
+                                skdata = self.read_data_for_imu(file)
+                                imudata = self.read_imu_data(imufile).astype('float64')
+                                pdb.set_trace()
+                                imudata = imudata[:skdata.shape[0], :]
+                                labels = skdata[:imudata.shape[0], 0].reshape((-1, 1))
+                                nanfilter = np.isnan(imudata).any(axis=1)
+                                labels = labels[~nanfilter]
+                                imudata = imudata[~nanfilter]
+                                filteredData, filteredLabels = self.removeClassMarkers(imudata, labels, 7)
+                                if filteredData.shape[0] == 0:
+                                    break;
+                                stackedData = self.coords_to_channels(filteredData)
+
+                                data_windows = sliding_window( stackedData,
+                                                               (stackedData.shape[0],
+                                                                self.win_size,
+                                                                stackedData.shape[2]),
+                                                               (1, self.win_stride, 1))
+                                label_windows = sliding_window(filteredLabels,
+                                                               (self.win_size, labels.shape[1]),
+                                                               (self.win_stride, 1))
+                                win_amount = self.saveImuWindows(data_windows,
+                                                                 label_windows,
+                                                                 self.save_imu_dataset_dir.format(self.win_size,
+                                                                                                  self.win_stride,
+                                                                                                  folder),
+                                                                 win_amount,
+                                                                 folder)
+                        except AttributeError:
+                            print('something went wrong with regexp')
+            end = time.time()
+            t = end-start
+            print('[WindowGen] - Process has been finished after: {}'.format(t))
+
+            return True
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 if __name__ == '__main__':
