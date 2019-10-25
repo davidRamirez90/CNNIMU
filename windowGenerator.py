@@ -757,14 +757,16 @@ class WindowGenerator:
 if __name__ == '__main__':
 
     # TYPE 0
-    print("Creating Skeletons")
-    wg1 = WindowGenerator(100, 5, 138)
-    wg1.run()
+    # print("Creating Skeletons")
+    # wg1 = WindowGenerator(100, 5, 138)
+    # wg1.run()
     print("Creating Markers")
     wg2 = WindowGenerator(100, 5, 38)
-    wg2.runMarkers()
-    print("Creating Accel")
-    wg2.runDerivation()
+    # wg2.runMarkers()
+    # print("Creating Accel")
+    # wg2.runDerivation()
+    print("Creating IMU")
+    wg2.runIMUData()
     # wg1 = WindowGenerator(300, 15)
     # wg1.runMarkers()
     # wg1.run()
