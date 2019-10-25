@@ -695,7 +695,7 @@ class WindowGenerator:
                 win_amount = 0
                 for j, dir in enumerate(imu_dict[folder]):
                     skeletondir = 'P{}'.format(dir)
-                    files = glob.glob(self.dataset_dir.format(skeletondir))
+                    files = glob.glob(self.new_sk_url.format(skeletondir))
                     for k, file in enumerate(files):
                         try:
                             imuseq = re.search('P[0-9]*_R(.+?)_A[0-9]*', file).group(1)
