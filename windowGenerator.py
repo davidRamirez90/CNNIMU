@@ -706,8 +706,9 @@ class WindowGenerator:
                                 print('[WindowGen] - Saving for found file {}'.format(file))
                                 seenSequences[dir].append(imuseq)
                                 imufile = self.imuset_dir.format(dir, dir, imuseq)
-                                    print("skipping")
+
                                 if not os.path.isdir(imufile):
+                                    print("skipping")
                                     continue
                                 print("generating windows...")
                                 skdata = self.read_data_for_imu(file)
