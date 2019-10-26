@@ -700,15 +700,16 @@ class WindowGenerator:
                     print(dir)
                     # pdb.set_trace()
                     for k, file in enumerate(files):
-                        print(file)
                         try:
                             imuseq = re.search('P[0-9]*_R(.+?)_A[0-9]*', file).group(1)
                             if imuseq not in seenSequences[dir]:
                                 print('[WindowGen] - Saving for found file {}'.format(file))
                                 seenSequences[dir].append(imuseq)
                                 imufile = self.imuset_dir.format(dir, dir, imuseq)
+                                    print("skipping")
                                 if not os.path.isdir(imufile):
                                     continue
+                                print("generating windows...")
                                 skdata = self.read_data_for_imu(file)
                                 imudata = self.read_imu_data(imufile).astype('float64')
                                 # pdb.set_trace()
