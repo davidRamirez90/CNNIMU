@@ -704,6 +704,8 @@ class WindowGenerator:
                                 print('[WindowGen] - Saving for found file {}'.format(file))
                                 seenSequences[dir].append(imuseq)
                                 imufile = self.imuset_dir.format(dir, dir, imuseq)
+                                if not os.path.isdir(imufile):
+                                    break
                                 skdata = self.read_data_for_imu(file)
                                 imudata = self.read_imu_data(imufile).astype('float64')
                                 # pdb.set_trace()
