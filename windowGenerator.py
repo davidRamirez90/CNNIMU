@@ -698,7 +698,7 @@ class WindowGenerator:
                     skeletondir = 'P{}'.format(dir)
                     files = glob.glob(self.new_sk_url.format(skeletondir))
                     print(dir)
-                    pdb.set_trace()
+                    # pdb.set_trace()
                     for k, file in enumerate(files):
                         print(file)
                         try:
@@ -708,7 +708,7 @@ class WindowGenerator:
                                 seenSequences[dir].append(imuseq)
                                 imufile = self.imuset_dir.format(dir, dir, imuseq)
                                 if not os.path.isdir(imufile):
-                                    break
+                                    continue
                                 skdata = self.read_data_for_imu(file)
                                 imudata = self.read_imu_data(imufile).astype('float64')
                                 # pdb.set_trace()
@@ -720,7 +720,7 @@ class WindowGenerator:
                                 imudata = imudata[~nanfilter]
                                 filteredData, filteredLabels = self.removeClassMarkers(imudata, labels, 7)
                                 if filteredData.shape[0] == 0:
-                                    break;
+                                    continue
                                 stackedData = self.coords_to_channels(filteredData)
 
                                 data_windows = sliding_window( stackedData,
