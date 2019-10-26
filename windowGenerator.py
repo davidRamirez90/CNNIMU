@@ -726,7 +726,7 @@ class WindowGenerator:
                                 label_windows = sliding_window(filteredLabels,
                                                                (self.win_size, labels.shape[1]),
                                                                (self.win_stride, 1))
-                                win_amount = self.saveImuWindows(data_windows,
+                                win_amount = self.saveMarkerWindows(data_windows,
                                                                  label_windows,
                                                                  self.save_imu_dataset_dir.format(self.win_size,
                                                                                                   self.win_stride,
