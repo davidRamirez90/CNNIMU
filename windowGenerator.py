@@ -707,7 +707,7 @@ class WindowGenerator:
                                 seenSequences[dir].append(imuseq)
                                 imufile = self.imuset_dir.format(dir, dir, imuseq)
                                 print(imufile)
-                                if not os.path.isdir(imufile):
+                                if not os.path.isfile(imufile):
                                     print("skipping")
                                     continue
                                 print("generating windows...")
