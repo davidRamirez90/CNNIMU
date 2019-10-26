@@ -663,6 +663,7 @@ class WindowGenerator:
         labels = ['train', 'validate', 'test']
 
         for folder in labels:
+            print(self.save_imu_dataset_dir + folder)
             if self.checkDirExists(self.save_imu_dataset_dir + folder):
                 print('[WindowGen] - {} folder already exists, skipping generation...'.format(folder))
                 return True
