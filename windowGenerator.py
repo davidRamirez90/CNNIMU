@@ -708,6 +708,7 @@ class WindowGenerator:
                                 imudata = self.read_imu_data(imufile).astype('float64')
                                 pdb.set_trace()
                                 imudata = imudata[:skdata.shape[0], :]
+                                skdata = skdata[:imudata.shape[0], :]
                                 labels = skdata[:imudata.shape[0], 0].reshape((-1, 1))
                                 nanfilter = np.isnan(imudata).any(axis=1)
                                 labels = labels[~nanfilter]
