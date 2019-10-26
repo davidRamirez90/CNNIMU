@@ -93,7 +93,7 @@ class WindowGenerator:
         return data
 
     def read_imu_data(self, path):
-        pdb.set_trace()
+        # pdb.set_trace()
         data = pd.read_csv(path, skiprows=2)
         data = data.dropna(axis=1, how='all')
         data = data.iloc[1:, 1:]
@@ -706,7 +706,7 @@ class WindowGenerator:
                                 imufile = self.imuset_dir.format(dir, dir, imuseq)
                                 skdata = self.read_data_for_imu(file)
                                 imudata = self.read_imu_data(imufile).astype('float64')
-                                pdb.set_trace()
+                                # pdb.set_trace()
                                 imudata = imudata[:skdata.shape[0], :]
                                 skdata = skdata[:imudata.shape[0], :]
                                 labels = skdata[:imudata.shape[0], 0].reshape((-1, 1))
