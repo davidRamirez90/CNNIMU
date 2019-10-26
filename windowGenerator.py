@@ -697,8 +697,10 @@ class WindowGenerator:
                 for j, dir in enumerate(imu_dict[folder]):
                     skeletondir = 'P{}'.format(dir)
                     files = glob.glob(self.new_sk_url.format(skeletondir))
+                    print(dir)
                     pdb.set_trace()
                     for k, file in enumerate(files):
+                        print(file)
                         try:
                             imuseq = re.search('P[0-9]*_R(.+?)_A[0-9]*', file).group(1)
                             if imuseq not in seenSequences[dir]:
