@@ -59,6 +59,11 @@ class TorchModel:
             self.model_url = env.marker_models_url
             self.envname = "NEWARCH_markers".format(conf['win_len'],
                                                     conf['win_step'])
+        elif self.type == 2:
+            self.win_url = env.imu_window_url
+            self.model_url = env.imu_models_url
+            self.envname = "IMU".format(conf['win_len'],
+                                                  conf['win_step'])
         else:
             self.win_url = env.accel_window_url
             self.model_url = env.accel_models_url
@@ -148,8 +153,10 @@ class TorchModel:
             win_generated = winGen.run()
         elif type == 1:
             win_generated = winGen.runMarkers()
-        else:
+        elif type == 2:
             win_generated = winGen.runDerivation()
+        else:
+            win_generated=winGen.runIMUData()
 
         assert win_generated
 

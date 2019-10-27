@@ -89,7 +89,7 @@ def init(args):
         'maxit': args.iterations
     }
 
-    if args.type == 1 or args.type == 2:
+    if args.type == 1 or args.type == 2 or args.type == 3:
         if args.channels == 0:
             config['channels'] = 38
         else:
@@ -125,7 +125,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--core", "-c", help="Specify GPU core to use")
     parser.add_argument("--channels", "-ch", help="Specify number of channels to use", default=0, type=int)
-    parser.add_argument("--type", "-t", help="Specify net type: 0: Skeletons, 1: Markers, 2: Deriv", default=0, type=int)
+    parser.add_argument("--type", "-t", help="Specify net type: 0: Skeletons, 1: Markers, 2: Deriv, 3: IMU", default=0, type=int)
     parser.add_argument("--lr", "-l", help="Specify if LR reduction used", default=False, type=bool)
     parser.add_argument("--iterations", "-it", help="Specify max iterations for training", default=-1, type=int)
 
