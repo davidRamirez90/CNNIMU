@@ -173,6 +173,7 @@ class TorchModel:
         device = torch.device(
             config['gpucore'] if torch.cuda.is_available() else "cpu")
         net = CNN_IMU(config)
+        pdb.set_trace()
         net = net.to(device)
         print(device)
         print(net)
