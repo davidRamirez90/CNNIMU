@@ -60,14 +60,14 @@ class TorchModel:
             self.envname = "NEWARCH_markers".format(conf['win_len'],
                                                     conf['win_step'])
         elif self.type == 2:
-            self.win_url = env.imu_window_url
-            self.model_url = env.imu_models_url
-            self.envname = "IMU".format(conf['win_len'],
-                                                  conf['win_step'])
-        else:
             self.win_url = env.accel_window_url
             self.model_url = env.accel_models_url
             self.envname = "NEWARCH_accel".format(conf['win_len'],
+                                                  conf['win_step'])
+        else:
+            self.win_url = env.imu_window_url
+            self.model_url = env.imu_models_url
+            self.envname = "IMU".format(conf['win_len'],
                                                   conf['win_step'])
 
     def get_train_data_loader(self, config):
@@ -100,7 +100,6 @@ class TorchModel:
                                                         config['win_step'],
                                                         'validate'),
                                     transform=GaussianNoise(0, 1e-2, self.type))
-        pdb.set_trace()
         train_loader = DataLoader(train_dataset, batch_size=train_batch_size,
                                   shuffle=True, num_workers=4)
         val_loader = DataLoader(
