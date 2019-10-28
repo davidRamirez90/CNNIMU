@@ -35,7 +35,23 @@ class Analyzer:
             t_sum = data2.sum(dim=0).type(torch.IntTensor)
             self.sum = self.sum + t_sum
 
+    def reset(self):
+        self.sum = torch.zeros(7).type(torch.IntTensor)
+
     def run(self, input):
+        prefix = '/vol/corpora/har/DFG_Project/2019/MoCap/recordings_2019_06/09_New_Representation/{}'
+        filenames = [
+            'S01_P07_R01_A03_N01_norm.csv',
+            'S01_P07_R01_A03_N01_norm.csv',
+            'S01_P09_R01_A03_N01_norm.csv',
+            'S01_P09_R01_A03_N01_norm.csv',
+            'S01_P10_R01_A03_N01_norm.csv',
+            'S01_P10_R01_A03_N01_norm.csv',
+            'S01_P11_R01_A03_N01_norm.csv',
+            'S01_P11_R01_A03_N01_norm.csv',
+            'S01_P13_R01_A03_N01_norm.csv',
+            'S01_P13_R01_A03_N01_norm.csv',
+        ]
         data_dict = input['data_sets']
         name = input['name']
         for dir in data_dict:
@@ -45,6 +61,12 @@ class Analyzer:
                 self.read_data(f)
         print('Results for {}'.format(name))
         print(self.sum)
+
+        for i, f in enumerate(tqdm.tqdm(filenames)):
+            self.read_data(f)
+            print('Results for {}'.format(f))
+            print(self.sum)
+            self.reset()
 
 class StatAnalyzer:
 
