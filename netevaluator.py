@@ -392,7 +392,7 @@ class TorchModel:
             m = engine.state.metrics
             print(m)
             if m['loss'] < self.best_loss:
-                print('found best loss here')
+                print('found best loss here-------------------------------------->>>>>')
                 self.best_loss = m['loss']
                 vis.line(Y=[0, m['loss']],
                          X=[trainer.state.iteration, trainer.state.iteration],
