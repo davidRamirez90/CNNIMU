@@ -337,15 +337,15 @@ class TorchModel:
         self.append_plot_to_window(vis, acc_per_class_window, '5', 'append')
         self.append_plot_to_window(vis, acc_per_class_window, '6', 'append')
 
-        # val_f1_window = self.create_plot_window(
-        #     vis,
-        #     '# Iterations',
-        #     'F1',
-        #     '[{}] F1 score W [{}/{}] - LR [{}]'.format(
-        #         iteration,
-        #         config['win_len'],
-        #         config['win_step'],
-        #         config['lr']))
+        val_f1_window = self.create_plot_window(
+            vis,
+            '# Iterations',
+            'F1',
+            '[{}] F1 score W [{}/{}] - LR [{}]'.format(
+                iteration,
+                config['win_len'],
+                config['win_step'],
+                config['lr']))
 
         training_losses_acc = list()
 
