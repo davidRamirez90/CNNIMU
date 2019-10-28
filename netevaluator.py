@@ -384,49 +384,49 @@ class TorchModel:
             else:
                 val_evaluator.run(val_loader)
 
-        # @val_evaluator.on(Events.EPOCH_COMPLETED)
-        # def log_validation_results(engine):
-        #
-        #     m = engine.state.metrics
-        #     print(m)
-        #     if m['loss'] < self.best_loss:
-        #         print('found best loss here')
-        #         self.best_loss = m['loss']
-        #         vis.line(Y=[0, m['loss']],
-        #                  X=[trainer.state.iteration, trainer.state.iteration],
-        #                  name='best_model',
-        #                  update='update',
-        #                  win=train_metrics_window)
-        #
-        #     if self.lr:
-        #         step_scheduler.step(m['loss'])
-        #
-        #     self.append_scalar_to_plot(vis, m['loss'],
-        #                                trainer.state.iteration,
-        #                                'append', train_metrics_window,
-        #                                name='validationloss')
-        #     self.append_scalar_to_plot(vis, m['accuracy'],
-        #                                trainer.state.iteration,
-        #                                'append', val_acc_window)
-        #     self.append_scalar_to_plot(vis, m['accPerClass'][0], trainer.state.iteration, 'append',
-        #                                acc_per_class_window, name='0')
-        #     self.append_scalar_to_plot(vis, m['accPerClass'][1], trainer.state.iteration, 'append',
-        #                                acc_per_class_window, name='1')
-        #     self.append_scalar_to_plot(vis, m['accPerClass'][2], trainer.state.iteration, 'append',
-        #                                acc_per_class_window, name='2')
-        #     self.append_scalar_to_plot(vis, m['accPerClass'][3], trainer.state.iteration, 'append',
-        #                                acc_per_class_window, name='3')
-        #     self.append_scalar_to_plot(vis, m['accPerClass'][4], trainer.state.iteration, 'append',
-        #                                acc_per_class_window, name='4')
-        #     self.append_scalar_to_plot(vis, m['accPerClass'][5], trainer.state.iteration, 'append',
-        #                                acc_per_class_window, name='5')
-        #     self.append_scalar_to_plot(vis, m['accPerClass'][6], trainer.state.iteration, 'append',
-        #                                acc_per_class_window, name='6')
-        #     print(
-        #         "Validation Result: ----------->  Loss: {:.4f}, Accuracy: {:.4f}, F1: {:.4f}".format(
-        #             m['loss'],
-        #             m['accuracy'],
-        #             m['f1']))
+        @val_evaluator.on(Events.EPOCH_COMPLETED)
+        def log_validation_results(engine):
+
+            m = engine.state.metrics
+            print(m)
+            if m['loss'] < self.best_loss:
+                print('found best loss here')
+                self.best_loss = m['loss']
+                vis.line(Y=[0, m['loss']],
+                         X=[trainer.state.iteration, trainer.state.iteration],
+                         name='best_model',
+                         update='update',
+                         win=train_metrics_window)
+
+            if self.lr:
+                step_scheduler.step(m['loss'])
+
+            self.append_scalar_to_plot(vis, m['loss'],
+                                       trainer.state.iteration,
+                                       'append', train_metrics_window,
+                                       name='validationloss')
+            self.append_scalar_to_plot(vis, m['accuracy'],
+                                       trainer.state.iteration,
+                                       'append', val_acc_window)
+            self.append_scalar_to_plot(vis, m['accPerClass'][0], trainer.state.iteration, 'append',
+                                       acc_per_class_window, name='0')
+            self.append_scalar_to_plot(vis, m['accPerClass'][1], trainer.state.iteration, 'append',
+                                       acc_per_class_window, name='1')
+            self.append_scalar_to_plot(vis, m['accPerClass'][2], trainer.state.iteration, 'append',
+                                       acc_per_class_window, name='2')
+            self.append_scalar_to_plot(vis, m['accPerClass'][3], trainer.state.iteration, 'append',
+                                       acc_per_class_window, name='3')
+            self.append_scalar_to_plot(vis, m['accPerClass'][4], trainer.state.iteration, 'append',
+                                       acc_per_class_window, name='4')
+            self.append_scalar_to_plot(vis, m['accPerClass'][5], trainer.state.iteration, 'append',
+                                       acc_per_class_window, name='5')
+            self.append_scalar_to_plot(vis, m['accPerClass'][6], trainer.state.iteration, 'append',
+                                       acc_per_class_window, name='6')
+            print(
+                "Validation Result: ----------->  Loss: {:.4f}, Accuracy: {:.4f}, F1: {:.4f}".format(
+                    m['loss'],
+                    m['accuracy'],
+                    m['f1']))
 
 
         trainer.run(train_loader, max_epochs=15)
