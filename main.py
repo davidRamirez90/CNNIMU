@@ -85,7 +85,7 @@ def init(args):
         'momentum': 0.9,
         'win_len': 50,
         'win_step': 2,
-        'lr': 0.0001,
+        'lr': 0.00001,
         'maxit': args.iterations
     }
 
