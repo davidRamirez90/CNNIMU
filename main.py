@@ -77,7 +77,7 @@ def init(args):
         'f_size': (5, 1),
         'batch_train': 100,
         'batch_validate': 100,
-        'patience': 5,
+        'patience': 10,
         'train_info_iter': 10,
         'val_iter': 90,
         'noise': (0, 1e-2),
@@ -85,7 +85,7 @@ def init(args):
         'momentum': 0.9,
         'win_len': 50,
         'win_step': 2,
-        'lr': 0.00001,
+        'lr': 0.001,
         'maxit': args.iterations
     }
 
