@@ -56,10 +56,11 @@ class CNN_IMU(nn.Module):
         """
         x = x.float()
         x = F.relu(self.conv11(x))
-        x = F.max_pool2d(F.relu(self.conv12(x)), (2,1))
+        x = F.max_pool2d(x)
+        # x = F.max_pool2d(F.relu(self.conv12(x)), (2,1))
         # conv block 1
-        # x = F.relu(self.conv21(x))
-        # x = F.max_pool2d(F.relu(self.conv22(x)), (2,1))
+        x = F.relu(self.conv21(x))
+        x = F.max_pool2d(F.relu(self.conv22(x)), (2,1))
         # conv block 2
         x = x.view(-1, self.num_flat_features(x))
         x = self.drop(x)
