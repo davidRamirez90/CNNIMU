@@ -723,7 +723,7 @@ class WindowGenerator:
                             labels = labels[~nanfilter]
                             imudata = imudata[~nanfilter]
                             filteredData, filteredLabels = self.removeClassMarkers(imudata, labels, 7)
-
+                            pdb.set_trace()
                             an = StatAnalyzer()
                             an.calculate(pd.Series(filteredLabels))
                             pdb.set_trace()
