@@ -54,16 +54,17 @@ class Analyzer:
         ]
         data_dict = input['data_sets']
         name = input['name']
-        for dir in data_dict:
-            files = glob.glob(self.data_folder.format(dir))
-            for i, f in enumerate(tqdm.tqdm(files)):
-                # print('Running for {}'.format(f))
-                self.read_data(f)
-        print('Results for {}'.format(name))
-        print(self.sum)
+        # for dir in data_dict:
+        #     files = glob.glob(self.data_folder.format(dir))
+        #     for i, f in enumerate(tqdm.tqdm(files)):
+        #         # print('Running for {}'.format(f))
+        #         self.read_data(f)
+        # print('Results for {}'.format(name))
+        # print(self.sum)
 
         for i, f in enumerate(tqdm.tqdm(filenames)):
-            self.read_data(f)
+            print('Reading {}'.format(f))
+            self.read_data(prefix.format(f))
             print('Results for {}'.format(f))
             print(self.sum)
             self.reset()
