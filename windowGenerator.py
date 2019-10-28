@@ -770,7 +770,7 @@ if __name__ == '__main__':
     # wg1 = WindowGenerator(100, 5, 138)
     # wg1.run()
     print("Creating Markers")
-    wg2 = WindowGenerator(100, 5, 38)
+    wg2 = WindowGenerator(50, 2, 38)
     # wg2.runMarkers()
     # print("Creating Accel")
     # wg2.runDerivation()
