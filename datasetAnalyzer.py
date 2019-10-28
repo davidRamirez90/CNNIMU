@@ -62,7 +62,7 @@ class Analyzer:
         # print('Results for {}'.format(name))
         # print(self.sum)
 
-        for i, f in enumerate(tqdm.tqdm(filenames)):
+        for i, f in enumerate(filenames):
             print('Reading {}'.format(f))
             self.read_data(prefix.format(f))
             print('Results for {}'.format(f))
