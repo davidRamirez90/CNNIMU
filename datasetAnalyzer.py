@@ -102,10 +102,12 @@ class StatAnalyzer:
 
 
     def calculate(self, inputVect):
+        pdb.set_trace()
         prev = 999
         count = 0
         if (inputVect.size > 0):
             for f_class in inputVect:
+                pdb.set_trace()
                 if f_class == prev:
                     count += 1
                 else:
