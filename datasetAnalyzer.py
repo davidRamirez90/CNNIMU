@@ -107,10 +107,11 @@ class StatAnalyzer:
         count = 0
         if (inputVect.size > 0):
             for f_class in inputVect:
-                pdb.set_trace()
+                # pdb.set_trace()
                 if f_class == prev:
                     count += 1
                 else:
+                    print(f_class)
                     if prev != 999:
                         self.class_dict[prev].append(count)
                     count = 1
