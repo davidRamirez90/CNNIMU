@@ -672,9 +672,9 @@ class WindowGenerator:
                                                                 folder))
 
         imu_dict = dict(
-            train=['07', '08', '09'],
-            validate=['10'],
-            test=['11', '12', '13']
+            train=['07', '08', '09', '10'],
+            validate=['11'],
+            test=['12', '13']
         )
 
         seenSequences = {
