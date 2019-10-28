@@ -739,8 +739,8 @@ class WindowGenerator:
                             label_windows = sliding_window(filteredLabels,
                                                            (self.win_size, labels.shape[1]),
                                                            (self.win_stride, 1))
-                            an = StatAnalyzer()
-                            an.calculate(pd.DataFrame(label_windows))
+                            # an = StatAnalyzer()
+                            # an.calculate(pd.DataFrame(label_windows))
                             # pdb.set_trace()
                             win_amount = self.saveMarkerWindows(data_windows,
                                                              label_windows,
