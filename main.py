@@ -97,6 +97,7 @@ def init(args):
         config['depth'] = 3
     elif args.type == 3:
         config['channels'] = 10
+        config['depth'] = 3
 
 
 
