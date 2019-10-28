@@ -118,9 +118,9 @@ class StatAnalyzer:
 
 
 if __name__ == '__main__':
-    # an = Analyzer()
-    #
-    # an.run({'name': 'Training', 'data_sets': ['P01', 'P02', 'P03']})
+    an = Analyzer()
+
+    an.run({'name': 'Training', 'data_sets': ['P01', 'P02', 'P03']})
     # an.run({'name': 'Validating', 'data_sets': ['P04']})
     # # an.run({'name': 'Testing', 'data_sets': ['P05', 'P06']})
     #
@@ -128,8 +128,8 @@ if __name__ == '__main__':
     # data = pd.read_csv(path)
 
 
-    a = StatAnalyzer()
+    # a = StatAnalyzer()
 
-    stats = a.run({'name': 'Training', 'data_sets': ['P01', 'P02', 'P03', 'P04']})
+    # stats = a.run({'name': 'Training', 'data_sets': ['P01', 'P02', 'P03', 'P04']})
 
 
