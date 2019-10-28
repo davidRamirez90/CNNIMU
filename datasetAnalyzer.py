@@ -101,6 +101,20 @@ class StatAnalyzer:
             print(self.class_dict)
 
 
+    def getMostCommonClass(self, window):
+        '''
+        Looks for most common class within the provided window
+        @:param windows: Window to be analyzed
+        @:return class: Most common class found on window
+        '''
+        if window.shape.__len__() > 1:
+            classes = window[:, 0]
+        else:
+            classes = window
+        mid = classes[round(classes.size / 2)]
+
+        return mid
+
     def calculate(self, inputVect):
         pdb.set_trace()
         prev = 999
@@ -108,7 +122,8 @@ class StatAnalyzer:
         data = inputVect[0]
         if (data.size > 0):
 
-            for f_class in data:
+            for i, iteration in enumerate(range(0, data[0].size)):
+                f_class = self.getMostCommonClass(data.iloc[i, :])
                 # pdb.set_trace()
                 if f_class == prev:
                     count += 1
