@@ -42,15 +42,17 @@ class Analyzer:
         prefix = '/vol/corpora/har/DFG_Project/2019/MoCap/recordings_2019_06/09_New_Representation/{}'
         filenames = [
             'S01_P07_R01_A03_N01_norm.csv',
-            'S01_P07_R01_A03_N01_norm.csv',
+            'S01_P07_R02_A03_N01_norm.csv',
             'S01_P09_R01_A03_N01_norm.csv',
-            'S01_P09_R01_A03_N01_norm.csv',
-            'S01_P10_R01_A03_N01_norm.csv',
-            'S01_P10_R01_A03_N01_norm.csv',
+            'S01_P09_R02_A03_N01_norm.csv',
+            'S01_P10_R01_A017_N01_norm.csv',
+            'S01_P10_R02_A017_N01_norm.csv',
             'S01_P11_R01_A03_N01_norm.csv',
-            'S01_P11_R01_A03_N01_norm.csv',
-            'S01_P13_R01_A03_N01_norm.csv',
-            'S01_P13_R01_A03_N01_norm.csv',
+            'S01_P11_R02_A03_N01_norm.csv',
+            'S01_P13_R01_A08_N01_norm.csv',
+            'S01_P13_R02_A08_N01_norm.csv',
+            'S01_P14_R01_A06_N01_norm.csv',
+            'S01_P14_R02_A06_N01_norm.csv',
         ]
         data_dict = input['data_sets']
         name = input['name']
