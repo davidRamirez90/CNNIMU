@@ -723,8 +723,8 @@ class WindowGenerator:
                             labels = labels[~nanfilter]
                             imudata = imudata[~nanfilter]
                             filteredData, filteredLabels = self.removeClassMarkers(imudata, labels, 7)
-                            an = StatAnalyzer()
-                            an.calculate(pd.DataFrame(filteredLabels))
+                            # an = StatAnalyzer()
+                            # an.calculate(pd.DataFrame(filteredLabels))
                             # pdb.set_trace()
 
                             if filteredData.shape[0] == 0:
@@ -739,6 +739,9 @@ class WindowGenerator:
                             label_windows = sliding_window(filteredLabels,
                                                            (self.win_size, labels.shape[1]),
                                                            (self.win_stride, 1))
+                            an = StatAnalyzer()
+                            an.calculate(pd.DataFrame(label_windows))
+                            # pdb.set_trace()
                             win_amount = self.saveMarkerWindows(data_windows,
                                                              label_windows,
                                                              self.save_imu_dataset_dir.format(self.win_size,
