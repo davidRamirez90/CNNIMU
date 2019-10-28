@@ -424,6 +424,9 @@ class TorchModel:
                                        acc_per_class_window, name='5')
             self.append_scalar_to_plot(vis, m['accPerClass'][6], trainer.state.iteration, 'append',
                                        acc_per_class_window, name='6')
+            self.append_scalar_to_plot(vis, m['f1'],
+                                       trainer.state.iteration,
+                                       'append', val_f1_window)
             print(
                 "Validation Result: ----------->  Loss: {:.4f}, Accuracy: {:.4f}, F1: {:.4f}".format(
                     m['loss'],
