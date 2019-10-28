@@ -684,7 +684,8 @@ class WindowGenerator:
             "10": list(),
             "11": list(),
             "12": list(),
-            "13": list()
+            "13": list(),
+            "14": list()
         }
 
         print('[WindowGen] - Creating Training Windows')
