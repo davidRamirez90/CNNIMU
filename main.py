@@ -89,12 +89,14 @@ def init(args):
         'maxit': args.iterations
     }
 
-    if args.type == 1 or args.type == 2 or args.type == 3:
+    if args.type == 1 or args.type == 2:
         if args.channels == 0:
             config['channels'] = 38
         else:
             config['channels'] = args.channels
         config['depth'] = 3
+    elif args.type == 3:
+        config['channels'] = 10
 
 
 
