@@ -101,6 +101,22 @@ class StatAnalyzer:
             print(self.class_dict)
 
 
+    def calculate(self, inputVect):
+        prev = 999
+        count = 0
+        if (inputVect.size > 0):
+            for f_class in inputVect:
+                if f_class == prev:
+                    count += 1
+                else:
+                    if prev != 999:
+                        self.class_dict[prev].append(count)
+                    count = 1
+                    prev = f_class
+            self.class_dict[prev].append(count)
+            print(self.class_dict)
+
+
     def run(self, input):
 
 

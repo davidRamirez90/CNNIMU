@@ -9,6 +9,7 @@ import pandas as pd
 import logging
 import pickle
 from sliding_window import sliding_window
+from datasetAnalyzer import Analyzer
 import time
 import glob
 import tqdm
@@ -722,6 +723,11 @@ class WindowGenerator:
                             labels = labels[~nanfilter]
                             imudata = imudata[~nanfilter]
                             filteredData, filteredLabels = self.removeClassMarkers(imudata, labels, 7)
+
+                            an = Analyzer()
+                            an.calculate(filteredLabels)
+                            pdb.set_trace()
+
                             if filteredData.shape[0] == 0:
                                 continue
                             stackedData = self.coords_to_channels(filteredData)
