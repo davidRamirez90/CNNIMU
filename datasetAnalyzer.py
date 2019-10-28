@@ -105,14 +105,13 @@ class StatAnalyzer:
         pdb.set_trace()
         prev = 999
         count = 0
-        data = inputVect.iloc[:, 1]
+        data = inputVect[0]
         if (data.size > 0):
             for f_class in data:
                 # pdb.set_trace()
                 if f_class == prev:
                     count += 1
                 else:
-                    print(f_class)
                     if prev != 999:
                         self.class_dict[prev].append(count)
                     count = 1
