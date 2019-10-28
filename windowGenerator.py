@@ -9,7 +9,7 @@ import pandas as pd
 import logging
 import pickle
 from sliding_window import sliding_window
-from datasetAnalyzer import Analyzer
+from datasetAnalyzer import StatAnalyzer
 import time
 import glob
 import tqdm
@@ -724,7 +724,7 @@ class WindowGenerator:
                             imudata = imudata[~nanfilter]
                             filteredData, filteredLabels = self.removeClassMarkers(imudata, labels, 7)
 
-                            an = Analyzer()
+                            an = StatAnalyzer()
                             an.calculate(filteredLabels)
                             pdb.set_trace()
 
