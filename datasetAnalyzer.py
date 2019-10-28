@@ -107,6 +107,7 @@ class StatAnalyzer:
         count = 0
         data = inputVect[0]
         if (data.size > 0):
+
             for f_class in data:
                 # pdb.set_trace()
                 if f_class == prev:
@@ -117,6 +118,7 @@ class StatAnalyzer:
                     count = 1
                     prev = f_class
             self.class_dict[prev].append(count)
+            print(data.size)
             print(self.class_dict)
 
 
