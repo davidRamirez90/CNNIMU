@@ -182,11 +182,13 @@ class TorchModel:
         optimizer = SGD(net.parameters(),
                         lr=config['lr'],
                         momentum=config['momentum'])
-
+        # normal weights
         # weights = torch.tensor([2.6, 1.5, 1.1, 3.1, 3, 13.8, 6.6])
-        # weights = weights.to(device)
-        # criterion = nn.CrossEntropyLoss(weight=weights)
-        criterion = nn.CrossEntropyLoss()
+        # imu weights
+        weights = torch.tensor([0.9, 0.93, 0.83, 0.91, 0.5, 0.94, 0.97])
+        weights = weights.to(device)
+        criterion = nn.CrossEntropyLoss(weight=weights)
+        # criterion = nn.CrossEntropyLoss()
 
         # IGNITE METRICS DEFINED INCLUDING CUSTOM F1
         precision = Precision(average=False)
