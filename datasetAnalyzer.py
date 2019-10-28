@@ -119,7 +119,7 @@ class StatAnalyzer:
         pdb.set_trace()
         prev = 999
         count = 0
-        data = inputVect[0]
+        data = inputVect
         if (data.size > 0):
 
             for i, iteration in enumerate(range(0, data[0].size)):
