@@ -725,7 +725,7 @@ class WindowGenerator:
                             filteredData, filteredLabels = self.removeClassMarkers(imudata, labels, 7)
                             pdb.set_trace()
                             an = StatAnalyzer()
-                            an.calculate(pd.Series(filteredLabels))
+                            an.calculate(pd.DataFrame(filteredLabels))
                             pdb.set_trace()
 
                             if filteredData.shape[0] == 0:
