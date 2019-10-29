@@ -110,21 +110,17 @@ class TorchModel:
     def loadPretrainedModel(self, config, model_path):
         net = CNN_IMU(config)
 
-        pretr_dict = torch.load(model_path)
-        pdb.set_trace()
-        print(pretr_dict)
+        pretrained_statedict = torch.load(model_path)
+        new_statedict = net.state_dict()
 
-        # keystr = "{}_{}_{}".format(config['win_len'], config['win_step'], config['lr'])
-        # saved_model_name = [n for n in os.listdir(self.load_model_url) if keystr in n][0]
-        # saved_model_path = os.path.join(self.load_model_url, saved_model_name)
-
-        currdict = net.state_dict()
-        # pdb.set_trace()
-        for k, v in currdict.items():
+        for k, v in pretrained_statedict.items():
             if 'conv' in k:
-                currdict.update({k: v})
+                print(k, "\t", v)
+                pdb.set_trace()
+                new_statedict.update({k: v})
+                print(k, "\t", v)
 
-        net.load_state_dict(currdict)
+        net.load_state_dict(new_statedict)
 
         if self.freeze:
             for name, param in net.named_parameters():
