@@ -122,7 +122,7 @@ class TorchModel:
                 # print(k, "\t", new_statedict[k])
 
         net.load_state_dict(new_statedict)
-        net.train()
+        net.eval()
 
         if self.freeze:
             for name, param in net.named_parameters():
@@ -273,6 +273,7 @@ class TorchModel:
             m = engine.state.metrics
             if self.lr:
                 step_scheduler.step(m['loss'])
+
             self.append_scalar_to_plot(vis, m['loss'],
                                        trainer.state.iteration,
                                        'append', train_metrics_window,
