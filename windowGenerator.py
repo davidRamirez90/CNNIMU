@@ -44,7 +44,7 @@ class WindowGenerator:
 
         self.save_accel_dataset_dir = env.accel_window_url
 
-        self.imuset_dir = env.local_imu
+        self.imuset_dir = env.imu_url
         self.save_imu_dataset_dir = env.imu_window_url
 
         self.channels = channels
