@@ -463,7 +463,7 @@ class GaussianNoise(object):
                                  self.sigma,
                                  data.shape)
         # THIS TWO TYPES BELONG TO SKELETON TRAINING NEED EXPANDED DIMS
-        if self.type == 0 or self.type == 4:
+        if self.type == 0 or self.type == 4 or self.type == 3:
             data = np.expand_dims(data, 0)
         return (data, label)
 
