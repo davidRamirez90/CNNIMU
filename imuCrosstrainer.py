@@ -39,9 +39,8 @@ class TorchModel:
     Allows to evaluate one instance of torch model
     """
 
-    def __init__(self, type, freeze, lr, conf):
+    def __init__(self, freeze, lr):
         print('[netevaluator] - Init Crosstrain Torchmodel')
-        self.type = type
         self.freeze = freeze
         self.lr = lr
 
@@ -62,12 +61,12 @@ class TorchModel:
         train_dataset = windowDataSet(dir=self.win_url.format(config['win_len'],
                                                               config['win_step'],
                                                               'train'),
-                                      transform=GaussianNoise(0, 1e-2, self.type))
+                                      transform=GaussianNoise(0, 1e-2))
 
         val_dataset = windowDataSet(dir=self.win_url.format(config['win_len'],
                                                             config['win_step'],
                                                             'validate'),
-                                    transform=GaussianNoise(0, 1e-2, self.type))
+                                    transform=GaussianNoise(0, 1e-2))
 
         train_loader = DataLoader(train_dataset, batch_size=train_batch_size,
                                   shuffle=True, num_workers=4)
@@ -308,10 +307,9 @@ class GaussianNoise(object):
     Add Gaussian noise to a window data sample
     """
 
-    def __init__(self, mu, sigma, type):
+    def __init__(self, mu, sigma):
         self.mu = mu
         self.sigma = sigma
-        self.type = type
 
     def __call__(self, sample):
         data = sample['data']
@@ -319,6 +317,5 @@ class GaussianNoise(object):
         data += np.random.normal(self.mu,
                                  self.sigma,
                                  data.shape)
-        if self.type == 0:
-            data = np.expand_dims(data, 0)
+        data = np.expand_dims(data, 0)
         return (data, label)
