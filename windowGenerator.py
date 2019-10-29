@@ -44,7 +44,7 @@ class WindowGenerator:
 
         self.save_accel_dataset_dir = env.accel_window_url
 
-        self.imuset_dir = env.imu_url
+        self.imuset_dir = env.local_imu
         self.save_imu_dataset_dir = env.imu_window_url
 
         self.channels = channels
@@ -95,9 +95,8 @@ class WindowGenerator:
 
     def read_imu_data(self, path):
         # pdb.set_trace()
-        data = pd.read_csv(path, skiprows=2)
+        data = pd.read_csv(path, skiprows=1)
         data = data.dropna(axis=1, how='all')
-        data = data.iloc[1:, 1:]
         data = data.to_numpy()
         return data
 
@@ -147,6 +146,18 @@ class WindowGenerator:
         indices = labels[:, 0] != classN
         filtData = data[indices, :]
         filtLabels = labels[indices, :]
+
+        return filtData, filtLabels
+
+    def removeIMUMarkers(self, data, labels, classN):
+        '''
+        :param data: Data to remove class from
+        :param classN: Class number to remove from data
+        :return: filtArray: Filtered Array
+        '''
+        indices = labels != classN
+        filtData = data[indices, :]
+        filtLabels = labels[indices]
 
         return filtData, filtLabels
 
@@ -675,7 +686,7 @@ class WindowGenerator:
         imu_dict = dict(
             train=['07', '08', '09', '10'],
             validate=['11', '12'],
-            test=['12', '13', '14']
+            test=['13', '14']
         )
 
         seenSequences = {
@@ -698,59 +709,59 @@ class WindowGenerator:
             win_amount = 0
             for j, dir in enumerate(imu_dict[folder]):
                 skeletondir = 'P{}'.format(dir)
-                files = glob.glob(self.new_sk_url.format(skeletondir))
+                files = glob.glob(self.imuset_dir.format(skeletondir))
                 print(dir)
                 # pdb.set_trace()
                 for k, file in enumerate(files):
-                    try:
-                        imuseq = re.search('P[0-9]*_R(.+?)_A[0-9]*', file).group(1)
-                        if imuseq not in seenSequences[dir]:
-                            print('[WindowGen] - Saving for found file {}'.format(file))
-                            seenSequences[dir].append(imuseq)
-                            imufile = self.imuset_dir.format(dir, dir, imuseq)
-                            print(imufile)
-                            if not os.path.isfile(imufile):
-                                print("skipping")
-                                continue
-                            print("generating windows...")
-                            skdata = self.read_data_for_imu(file)
-                            imudata = self.read_imu_data(imufile).astype('float64')
-                            # pdb.set_trace()
-                            imudata = imudata[:skdata.shape[0], :]
-                            skdata = skdata[:imudata.shape[0], :]
-                            labels = skdata[:imudata.shape[0], 0].reshape((-1, 1))
-                            nanfilter = np.isnan(imudata).any(axis=1)
-                            labels = labels[~nanfilter]
-                            imudata = imudata[~nanfilter]
-                            filteredData, filteredLabels = self.removeClassMarkers(imudata, labels, 7)
-                            # an = StatAnalyzer()
-                            # an.calculate(pd.DataFrame(filteredLabels))
-                            # pdb.set_trace()
+                    print('[WindowGen] - Saving for found file {}'.format(file))
+                    imudata = self.read_imu_data(file)
+                    imulabels = imudata[:, 0].reshape((-1, 1))
+                    imudata = imudata[:, 1:]
 
-                            if filteredData.shape[0] == 0:
-                                continue
-                            stackedData = self.coords_to_channels(filteredData)
+                    filteredData, filteredLabels = self.removeClassMarkers(imudata, imulabels, 7)
+                    if filteredData.shape[0] == 0:
+                        continue;
+                    stackedData = self.coords_to_channels(filteredData)
 
-                            data_windows = sliding_window( stackedData,
-                                                           (stackedData.shape[0],
-                                                            self.win_size,
-                                                            stackedData.shape[2]),
-                                                           (1, self.win_stride, 1))
-                            label_windows = sliding_window(filteredLabels,
-                                                           (self.win_size, labels.shape[1]),
-                                                           (self.win_stride, 1))
-                            # an = StatAnalyzer()
-                            # an.calculate(pd.DataFrame(label_windows))
-                            # pdb.set_trace()
-                            win_amount = self.saveMarkerWindows(data_windows,
-                                                             label_windows,
-                                                             self.save_imu_dataset_dir.format(self.win_size,
-                                                                                              self.win_stride,
-                                                                                              folder),
-                                                             win_amount,
-                                                             folder)
-                    except AttributeError:
-                        print('something went wrong with regexp')
+                    data_windows = sliding_window(stackedData,
+                                                  (stackedData.shape[0],
+                                                   self.win_size,
+                                                   stackedData.shape[2]),
+                                                  (1, self.win_stride, 1))
+                    label_windows = sliding_window(filteredLabels,
+                                                   (self.win_size, filteredLabels.shape[1]),
+                                                   (self.win_stride, 1))
+
+                    win_amount = self.saveMarkerWindows(data_windows,
+                                                        label_windows,
+                                                        self.save_imu_dataset_dir.format(self.win_size,
+                                                                                         self.win_stride,
+                                                                                         folder),
+                                                        win_amount,
+                                                        folder)
+
+                    # pdb.set_trace()
+                    # imudata = imudata[:skdata.shape[0], :]
+                    # skdata = skdata[:imudata.shape[0], :]
+                    # labels = skdata[:imudata.shape[0], 0].reshape((-1, 1))
+                    # nanfilter = np.isnan(imudata).any(axis=1)
+                    # labels = labels[~nanfilter]
+                    # imudata = imudata[~nanfilter]
+                    # filteredData, filteredLabels = self.removeClassMarkers(imudata, labels, 7)
+                    # # an = StatAnalyzer()
+                    # # an.calculate(pd.DataFrame(filteredLabels))
+                    # # pdb.set_trace()
+                    #
+                    # if filteredData.shape[0] == 0:
+                    #     continue
+                    # stackedData = self.coords_to_channels(filteredData)
+
+
+                    # an = StatAnalyzer()
+                    # an.calculate(pd.DataFrame(label_windows))
+                    # pdb.set_trace()
+
+
         end = time.time()
         t = end-start
         print('[WindowGen] - Process has been finished after: {}'.format(t))
