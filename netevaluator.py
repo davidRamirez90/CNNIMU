@@ -273,7 +273,7 @@ class TorchModel:
             mode = 'min',
             min_lr=0.000001,
             factor = 0.1,
-            patience = 7,
+            patience = 6,
             verbose = True)
 
 

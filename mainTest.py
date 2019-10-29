@@ -143,6 +143,8 @@ def getName(type):
         return "[SK]pretrained"
     elif type == 4:
         return "[MK]pretrained"
+    elif type == 5:
+        return  "IMU"
 
 
 if __name__ == "__main__":
