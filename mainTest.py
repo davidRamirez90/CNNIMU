@@ -50,9 +50,7 @@ def init(args):
     #     4: 4
     # }
     types = {
-        0: 0,
-        1: 1,
-        2: 2
+        0: 5
     }
 
     names = {
@@ -60,7 +58,8 @@ def init(args):
         1: "[MK]simple",
         2: "[ACC]simple",
         3: "[SK]pretrained",
-        4: "[MK]pretrained"
+        4: "[MK]pretrained",
+        5: "[IMU]basic"
     }
 
     config = {
@@ -77,8 +76,8 @@ def init(args):
         'noise': (0, 1e-2),
         'gpucore': 'cuda:0',
         'momentum': 0.9,
-        'win_len': 100,
-        'win_step': 5,
+        'win_len': 50,
+        'win_step': 2,
         'lr': 0.0001
     }
 
@@ -99,6 +98,8 @@ def init(args):
             else:
                 c['channels'] = args.channels
             c['depth'] = 3
+        elif args.type == 5:
+            config['channels'] = 30
         configArr.append(c)
 
     # return config
