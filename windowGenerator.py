@@ -715,25 +715,26 @@ class WindowGenerator:
                 for k, file in enumerate(files):
                     print('[WindowGen] - Saving for found file {}'.format(file))
                     imudata = self.read_imu_data(file)
-                    imulabels = imudata[:, 0].reshape((-1, 1))
-                    imudata = imudata[:, 1:]
 
-                    filteredData, filteredLabels = self.removeClassMarkers(imudata, imulabels, 7)
+                    filteredData = self.removeClass(imudata, 7)
                     if filteredData.shape[0] == 0:
                         continue;
-                    stackedData = self.coords_to_channels(filteredData)
 
-                    data_windows = sliding_window(stackedData,
-                                                  (stackedData.shape[0],
-                                                   self.win_size,
-                                                   stackedData.shape[2]),
-                                                  (1, self.win_stride, 1))
-                    label_windows = sliding_window(filteredLabels,
-                                                   (self.win_size, filteredLabels.shape[1]),
-                                                   (self.win_stride, 1))
+                    normalizedData = self.normalizeData(filteredData)
 
-                    win_amount = self.saveMarkerWindows(data_windows,
-                                                        label_windows,
+                    # imulabels = filteredData[:, 0].reshape((-1, 1))
+                    # imudata = filteredData[:, 1:]
+                    #
+                    # stackedData = self.coords_to_channels(filteredData)
+
+                    data_windows = sliding_window(normalizedData,
+                                                  (self.win_size, normalizedData.shape[1]),
+                                                  (self.win_stride, 1))
+                    # label_windows = sliding_window(filteredLabels,
+                    #                                (self.win_size, filteredLabels.shape[1]),
+                    #                                (self.win_stride, 1))
+
+                    win_amount = self.saveWindows(data_windows,
                                                         self.save_imu_dataset_dir.format(self.win_size,
                                                                                          self.win_stride,
                                                                                          folder),
