@@ -46,13 +46,16 @@ class TorchModel:
         print('[netevaluator] - Init Crosstrain Torchmodel')
         self.freeze = freeze
         self.lr = lr
-
         self.win_url = env.imu_window_url
+
+
 
         if self.freeze:
             self.save_model_url = env.postrained_models_url+"/FROZEN"
+            self.env_prefix = "FR_"
         else:
             self.save_model_url = env.postrained_models_url+"/UNFROZEN"
+            self.env_prefix = "NFR_"
 
 
     def get_data_loaders(self, config):
@@ -135,8 +138,8 @@ class TorchModel:
 
     def execute_instance(self, config, model_name, model_path, iteration):
 
-        print('[Main] - Initializing Visdom with {}'.format(model_name))
-        vis = visdom.Visdom(env=model_name)
+        print('[Main] - Initializing Visdom with {}'.format(self.env_prefix+model_name))
+        vis = visdom.Visdom(env=self.env_prefix+model_name)
 
         # GETTING DATA
         train_loader, val_loader, train_size, val_size = self.get_data_loaders(
