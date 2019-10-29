@@ -118,7 +118,7 @@ class TorchModel:
                 print(k, "\t", new_statedict[k])
                 pdb.set_trace()
                 new_statedict.update({k: v})
-                print(k, "\t", v)
+                print(k, "\t", new_statedict[k])
 
         net.load_state_dict(new_statedict)
 
