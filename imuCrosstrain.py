@@ -100,6 +100,8 @@ if __name__ == "__main__":
 
     config = init(args)
 
+    print(config)
+
     hyParamChecker = TorchModel(args.freeze, args.lr)
 
     pretrained_models = glob.glob(env.pretrained_models_url)
