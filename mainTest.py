@@ -99,7 +99,7 @@ def init(args):
                 c['channels'] = args.channels
             c['depth'] = 3
         elif types[i] == 5:
-            config['channels'] = 30
+            c['channels'] = 30
         configArr.append(c)
 
     # return config
