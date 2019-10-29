@@ -673,20 +673,22 @@ class WindowGenerator:
         :return: Dataset with windows exists
         """
         labels = ['train', 'validate', 'test']
+        labels = ['test']
 
-        for folder in labels:
-            if self.checkDirExists(self.save_imu_dataset_dir + folder):
-                print('[WindowGen] - {} folder already exists, skipping generation...'.format(folder))
-                return True
-            else:
-                os.makedirs(self.save_imu_dataset_dir.format(self.win_size,
-                                                                self.win_stride,
-                                                                folder))
+
+        # for folder in labels:
+        #     if self.checkDirExists(self.save_imu_dataset_dir + folder):
+        #         print('[WindowGen] - {} folder already exists, skipping generation...'.format(folder))
+        #         return True
+        #     else:
+        #         os.makedirs(self.save_imu_dataset_dir.format(self.win_size,
+        #                                                         self.win_stride,
+        #                                                         folder))
 
         imu_dict = dict(
             train=['07', '08', '09', '10'],
             validate=['11', '12'],
-            test=['13', '14']
+            test=['13']
         )
 
         seenSequences = {
