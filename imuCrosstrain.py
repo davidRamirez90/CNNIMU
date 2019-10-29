@@ -112,7 +112,7 @@ if __name__ == "__main__":
             print("TRAINING PRETRAINED MODEL {}, ITERATION {}".format(model_name, i))
             logger.info("[WARN] TRAINING PRETRAINED MODEL {}, ITERATION {}".format(model_name, i))
             memory_dump(config['gpucore'])
-            hyParamChecker.execute_instance(config, model_name, model, i, type=args.type)
+            hyParamChecker.execute_instance(config, model_name, model, i)
 
     print('FINAL, script took: {:.6} seconds'.format(time.time() - total_time))
     logger.info('FINAL, script took: {:.6} seconds'.format(time.time() - total_time))

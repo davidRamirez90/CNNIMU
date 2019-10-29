@@ -134,7 +134,7 @@ class TorchModel:
 
         return net
 
-    def execute_instance(self, config, model_name, model_path, iteration, type=0):
+    def execute_instance(self, config, model_name, model_path, iteration):
 
         print('[Main] - Initializing Visdom with {}'.format(model_name))
         vis = visdom.Visdom(env=model_name)
