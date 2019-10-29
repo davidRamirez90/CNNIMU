@@ -41,6 +41,9 @@ class Tester:
         elif type == 4:
             self.modelurl = env.cross_marker_models_url
             self.dataurl = env.marker_window_url
+        elif type == 5:
+            self.modelurl = env.imu_models_url
+            self.dataurl = env.imu_window_url
 
 
     def filterStateDict(self, model_path, net):
