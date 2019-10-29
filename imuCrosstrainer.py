@@ -24,6 +24,8 @@ from network import CNN_IMU
 import env
 import pdb
 
+from ignite.utils import to_onehot
+
 
 # INITIAL CONFIG OF VARIABLES
 # logging_format = '[%(asctime)-19s, %(name)s, %(levelname)s] %(message)s'
@@ -115,12 +117,12 @@ class TorchModel:
 
         for k, v in pretrained_statedict.items():
             if 'conv' in k:
-                print(k, "\t", new_statedict[k])
-                pdb.set_trace()
+                # print(k, "\t", new_statedict[k])
                 new_statedict.update({k: v})
-                print(k, "\t", new_statedict[k])
+                # print(k, "\t", new_statedict[k])
 
         net.load_state_dict(new_statedict)
+        net.train()
 
         if self.freeze:
             for name, param in net.named_parameters():
@@ -163,6 +165,7 @@ class TorchModel:
 
         metrics = {
             'accuracy': Accuracy(),
+            'accPerClass': LabelwiseAccuracy(),
             'loss': Loss(criterion),
             'precision': precision,
             'recall': recall,
@@ -190,12 +193,9 @@ class TorchModel:
         # CREATING EARLY STOPPING AND SAVE HANDLERS
         checkpoint = ModelCheckpoint(
             dirname=self.save_model_url,
-            filename_prefix='[{}]-CNNIMU_{}_{}_{}_{}'.format(
+            filename_prefix='[{}]-{}'.format(
                 iteration,
-                config['win_len'],
-                config['win_step'],
-                config['lr'],
-                self.freeze),
+                model_name),
             score_function=self.score_function,
             score_name='loss',
             create_dir=True,
@@ -214,7 +214,7 @@ class TorchModel:
             optimizer,
             mode='min',
             factor=0.1,
-            patience=5,
+            patience=7,
             verbose=True)
 
         # CREATING VISDOM INITIAL GRAPH OBJECTS
@@ -296,6 +296,41 @@ class TorchModel:
         del val_evaluator
         del step_scheduler
         del net
+
+class LabelwiseAccuracy(Accuracy):
+    def __init__(self, output_transform=lambda x: x):
+        self._num_correct = None
+        self._num_examples = None
+        super(LabelwiseAccuracy, self).__init__(output_transform=output_transform)
+
+    def reset(self):
+        self._num_correct = torch.DoubleTensor(0)
+        self._num_examples = torch.DoubleTensor(0)
+        super(LabelwiseAccuracy, self).reset()
+
+    def update(self, output):
+
+        y_pred, y = self._check_shape(output)
+        self._check_type((y_pred, y))
+
+        num_classes = y_pred.size(1)
+        y = to_onehot(y.view(-1), num_classes=num_classes)
+        indices = torch.argmax(y_pred, dim=1).view(-1)
+        y_pred = to_onehot(indices, num_classes=num_classes)
+
+        y = y.type_as(y_pred)
+        correct = y * y_pred
+        all_examples = y_pred.sum(dim=0).type(torch.DoubleTensor)
+
+        if correct.sum() == 0:
+            true_examples = torch.zeros_like(all_examples)
+        else:
+            true_examples = correct.sum(dim=0)
+
+        true_examples = true_examples.type(torch.DoubleTensor)
+
+        self._num_correct += true_examples
+        self._num_examples += all_examples
 
 
 class GaussianNoise(object):

@@ -111,10 +111,13 @@ if __name__ == "__main__":
         model_name = re.search("/([a-zA-Z_]*)\.pth", model).group(1)
         # RUN 5 TIMES
         for i, iteration in enumerate(range(0,5), start=1):
+            model_time = time.time()
             print("TRAINING PRETRAINED MODEL {}, ITERATION {}".format(model_name, i))
             logger.info("[WARN] TRAINING PRETRAINED MODEL {}, ITERATION {}".format(model_name, i))
             memory_dump(config['gpucore'])
             hyParamChecker.execute_instance(config, model_name, model, i)
+            print('RESULT [{}]_{} --- Took: {:.6} seconds'.format(i, model_name, time.time() - model_time))
+            logger.info('[WARN] RESULT [{}]_{} --- Took: {:.6} seconds'.format(i, model_name, time.time() - model_time))
 
     print('FINAL, script took: {:.6} seconds'.format(time.time() - total_time))
     logger.info('FINAL, script took: {:.6} seconds'.format(time.time() - total_time))
