@@ -685,6 +685,12 @@ class WindowGenerator:
         #                                                         self.win_stride,
         #                                                         folder))
 
+
+        os.makedirs(self.save_imu_dataset_dir.format(self.win_size,
+                                                     self.win_stride,
+                                                     'test'))
+
+
         imu_dict = dict(
             train=['07', '08', '09', '10'],
             validate=['11', '12'],
