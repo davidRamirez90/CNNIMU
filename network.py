@@ -15,10 +15,10 @@ class CNN_IMU(nn.Module):
         self.conv11 = nn.Conv2d(config['depth'],
                                config['n_filters'],
                                config['f_size'])
-        # self.conv12 = nn.Conv2d(config['n_filters'],
-        #                         config['n_filters'],
-        #                         config['f_size'])
-        out_dim = (config['win_len'] - 4) / 2
+        self.conv12 = nn.Conv2d(config['n_filters'],
+                                config['n_filters'],
+                                config['f_size'])
+        out_dim = (config['win_len'] - 8) / 2
         self.conv21 = nn.Conv2d(config['n_filters'],
                                config['n_filters'],
                                config['f_size'])
@@ -40,7 +40,7 @@ class CNN_IMU(nn.Module):
         ORTHONORMAL WEIGHT INITIALIZATION
         """
         init.orthogonal_(self.conv11.weight, init.calculate_gain('relu'))
-        # init.orthogonal_(self.conv12.weight, init.calculate_gain('relu'))
+        init.orthogonal_(self.conv12.weight, init.calculate_gain('relu'))
         init.orthogonal_(self.conv21.weight, init.calculate_gain('relu'))
         init.orthogonal_(self.conv22.weight, init.calculate_gain('relu'))
         init.orthogonal_(self.fc1.weight, init.calculate_gain('relu'))
@@ -56,8 +56,8 @@ class CNN_IMU(nn.Module):
         """
         x = x.float()
         x = F.relu(self.conv11(x))
-        x = F.max_pool2d(x, (2,1))
-        # x = F.max_pool2d(F.relu(self.conv12(x)), (2,1))
+        # x = F.max_pool2d(x, (2,1))
+        x = F.max_pool2d(F.relu(self.conv12(x)), (2,1))
         # conv block 1
         x = F.relu(self.conv21(x))
         x = F.max_pool2d(F.relu(self.conv22(x)), (2,1))
