@@ -127,7 +127,7 @@ if __name__ == "__main__":
     # logger.info('---------------------------------------------')
 
 
-    types = ['FROZEN']
+    types = ['FROZEN', 'UNFROZEN']
 
     for type in types:
         loaded_models = glob.glob(env.postrained_models_load_url.format(type))
@@ -159,5 +159,3 @@ if __name__ == "__main__":
                 writer.writerow(fullFiltr)
                 clean_memory()
                 memory_dump(args.core)
-
-            print('Finished Testing of all models')
