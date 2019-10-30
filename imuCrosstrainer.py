@@ -122,8 +122,12 @@ class TorchModel:
         for k, v in pretrained_statedict.items():
             if 'conv' in k:
                 # print(k, "\t", new_statedict[k])
-                pdb.set_trace()
-                new_statedict.update({k: v})
+                if new_statedict[k].size() != v.size():
+                    print("resized conv ")
+                    v_mod = torch.chunk(v, v.size()[1], dim=1)[0]
+                    new_statedict.update({k: v_mod})
+                else:
+                    new_statedict.update({k: v})
                 # print(k, "\t", new_statedict[k])
 
         net.load_state_dict(new_statedict)
