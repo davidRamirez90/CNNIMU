@@ -9,8 +9,10 @@ import pdb
 import env
 import glob
 import re
+import csv
 
 from imuCrosstrainer import TorchModel
+from tester import Tester
 
 logging_format = '[%(asctime)-19s, %(name)s, %(levelname)s] %(message)s'
 logging.basicConfig(
@@ -102,60 +104,60 @@ if __name__ == "__main__":
 
     print(config)
 
-    hyParamChecker = TorchModel(args.freeze, args.lr)
+    # hyParamChecker = TorchModel(args.freeze, args.lr)
+    #
+    # pretrained_models = glob.glob(env.pretrained_models_url)
+    #
+    # # FOR EACH PRETRAINED MODEL
+    # for k, model in enumerate(pretrained_models):
+    #     model_name = re.search("/([a-zA-Z_]*)\.pth", model).group(1)
+    #     # RUN 5 TIMES
+    #     for i, iteration in enumerate(range(0,5), start=1):
+    #         model_time = time.time()
+    #         print("TRAINING PRETRAINED MODEL {}, ITERATION {}".format(model_name, i))
+    #         logger.info("[WARN] TRAINING PRETRAINED MODEL {}, ITERATION {}".format(model_name, i))
+    #         memory_dump(config['gpucore'])
+    #         hyParamChecker.execute_instance(config, model_name, model, i)
+    #         print('RESULT [{}]_{} --- Took: {:.6} seconds'.format(i, model_name, time.time() - model_time))
+    #         logger.info('[WARN] RESULT [{}]_{} --- Took: {:.6} seconds'.format(i, model_name, time.time() - model_time))
+    #
+    # print('FINAL, script took: {:.6} seconds'.format(time.time() - total_time))
+    # logger.info('FINAL, script took: {:.6} seconds'.format(time.time() - total_time))
+    # print('---------------------------------------------')
+    # logger.info('---------------------------------------------')
 
-    pretrained_models = glob.glob(env.pretrained_models_url)
 
-    # FOR EACH PRETRAINED MODEL
-    for k, model in enumerate(pretrained_models):
-        model_name = re.search("/([a-zA-Z_]*)\.pth", model).group(1)
-        # RUN 5 TIMES
-        for i, iteration in enumerate(range(0,5), start=1):
-            model_time = time.time()
-            print("TRAINING PRETRAINED MODEL {}, ITERATION {}".format(model_name, i))
-            logger.info("[WARN] TRAINING PRETRAINED MODEL {}, ITERATION {}".format(model_name, i))
-            memory_dump(config['gpucore'])
-            hyParamChecker.execute_instance(config, model_name, model, i)
-            print('RESULT [{}]_{} --- Took: {:.6} seconds'.format(i, model_name, time.time() - model_time))
-            logger.info('[WARN] RESULT [{}]_{} --- Took: {:.6} seconds'.format(i, model_name, time.time() - model_time))
+    types = ['FROZEN']
 
-    print('FINAL, script took: {:.6} seconds'.format(time.time() - total_time))
-    logger.info('FINAL, script took: {:.6} seconds'.format(time.time() - total_time))
-    print('---------------------------------------------')
-    logger.info('---------------------------------------------')
+    for type in types:
+        loaded_models = glob.glob(env.postrained_models_load_url.format(type))
 
+        with open('testResults.csv', mode='w') as csv_file:
+            fields = ['name', 'accuracy', 'loss', 'f1', 'acc_[0]', 'acc_[1]', 'acc_[2]', 'acc_[3]', 'acc_[4]', 'acc_[5]', 'acc_[6]']
+            for i in range(0, 7):
+                for j in range(0, 7):
+                    fields.append("CM{}{}".format(i, j))
+            fieldsShort = ['name', 'accuracy', 'loss', 'f1']
+            writer = csv.DictWriter(csv_file, fieldnames=fields)
+            writer.writeheader()
 
+            for k, model in enumerate(loaded_models):
+                model_name = re.search("-([a-zA-Z]*_[a-zA-Z]*)", model).group(1)
+                config["name"] = model_name
+                tester = Tester(type=5)
+                res = tester.runImuTest(model, config)
 
-    # for i, iteration in enumerate(range(0, 10), start=1):
-    #     model_time = time.time()
-    #     print('Executing CROSSTRAINING for MODE [{}] / ITERATION [{}]'.format(
-    #         args.type, i))
-    #     logger.info('Executing training for MODE [{}] / ITERATION [{}]'.format(
-    #         args.type, i))
-    #     memory_dump(configs['gpucore'])
-    #     hyParamChecker.execute_instance(configs, i, type=args.type)
-    #     # memory_dump(configs['gpucore'])
-    #     clean_memory()
-    #     memory_dump(configs['gpucore'])
-    #     print('CROSSTRAINING ---[# {}] --- [m: {}] --- Took: {:.6} seconds'.format(i, args.type,
-    #                                                                                time.time() - model_time))
-    #     logger.info('CROSSTRAINING ---[# {}] --- [m: {}] --- Took: {:.6} seconds'.format(i, args.type,
-    #                                                                                      time.time() - model_time))
+                print(res)
+                fullr = {**config, **res}
+                filtr = {key: value for key, value in fullr.items() if key in fieldsShort}
+                accList = res['accPerClass']
+                accPc = {"acc_[{}]".format(i): accList[i].item() for i in range(0, len(accList))}
+                confMat = res['confMatrix']
+                confList = {"CM{}{}".format(i, j): confMat[i][j].item() for i in range(0, len(confMat)) for j in
+                            range(0, len(confMat))}
+                fullFiltr = {**filtr, **accPc, **confList}
+                writer.writerow(fullFiltr)
+                clean_memory()
+                memory_dump(args.core)
 
-    # for i, config in enumerate(configs):
-    #     model_time = time.time()
-    #     print('Executing network for LR [{}] / WIN_SIZE [{}] / WIN_STRIDE [{}]'.format(
-    #         config['lr'], config['win_len'], config['win_step']))
-    #     logger.info('Executing network for LR [{}] / WIN_SIZE [{}] / WIN_STRIDE [{}]'.format(
-    #         config['lr'], config['win_len'], config['win_step']))
-    #     memory_dump(config['gpucore'])
-    #     hyParamChecker.execute_instance(config, type=args.type)
-    #     clean_memory()
-    #     memory_dump(config['gpucore'])
-    #     print(' > Took: {:.2} minutes'.format((time.time() - model_time) / 60))
-    #     logger.info('Took: {:.2} minutes'.format((time.time() - model_time) / 60))
-
-    print('FINAL, script took: {:.6} seconds'.format(time.time() - total_time))
-    logger.info('FINAL, script took: {:.6} seconds'.format(time.time() - total_time))
-    print('---------------------------------------------')
-    logger.info('---------------------------------------------')
+            print('Finished Testing of all models')

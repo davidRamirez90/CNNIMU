@@ -16,7 +16,7 @@ from ignite.utils import to_onehot
 import env
 from network import CNN_IMU
 from windataset import windowDataSet
-from netevaluator import GaussianNoise
+# from netevaluator import GaussianNoise
 
 
 
@@ -90,6 +90,18 @@ class Tester:
         print(device)
         
         return net, device
+
+    def load_imu_model(self, config, path):
+        net = CNN_IMU(config)
+        device = torch.device(
+            config['gpucore'] if torch.cuda.is_available() else "cpu")
+        net.load_state_dict(torch.load(path))
+        net = net.to(device)
+
+        print(net)
+        print(device)
+
+        return net, device
     
     
     def get_data_loader(self, config):
@@ -101,7 +113,7 @@ class Tester:
                                            config['win_step'],
                                            'test')
         test_dataset = windowDataSet(dir=test_win_dir,
-                                     transform=GaussianNoise(0, 1e-2, self.type))
+                                     transform=GaussianNoise(0, 1e-2))
 
         test_loader = DataLoader(test_dataset,
                                  batch_size=train_batch_size,
@@ -170,6 +182,38 @@ class Tester:
 
         print(tester)
         return tester
+
+    def create_imu_supervisor(self, path, config):
+
+        # GET LOADED NETWORK
+        net, device = self.load_imu_model(config, path)
+
+        # SET METRICS
+        metrics = self.get_metrics(device=device)
+
+        # CREATE IGNITE TESTER
+        tester = create_supervised_evaluator(net,
+                                             metrics=metrics,
+                                             device=device)
+
+        # TQDM OBSERVERS
+        pbar = tqdm_logger.ProgressBar()
+        pbar.attach(tester)
+
+        @tester.on(Events.EPOCH_COMPLETED)
+        def log_test_results(engine):
+            m = engine.state.metrics
+            print('Test results for WinSize [{}], WinStep [{}], LR [{}]'.format(
+                config['win_len'],
+                config['win_step'],
+                config['lr']))
+            print('Loss:    {}\nAccuracy    {}\nF1:    {}'.format(
+                m['loss'],
+                m['accuracy'],
+                m['f1']))
+
+        print(tester)
+        return tester
         
         
     def runTest(self, config, it):
@@ -182,6 +226,14 @@ class Tester:
         # RUN TEST
         tester.run(test_loader)
        
+        return tester.state.metrics
+
+    def runImuTest(self, path, config):
+        test_loader, test_len = self.get_data_loader(config)
+        tester = self.create_imu_supervisor(path, config)
+
+        tester.run(test_loader)
+
         return tester.state.metrics
 
 #
@@ -207,6 +259,24 @@ class Tester:
 #
 #
 #
+
+class GaussianNoise(object):
+    """
+    Add Gaussian noise to a window data sample
+    """
+
+    def __init__(self, mu, sigma):
+        self.mu = mu
+        self.sigma = sigma
+
+    def __call__(self, sample):
+        data = sample['data']
+        label = np.long(sample['label'])
+        data += np.random.normal(self.mu,
+                                 self.sigma,
+                                 data.shape)
+        data = np.expand_dims(data, 0)
+        return (data, label)
 
 class customConfusionMatrix(Metric):
     def __init__(self, num_classes, device, average=None, output_transform=lambda x: x):
