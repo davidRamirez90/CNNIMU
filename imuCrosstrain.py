@@ -132,7 +132,7 @@ if __name__ == "__main__":
     for type in types:
         print(type)
         loaded_models = glob.glob(env.postrained_models_load_url.format(type))
-        with open('testResults.csv', mode='w') as csv_file:
+        with open(type+'_testResults.csv', mode='w') as csv_file:
             fields = ['name', 'accuracy', 'loss', 'f1', 'acc_[0]', 'acc_[1]', 'acc_[2]', 'acc_[3]', 'acc_[4]', 'acc_[5]', 'acc_[6]']
             for i in range(0, 7):
                 for j in range(0, 7):
